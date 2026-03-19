@@ -19,6 +19,96 @@ interface FlightData {
   is_known_wx_mod: boolean;
   operator_notes: string;
   squawk: string | null;
+  suspicion_score: number;
+  suspicion_reasons: string[];
+}
+
+// Aircraft type codes commonly used for cloud seeding (turboprops, small props)
+const SUSPECT_AIRCRAFT_TYPES = new Set([
+  "BE20", "BE9L", "BE99", "BE10", "B200", "B300", // Beechcraft King Air variants
+  "C208", "C206", "C210", "C182", "C172", // Cessna singles
+  "C340", "C402", "C414", "C421", // Cessna twins
+  "PA31", "PA34", "PA46", // Piper (Cheyenne, Navajo, etc.)
+  "P180", // Piaggio Avanti
+  "DHC6", // Twin Otter
+  "BN2P", // Islander
+  "AC68", "AC69", // Aero Commander
+  "SW4", "SW3", // Swearingen Metroliner
+]);
+
+// Airline callsign prefixes — if it starts with these, it's a commercial flight
+const AIRLINE_PREFIXES = [
+  "AAL", "DAL", "UAL", "SWA", "JBU", "NKS", "FFT", "ASA", "HAL",
+  "SKW", "RPA", "ENY", "PDT", "PSA", "CPZ", "JIA", "EDV", "GJS",
+  "FDX", "UPS", // cargo
+];
+
+function isAirlineCallsign(callsign: string | null): boolean {
+  if (!callsign) return false;
+  const upper = callsign.toUpperCase().trim();
+  return AIRLINE_PREFIXES.some((prefix) => upper.startsWith(prefix));
+}
+
+function isSuspectAircraftType(type: string | null): boolean {
+  if (!type) return false;
+  return SUSPECT_AIRCRAFT_TYPES.has(type.toUpperCase().trim());
+}
+
+/**
+ * Score how suspicious a flight is for potential weather modification.
+ * Higher score = more worth watching. Max ~5.
+ */
+function scoreSuspicion(flight: {
+  altitude_ft: number;
+  callsign: string | null;
+  aircraft_type: string | null;
+  speed_kts: number;
+  is_known_wx_mod: boolean;
+}): { score: number; reasons: string[] } {
+  let score = 0;
+  const reasons: string[] = [];
+
+  // Known WX mod operator — instant max score
+  if (flight.is_known_wx_mod) {
+    return { score: 5, reasons: ["Known weather modification operator"] };
+  }
+
+  // At cloud seeding altitude
+  const band = getAltitudeBand(flight.altitude_ft);
+  if (band === "cloud_seeding") {
+    score += 1;
+    reasons.push("Cloud seeding altitude");
+  }
+
+  // NOT a commercial airline (no airline callsign prefix)
+  if (!isAirlineCallsign(flight.callsign)) {
+    score += 1;
+    reasons.push("Non-commercial flight");
+  }
+
+  // Suspect aircraft type (turboprop, small prop)
+  if (isSuspectAircraftType(flight.aircraft_type)) {
+    score += 1.5;
+    reasons.push("Small prop/turboprop aircraft");
+  }
+
+  // Slow speed (cloud seeding planes typically fly 100-200 kts, not 400+)
+  if (flight.speed_kts > 0 && flight.speed_kts < 250 && band === "cloud_seeding") {
+    score += 0.5;
+    reasons.push("Low speed at seeding altitude");
+  }
+
+  // Uses tail number as callsign (not an airline code)
+  if (
+    flight.callsign &&
+    flight.callsign.startsWith("N") &&
+    /^N\d/.test(flight.callsign)
+  ) {
+    score += 0.5;
+    reasons.push("Using tail number as callsign");
+  }
+
+  return { score, reasons };
 }
 
 type AltitudeBand = "cloud_seeding" | "high_altitude" | "ground" | "normal";
@@ -90,6 +180,7 @@ export function FlightLayer({
   const [showOther, setShowOther] = useState(true);
   const [showGround, setShowGround] = useState(true);
   const [showAltitudeOnMap, setShowAltitudeOnMap] = useState(false);
+  const [watchOnly, setWatchOnly] = useState(false);
 
   const trailsRef = useRef<
     Map<string, { positions: [number, number][]; tail_number: string | null }>
@@ -138,8 +229,13 @@ export function FlightLayer({
             is_known_wx_mod: false,
             operator_notes: "",
             squawk: f.squawk || null,
-          })
-        );
+            suspicion_score: 0,
+            suspicion_reasons: [] as string[],
+          }))
+        .map((flight: FlightData) => {
+          const { score, reasons } = scoreSuspicion(flight);
+          return { ...flight, suspicion_score: score, suspicion_reasons: reasons };
+        });
 
       // Accumulate trail positions
       for (const flight of transformed) {
@@ -167,11 +263,13 @@ export function FlightLayer({
         }
       }
 
-      // Sort
+      // Sort by suspicion score (highest first), then altitude band
       transformed.sort((a, b) => {
-        if (a.is_known_wx_mod !== b.is_known_wx_mod) {
-          return a.is_known_wx_mod ? -1 : 1;
+        // Suspicion score first
+        if (a.suspicion_score !== b.suspicion_score) {
+          return b.suspicion_score - a.suspicion_score;
         }
+        // Then altitude band priority
         const bandA = getAltitudeBand(a.altitude_ft);
         const bandB = getAltitudeBand(b.altitude_ft);
         if (
@@ -212,9 +310,11 @@ export function FlightLayer({
     [showCloudSeeding, showHighAltitude, showOther, showGround]
   );
 
-  const filteredFlights = allFlights.filter((f) =>
-    isVisible(getAltitudeBand(f.altitude_ft))
-  );
+  const filteredFlights = allFlights.filter((f) => {
+    if (!isVisible(getAltitudeBand(f.altitude_ft))) return false;
+    if (watchOnly && f.suspicion_score < 2) return false;
+    return true;
+  });
 
   // Update trails for map (only filtered flights)
   useEffect(() => {
@@ -350,7 +450,16 @@ export function FlightLayer({
             )}
           </label>
         </div>
-        <div className="border-t border-border pt-2 mt-1">
+        <div className="border-t border-border pt-2 mt-1 space-y-1.5">
+          <label className="flex items-center gap-1.5 text-xs cursor-pointer font-medium">
+            <input
+              type="checkbox"
+              checked={watchOnly}
+              onChange={(e) => setWatchOnly(e.target.checked)}
+              className="rounded accent-red-500"
+            />
+            Show only flagged aircraft (Watch + WX MOD)
+          </label>
           <label className="flex items-center gap-1.5 text-xs cursor-pointer">
             <input
               type="checkbox"
@@ -399,6 +508,16 @@ export function FlightLayer({
                         WX MOD
                       </Badge>
                     )}
+                    {!flight.is_known_wx_mod && flight.suspicion_score >= 3 && (
+                      <span className="text-xs px-1.5 py-0.5 rounded border font-medium bg-red-100 text-red-800 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-700">
+                        Watch
+                      </span>
+                    )}
+                    {!flight.is_known_wx_mod && flight.suspicion_score >= 2 && flight.suspicion_score < 3 && (
+                      <span className="text-xs px-1.5 py-0.5 rounded border font-medium bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-700">
+                        Interest
+                      </span>
+                    )}
                     {tag.label && (
                       <span
                         className={`text-xs px-1.5 py-0.5 rounded border font-medium ${tag.className}`}
@@ -430,6 +549,11 @@ export function FlightLayer({
                   {flight.operator_notes}
                 </p>
               )}
+              {flight.suspicion_reasons.length > 0 && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {flight.suspicion_reasons.join(" · ")}
+                </p>
+              )}
             </button>
           );
         })}
@@ -452,26 +576,37 @@ export function FlightLayer({
       {/* Legend */}
       <div className="border-t border-border pt-3">
         <p className="text-xs font-medium text-muted-foreground mb-2">
-          Trail Colors by Altitude
+          Tags &amp; Trail Colors
         </p>
         <div className="grid grid-cols-2 gap-1.5 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
+            <span className="inline-block px-1.5 py-0.5 rounded bg-red-500 text-white text-[10px] font-bold">WX</span>
+            Known weather mod operator
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="inline-block px-1.5 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-bold border border-red-300">Watch</span>
+            Multiple suspicion signals
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">Interest</span>
+            Some suspicion signals
+          </div>
+          <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
-            Cloud Seeding (3,000-20,000 ft)
+            Cloud Seeding Alt (3-20K ft)
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-purple-400" />
-            High Altitude (25,000-45,000 ft)
+            High Altitude (25-45K ft)
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-500" />
             Other / Transit
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-500" />
-            Known WX Mod Operator
-          </div>
         </div>
+        <p className="mt-2 text-[10px] text-muted-foreground/70">
+          Scoring: non-commercial + small aircraft + seeding altitude + low speed + tail number callsign. Airlines passing through are scored low.
+        </p>
       </div>
 
       {/* Learn More */}

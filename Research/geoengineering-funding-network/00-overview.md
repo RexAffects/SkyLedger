@@ -19,10 +19,9 @@ The pattern is not conspiracy but **convergent interest**: a small class of tech
 ## Research Sessions
 
 - [2026-03-19 Funding Network Map](2026-03-19-funding-network-map.md) -- Comprehensive mapping of funders, connections, financial incentives, and science assessment
+- [2026-03-19 Stardust Solutions Deep Dive](2026-03-19-stardust-solutions-deep-dive.md) -- Founders (Dimona/IAEC backgrounds), $75M funding (Awz Ventures → Lowercarbon Capital), technology, business model, governance failures, network connections
 
 ## Next Steps
-
-- Deep dive on Stardust Solutions team (Israeli nuclear scientists, Negev connection)
 - Map the Draper family VC network more completely
 - Track carbon credit / cooling credit market development
 - Research international geoengineering programs (China, UAE)
