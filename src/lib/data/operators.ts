@@ -344,7 +344,7 @@ export const OPERATORS: Operator[] = [
     keyFacts: [
       "Accounts for ~65% of ALL geoengineering startup funding ($75M of $115.8M total)",
       "All three cofounders come from Israel's nuclear weapons establishment (Dimona/IAEC)",
-      "Seed money from Shin Bet veteran's VC fund (Awz Ventures) partnered with Israeli Ministry of Defense",
+      "Seed money from Awz Ventures — founded by a Shin Bet veteran, advisory board includes former Mossad Chief of Intelligence, former CIA/FBI/MI5 directors, and Unit 8200 alumni. Partnered with MAFAT (Israeli MoD R&D). Former IDF Chief Aviv Kohavi joined the firm. Manages $500M+ across four funds. First fund ($82.5M) was a joint fund with the Israeli Ministry of Defence.",
       "Particle composition is secret (patent pending) — no independent analysis possible",
       "Hired Holland & Knight (K Street lobby firm) Q1 2025; disclosure initially hidden due to 'clerical error'",
       "Hired independent governance consultant who recommended transparency — then ignored every recommendation",
@@ -573,6 +573,17 @@ export const OPERATORS: Operator[] = [
         source: {
           label: "E&E News",
           url: "https://www.eenews.net/articles/betting-on-climate-failure-these-investors-could-earn-billions/",
+        },
+      },
+      {
+        entity: "Bill Gates / FICER",
+        entitySlug: "bill-gates-ficer",
+        relationship:
+          "No direct Gates investment in Stardust. But Gates funds the research ecosystem (Harvard SGRP, FICER, Breakthrough Energy) that produces the science Stardust's business model depends on. Stardust's lead investor Chris Sacca also donates to Harvard SGRP — same pipeline.",
+        confirmed: true,
+        source: {
+          label: "Harvard SGRP funding page",
+          url: "https://geoengineering.environment.harvard.edu/funding",
         },
       },
     ],
@@ -912,6 +923,17 @@ export const OPERATORS: Operator[] = [
           url: "https://www.insidephilanthropy.com/find-a-grant/major-donors/chris-and-crystal-sacca",
         },
       },
+      {
+        entity: "Bill Gates / FICER",
+        entitySlug: "bill-gates-ficer",
+        relationship:
+          "Both Sacca and Gates donate to Harvard SGRP. Gates funds the research through FICER ($8.5M+); Sacca funds the research AND invests in the companies that profit from deployment. Two sides of the same pipeline.",
+        confirmed: true,
+        source: {
+          label: "Harvard SGRP funding page",
+          url: "https://geoengineering.environment.harvard.edu/funding",
+        },
+      },
     ],
     sources: [
       {
@@ -921,6 +943,175 @@ export const OPERATORS: Operator[] = [
       {
         label: "Inside Philanthropy: Chris and Crystal Sacca",
         url: "https://www.insidephilanthropy.com/find-a-grant/major-donors/chris-and-crystal-sacca",
+      },
+    ],
+    faaKeywords: [],
+  },
+
+  // =========================================================================
+  // BILL GATES / FICER / BREAKTHROUGH ENERGY — FUNDING NODE
+  // =========================================================================
+  {
+    slug: "bill-gates-ficer",
+    name: "Bill Gates / FICER / Breakthrough Energy",
+    shortName: "Gates/FICER",
+    category: "funding",
+    description:
+      "Bill Gates has personally funded geoengineering research with $8.5M+ since 2007 through FICER (Fund for Innovative Climate and Energy Research), managed by David Keith and Ken Caldeira. Gates also founded Breakthrough Energy, which employs Ken Caldeira as Senior Scientist. Gates funds the research ecosystem that the for-profit geoengineering startups build on.",
+    founded: "2007",
+    headquarters: "United States",
+    status: "active",
+    totalFunding: "$8.5M+ (FICER alone)",
+    keyFacts: [
+      "Gates has personally funded geoengineering research with $8.5M+ since 2007 through FICER",
+      "FICER is managed by David Keith (world's leading SRM researcher) and Ken Caldeira — both top geoengineering scientists",
+      "FICER is explicitly 'not a Gates Foundation project' — it's personal money, harder to track",
+      "Gates founded Breakthrough Energy in 2015, assembling 28 billionaires including Jeff Bezos, Richard Branson, Mark Zuckerberg, Jack Ma",
+      "Breakthrough Energy employs Ken Caldeira as Senior Scientist — the same person who co-manages FICER",
+      "Gates is a donor to Harvard Solar Geoengineering Research Program (SGRP) — the central academic hub for SRM research",
+      "David Keith ran Harvard SGRP, then moved to UChicago to lead the Climate Systems Engineering initiative (CSEi)",
+      "Gates also co-founded CEPI (Coalition for Epidemic Preparedness Innovations) at Davos 2017 — one of few people who fund across both vaccine and geoengineering domains",
+      "Cited in sworn Congressional testimony (Sept 2025) as a key geoengineering funder",
+    ],
+    people: [
+      {
+        name: "Bill Gates",
+        role: "Funder",
+        background:
+          "American. Microsoft co-founder. Net worth ~$100B+. Personal geoengineering funding through FICER since 2007. Founded Breakthrough Energy (2015). Co-founded CEPI at Davos 2017. The single most influential individual funder of geoengineering research.",
+        nationality: "American",
+        sources: [
+          {
+            label: "Congressional hearing testimony, Sept 2025",
+            url: "https://oversight.house.gov/",
+          },
+          {
+            label: "Inside Philanthropy: Gates geoengineering",
+            url: "https://www.insidephilanthropy.com",
+          },
+        ],
+      },
+      {
+        name: "David Keith",
+        role: "FICER Co-Manager / Leading SRM Researcher",
+        background:
+          "Canadian. World's leading solar geoengineering researcher. Ran Harvard Solar Geoengineering Research Program. Now founding director of UChicago Climate Systems Engineering initiative (CSEi). Co-managed Gates' FICER fund. Advised governments in US and Canada.",
+        nationality: "Canadian",
+        sources: [
+          {
+            label: "Harvard SGRP",
+            url: "https://geoengineering.environment.harvard.edu",
+          },
+          {
+            label: "UChicago CSEi",
+            url: "https://climate.uchicago.edu",
+          },
+        ],
+      },
+      {
+        name: "Ken Caldeira",
+        role: "FICER Co-Manager / Breakthrough Energy Senior Scientist",
+        background:
+          "American. Former Edward Teller Fellow at Lawrence Livermore National Lab (DOE weapons lab), 1991-2005. Now Senior Scientist at Gates' Breakthrough Energy. Co-manages FICER. Stanford courtesy professor. One of the most cited geoengineering scientists.",
+        nationality: "American",
+        connections: [
+          "Co-manages FICER (Gates' personal geoengineering fund)",
+          "Senior Scientist at Breakthrough Energy (Gates' climate investment vehicle)",
+          "Former Edward Teller Fellow at Lawrence Livermore (DOE weapons lab)",
+        ],
+        sources: [
+          {
+            label: "Breakthrough Energy",
+            url: "https://www.breakthroughenergy.org",
+          },
+        ],
+      },
+    ],
+    funding: [],
+    connections: [
+      {
+        entity: "Harvard Solar Geoengineering Research Program",
+        relationship:
+          "Gates is a donor. David Keith (FICER co-manager) ran the program. This is the central academic hub that produces research saying SAI 'could work.'",
+        confirmed: true,
+        source: {
+          label: "Harvard SGRP funding page",
+          url: "https://geoengineering.environment.harvard.edu/funding",
+        },
+      },
+      {
+        entity: "UChicago Climate Systems Engineering Initiative",
+        relationship:
+          "David Keith (FICER co-manager) left Harvard to found CSEi at UChicago. Quadrature Climate Foundation gave $5M grant.",
+        confirmed: true,
+        source: {
+          label: "UChicago CSEi",
+          url: "https://climate.uchicago.edu",
+        },
+      },
+      {
+        entity: "Lowercarbon Capital",
+        entitySlug: "lowercarbon-capital",
+        relationship:
+          "Chris Sacca also donates to Harvard SGRP. Gates funds the research; Sacca funds the research AND invests in the companies. They feed the same pipeline from opposite ends.",
+        confirmed: true,
+        source: {
+          label: "Harvard SGRP funding page",
+          url: "https://geoengineering.environment.harvard.edu/funding",
+        },
+      },
+      {
+        entity: "Stardust Solutions",
+        entitySlug: "stardust-solutions",
+        relationship:
+          "No direct Gates investment in Stardust. But Gates funds the research (Harvard SGRP, FICER) that produces the scientific basis Stardust's business model depends on. Stardust's lead investor (Sacca) also funds Harvard SGRP.",
+        confirmed: true,
+        source: {
+          label: "E&E News: Funding network",
+          url: "https://www.eenews.net/articles/betting-on-climate-failure-these-investors-could-earn-billions/",
+        },
+      },
+      {
+        entity: "Breakthrough Energy Coalition",
+        relationship:
+          "Gates assembled 28 billionaires in 2015: Jeff Bezos, Richard Branson, Michael Bloomberg, Mark Zuckerberg, Jack Ma, Masayoshi Son, among others. Ken Caldeira is Senior Scientist.",
+        confirmed: true,
+        source: {
+          label: "Breakthrough Energy website",
+          url: "https://www.breakthroughenergy.org",
+        },
+      },
+      {
+        entity: "SilverLining",
+        relationship:
+          "SilverLining lobbies Congress for SRM research funding. Gates funds the research that SilverLining advocates for. Kelly Wanser (SilverLining ED) has connections to government agencies.",
+        confirmed: true,
+        source: {
+          label: "SilverLining public disclosures",
+          url: "https://www.silverlining.ngo",
+        },
+      },
+    ],
+    sources: [
+      {
+        label: "Congressional hearing testimony, Sept 16, 2025",
+        url: "https://oversight.house.gov/",
+      },
+      {
+        label: "Harvard SGRP funding page",
+        url: "https://geoengineering.environment.harvard.edu/funding",
+      },
+      {
+        label: "Inside Philanthropy: Gates geoengineering funding",
+        url: "https://www.insidephilanthropy.com",
+      },
+      {
+        label: "Breakthrough Energy website",
+        url: "https://www.breakthroughenergy.org",
+      },
+      {
+        label: "FICER public disclosures",
+        url: "https://keith.seas.harvard.edu/FICER",
       },
     ],
     faaKeywords: [],
