@@ -1,4 +1,4 @@
-# OpenSkies Outreach List
+# SkyLedger Outreach List
 
 People and organizations to contact when the project is ready for public launch.
 
@@ -11,7 +11,7 @@ People and organizations to contact when the project is ready for public launch.
 
 ## Legal Organizations
 
-- **The GeoFight** (thegeofight.com) — Nicole Pearson, Blake Horwitz, Tom Renz. Building federal lawsuit. Would benefit from OpenSkies as an evidence tool.
+- **The GeoFight** (thegeofight.com) — Nicole Pearson, Blake Horwitz, Tom Renz. Building federal lawsuit. Would benefit from SkyLedger as an evidence tool.
 - **ICAN** (icandecide.org) — Filing FOIAs, uncovering funded SAI research.
 - **Dane Wigington / Geoengineering Watch** — Testified as expert witness for state bills. Large audience.
 
@@ -28,7 +28,7 @@ People and organizations to contact when the project is ready for public launch.
 
 ## State-Level Contacts
 
-- **Louisiana DEQ** — Running the Act No. 95 reporting portal. Could integrate with OpenSkies.
+- **Louisiana DEQ** — Running the Act No. 95 reporting portal. Could integrate with SkyLedger.
 - **Florida complaint system administrators** — SB 56 created a public complaint system.
 - **Texas Weather Modification Advisory Board** — Most transparent state program.
 
@@ -36,6 +36,6 @@ People and organizations to contact when the project is ready for public launch.
 
 ## Notes
 
-- OpenSkies is a tool, not an advocacy org. Position it as: "We built this free tool for citizen transparency. Want to share it with your audience?"
+- SkyLedger is a tool, not an advocacy org. Position it as: "We built this free tool for citizen transparency. Want to share it with your audience?"
 - Lead with the flight tracker — it's the most impressive demo
 - The congressional hearing page is the best "credibility link" to share with skeptics

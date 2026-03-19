@@ -4,19 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const metadata: Metadata = {
   title: "About & Methodology",
   description:
-    "How OpenSkies works: our data sources, methodology, evidence standards, and mission.",
+    "How SkyLedger works: our data sources, methodology, evidence standards, and mission.",
 };
 
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold">About OpenSkies</h1>
+      <h1 className="text-3xl font-bold">About SkyLedger</h1>
 
       {/* Mission */}
       <section className="mt-8">
         <h2 className="text-xl font-semibold">Mission</h2>
         <p className="mt-4 text-muted-foreground leading-relaxed">
-          OpenSkies exists to bring transparency to weather modification
+          SkyLedger exists to bring transparency to weather modification
           programs. We believe that citizens have a right to know what is
           happening in their skies, who is responsible, and whether it is
           authorized.
@@ -75,7 +75,7 @@ export default function AboutPage() {
           <div>
             <h3 className="font-medium">Evidence Integrity</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Every photo submitted to OpenSkies is SHA-256 hashed in the
+              Every photo submitted to SkyLedger is SHA-256 hashed in the
               user&apos;s browser before upload. The hash is stored alongside the
               photo. Anyone can independently verify that a photo has not been
               modified since submission by downloading the photo, generating its
@@ -138,7 +138,7 @@ export default function AboutPage() {
             <h3 className="font-medium">Flight Correlation</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               When a citizen submits an observation with GPS coordinates and a
-              timestamp, OpenSkies queries ADS-B flight data for aircraft that
+              timestamp, SkyLedger queries ADS-B flight data for aircraft that
               were in the vicinity at that time. Matched aircraft are
               cross-referenced with the FAA registry to identify the owner, and
               with NOAA reports to determine if the operator has filed required
@@ -152,7 +152,7 @@ export default function AboutPage() {
       <section className="mt-12">
         <h2 className="text-xl font-semibold">Legal Framework</h2>
         <p className="mt-4 text-sm text-muted-foreground">
-          All data presented on OpenSkies comes from publicly available
+          All data presented on SkyLedger comes from publicly available
           government databases and voluntary citizen observations. We do not
           access private systems, intercept communications, or conduct
           surveillance. Aircraft position data is broadcast openly on the 1090
@@ -160,7 +160,7 @@ export default function AboutPage() {
           worldwide.
         </p>
         <p className="mt-4 text-sm text-muted-foreground">
-          OpenSkies is open source under the AGPL-3.0 license. The complete
+          SkyLedger is open source under the AGPL-3.0 license. The complete
           source code is available for public audit. We do not collect personal
           information from observers beyond what they voluntarily submit.
         </p>
@@ -170,7 +170,7 @@ export default function AboutPage() {
       <section className="mt-12 mb-8">
         <h2 className="text-xl font-semibold">Open Source</h2>
         <p className="mt-4 text-sm text-muted-foreground">
-          OpenSkies is licensed under AGPL-3.0. This means:
+          SkyLedger is licensed under AGPL-3.0. This means:
         </p>
         <ul className="mt-2 space-y-1 text-sm text-muted-foreground list-disc list-inside">
           <li>Anyone can view, audit, and verify the source code</li>

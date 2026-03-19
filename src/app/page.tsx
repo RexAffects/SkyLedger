@@ -338,7 +338,7 @@ export default function Home() {
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
             We all want the same thing: clean skies, transparent government, and
-            access to the truth. OpenSkies gives citizens the tools to document,
+            access to the truth. SkyLedger gives citizens the tools to document,
             track, and act.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">

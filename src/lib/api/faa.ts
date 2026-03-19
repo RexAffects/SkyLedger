@@ -57,7 +57,7 @@ export async function lookupTailNumber(
 
     const res = await fetch(url, {
       headers: {
-        "User-Agent": "OpenSkies/1.0 (citizen transparency platform)",
+        "User-Agent": "SkyLedger/1.0 (citizen transparency platform)",
       },
     });
 

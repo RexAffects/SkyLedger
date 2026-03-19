@@ -131,7 +131,7 @@ export default function GetInvolvedPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <p className="text-3xl font-bold">3</p>
-              <h3 className="mt-2 font-semibold">Share OpenSkies</h3>
+              <h3 className="mt-2 font-semibold">Share SkyLedger</h3>
               <p className="mt-2 text-xs text-muted-foreground">
                 Send someone this site. The more eyes on the data, the harder
                 it is to ignore. Transparency scales with people.
@@ -262,7 +262,7 @@ export default function GetInvolvedPage() {
             <CardContent className="pt-6">
               <h3 className="font-semibold text-sm">Document &amp; Report</h3>
               <p className="mt-2 text-xs text-muted-foreground">
-                Use OpenSkies to track flights and submit observations. In
+                Use SkyLedger to track flights and submit observations. In
                 states with enacted bans (FL, LA), you can file official
                 reports of suspected weather modification through state
                 portals. Your observations are evidence.
@@ -363,10 +363,10 @@ export default function GetInvolvedPage() {
         <div className="rounded-lg border border-border bg-muted/30 p-6">
           <p className="text-xs text-muted-foreground">
             <span className="font-medium text-foreground">Disclaimer:</span>{" "}
-            OpenSkies is not affiliated with any of the organizations listed
+            SkyLedger is not affiliated with any of the organizations listed
             above. We provide these links as a resource for citizens who want
             to take action. We encourage you to research any organization
-            before donating. OpenSkies does not collect donations &mdash; all
+            before donating. SkyLedger does not collect donations &mdash; all
             donation links go directly to the organizations listed.
           </p>
         </div>

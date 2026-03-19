@@ -55,7 +55,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/openskies"
+                  href="https://github.com/RexAffects/OpenSkies"
                   className="text-sm text-muted-foreground hover:text-foreground"
                   target="_blank"
                   rel="noopener noreferrer"
