@@ -62,6 +62,89 @@ export interface AggregatedRedFlag {
 }
 
 // ============================================================
+// FUNDING SPEED COMPARISON
+// ============================================================
+
+export interface FundingSpeed {
+  company: string;
+  totalFunding: string;
+  yearsActive: number;
+  ratePerYear: string;
+  rateNumeric: number;
+  note?: string;
+}
+
+export const FUNDING_SPEED: FundingSpeed[] = [
+  {
+    company: "Stardust Solutions",
+    totalFunding: "$75M",
+    yearsActive: 2.5,
+    ratePerYear: "$30M/year",
+    rateNumeric: 30,
+    note: "More than double any other geoengineering company. 3-4x the rate of the next fastest.",
+  },
+  {
+    company: "Rainmaker",
+    totalFunding: "$31M",
+    yearsActive: 3,
+    ratePerYear: "~$10M/year",
+    rateNumeric: 10,
+  },
+  {
+    company: "Reflect Orbital",
+    totalFunding: "$35M",
+    yearsActive: 5,
+    ratePerYear: "~$7M/year",
+    rateNumeric: 7,
+  },
+  {
+    company: "Make Sunsets",
+    totalFunding: "$1.2M",
+    yearsActive: 4,
+    ratePerYear: "~$0.3M/year",
+    rateNumeric: 0.3,
+  },
+];
+
+// ============================================================
+// SILVERLINING COORDINATION TIMELINE
+// ============================================================
+
+export interface CoordinationEvent {
+  year: string;
+  event: string;
+  actors: string[];
+  significance: string;
+}
+
+export const SILVERLINING_TIMELINE: CoordinationEvent[] = [
+  {
+    year: "2020",
+    event: "Sacca (Lowercarbon) and Cohler both fund SilverLining's $3M research initiative",
+    actors: ["Chris Sacca", "Matt Cohler"],
+    significance: "Step 1: Fund the research. SilverLining's donors also include Bill Trenchard, Dan Scales (Google), and foundations including Quadrature Climate Foundation and Pritzker Innovation Fund.",
+  },
+  {
+    year: "2020-2024",
+    event: "SilverLining lobbies Congress and State Department FOR geoengineering programs",
+    actors: ["SilverLining", "Kelly Wanser"],
+    significance: "Step 2: Lobby for government support. SilverLining receives $20.5M from leading climate foundations in May 2024.",
+  },
+  {
+    year: "2024",
+    event: "Stardust raises $15M seed from AWZ Ventures (Israeli defense-VC)",
+    actors: ["AWZ Ventures", "Stardust Solutions"],
+    significance: "Step 3: Invest in deployment. Defense-intelligence money seeds the company.",
+  },
+  {
+    year: "October 2025",
+    event: "Sacca leads $60M Series A in Stardust. Cohler invests personally.",
+    actors: ["Chris Sacca", "Matt Cohler", "Stardust Solutions"],
+    significance: "The same people who funded the research and lobbying now invest in the commercial deployment company. Research → Lobbying → Deployment → Profit.",
+  },
+];
+
+// ============================================================
 // FUNDING TIMELINE
 // ============================================================
 
@@ -923,6 +1006,152 @@ export const PLAYERS: NetworkPlayer[] = [
         label: "Harvard SGRP funding page",
         url: "https://geoengineering.environment.harvard.edu/funding",
       },
+    ],
+  },
+  // ============================================================
+  // SECONDARY SERIES A INVESTORS
+  // ============================================================
+  {
+    slug: "nebular-murphy",
+    name: "Nebular (Finn Murphy)",
+    shortName: "Nebular",
+    type: "fund",
+    tagline: "Said the quiet part out loud: Stardust 'can be worth tens of billions of dollars.'",
+    keyStats: ["$30M+ Fund I", "$32.3M Fund II", "$1M+ into Stardust"],
+    summary: "Irish solo GP. Generalist fund betting on AI, data centers, fossil startups, and geoengineering. Told E&E News that with global temperatures soaring and political will waning, Stardust 'can be worth tens of billions of dollars.' The explicit bet on climate failure being profitable.",
+    sections: [
+      {
+        title: "Background",
+        content: [
+          "Finn Murphy founded Nebular as a solo GP fund. Fund I ($30M+) deployed across 24 positions (US and Europe). Fund II first close at $32.3M in October 2025.",
+          "Studied engineering at Trinity College Dublin. Former partner at Frontline Ventures (Irish VC).",
+        ],
+      },
+    ],
+    socialMedia: [
+      { platform: "LinkedIn", handle: "finn-murphy", url: "https://www.linkedin.com/in/finn-murphy-16160465/" },
+    ],
+    sources: [
+      { label: "E&E News: Betting on climate failure", url: "https://www.eenews.net/articles/betting-on-climate-failure-these-investors-could-earn-billions/" },
+      { label: "Venture Capital Journal: Nebular Fund II", url: "https://www.venturecapitaljournal.com/tech-investor-nebular-holds-first-close-on-32-3m-for-fund-ii/" },
+    ],
+  },
+  {
+    slug: "future-ventures",
+    name: "Future Ventures (Steve Jurvetson)",
+    shortName: "Future Ventures",
+    type: "fund",
+    tagline: "Silicon Valley's most prominent deep-tech VC, now betting on geoengineering.",
+    keyStats: ["15-year fund structure", "SpaceX, Tesla early investor"],
+    summary: "Co-founded by Steve Jurvetson and Maryanna Saenko in 2018. Patient capital fund focused on deep-tech, mission-driven companies. Jurvetson is one of Silicon Valley's most prominent VCs — early investor in SpaceX, Tesla, Planet Labs.",
+    sections: [
+      {
+        title: "Background",
+        content: [
+          "Jurvetson: Stanford engineering and MBA. Formerly of Draper Fisher Jurvetson (DFJ).",
+          "Left DFJ in 2017 amid workplace misconduct allegations during the Silicon Valley harassment wave. Founded Future Ventures months later.",
+          "Intentionally small two-partner firm with a 15-year fund structure for patient capital.",
+        ],
+      },
+    ],
+    socialMedia: [
+      { platform: "X", handle: "@FutureJurvetson", url: "https://x.com/FutureJurvetson" },
+    ],
+    sources: [
+      { label: "Future Ventures", url: "https://future.ventures/" },
+      { label: "Heatmap: Stardust raises $60M", url: "https://heatmap.news/climate-tech/stardust-geoengineering" },
+    ],
+  },
+  {
+    slug: "future-positive",
+    name: "Future Positive Capital",
+    shortName: "Future Positive",
+    type: "fund",
+    tagline: "Paris-based deep-tech VC investing in SAI deployment.",
+    keyStats: ["Founded 2016", "Paris, France"],
+    summary: "Founded in 2016 by Michael Rosen, Alexandre Terrien, and Sofia Hmich. Paris-based VC backing companies using AI, synthetic biology, and deep technology to address climate, food, and aging challenges.",
+    sections: [],
+    sources: [
+      { label: "Future Positive Capital", url: "https://www.futurepositivecapital.com/" },
+    ],
+  },
+  {
+    slug: "starlight-ventures",
+    name: "Starlight Ventures (Matias Mosse)",
+    shortName: "Starlight",
+    type: "fund",
+    tagline: "Deep-tech climate VC specializing in government-funded capital stacks.",
+    keyStats: ["Founded 2017", "Miami, FL", "Fusion, geothermal, SAI"],
+    summary: "Miami-based VC founded by Matias Mosse, an Argentine-born deep-tech investor. Focus: fusion, geothermal, advanced materials, climate tech. Expertise in structuring multi-layered capital stacks combining venture funding with government programs — exactly the model Stardust needs for its billion-dollar government contracts.",
+    sections: [],
+    sources: [
+      { label: "Starlight Ventures", url: "https://starlight.vc/" },
+    ],
+  },
+  {
+    slug: "attestor",
+    name: "Attestor Capital",
+    shortName: "Attestor",
+    type: "fund",
+    tagline: "London hedge fund in Stardust's $60M round.",
+    keyStats: ["Founded 2012", "London, UK"],
+    summary: "London-based value investment firm founded in 2012. British hedge fund using long/short equity strategy. One of three British groups in Stardust's $60M round.",
+    sections: [],
+    sources: [
+      { label: "Attestor", url: "https://www.attestor.com/" },
+      { label: "E&E News: Stardust $60M", url: "https://www.eenews.net/articles/global-cooling-startup-raises-60m-to-test-sun-reflecting-technology/" },
+    ],
+  },
+  {
+    slug: "kindred-capital",
+    name: "Kindred Capital",
+    shortName: "Kindred",
+    type: "fund",
+    tagline: "London VC in Stardust's $60M round.",
+    keyStats: ["Founded 2015", "London, UK"],
+    summary: "London-based VC founded in 2015. Invests in B2B, infrastructure, and technology sectors. One of three British groups in Stardust's $60M Series A.",
+    sections: [],
+    sources: [
+      { label: "Kindred Capital", url: "https://kindredcapital.vc/" },
+    ],
+  },
+  {
+    slug: "never-lift",
+    name: "Never Lift Ventures",
+    shortName: "Never Lift",
+    type: "fund",
+    tagline: "NYC VC in Stardust's $60M round.",
+    keyStats: ["New York, NY", "Logistics/mobility focus"],
+    summary: "New York-based VC focused on logistics, mobility, and infrastructure. General partner: Charlie March. Participated in Stardust's $60M Series A.",
+    sections: [],
+    sources: [
+      { label: "Never Lift", url: "https://www.neverlift.vc/" },
+    ],
+  },
+  {
+    slug: "orion-global",
+    name: "Orion Global Advisors",
+    shortName: "Orion",
+    type: "fund",
+    tagline: "British advisory firm in Stardust's $60M round.",
+    keyStats: ["UK-based"],
+    summary: "British advisory and investment firm. Participated in Stardust's $60M Series A alongside Attestor and Kindred Capital.",
+    sections: [],
+    sources: [
+      { label: "E&E News: Stardust $60M", url: "https://www.eenews.net/articles/global-cooling-startup-raises-60m-to-test-sun-reflecting-technology/" },
+    ],
+  },
+  {
+    slug: "earth-now",
+    name: "Earth.now",
+    shortName: "Earth.now",
+    type: "fund",
+    tagline: "Climate-focused fund in Stardust's $60M round.",
+    keyStats: ["Climate focus"],
+    summary: "Climate-focused investment fund. Participated in Stardust's $60M Series A.",
+    sections: [],
+    sources: [
+      { label: "Heatmap: Stardust raises $60M", url: "https://heatmap.news/climate-tech/stardust-geoengineering" },
     ],
   },
 ];

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   FUNDING_TIMELINE,
+  FUNDING_SPEED,
+  SILVERLINING_TIMELINE,
   PIPELINE_STEPS,
   PLAYERS,
   CONNECTIONS,
@@ -423,6 +425,109 @@ export default function FollowTheMoneyPage() {
             The money is moving from &ldquo;study it&rdquo; to &ldquo;build
             and deploy.&rdquo; Stardust alone accounts for ~65% of all
             geoengineering startup funding.
+          </p>
+        </div>
+
+        {/* Funding Speed Comparison */}
+        <div className="mt-6">
+          <h3 className="text-sm font-semibold mb-3">
+            Funding Speed: Stardust vs Everyone Else
+          </h3>
+          <div className="space-y-2">
+            {FUNDING_SPEED.map((fs) => {
+              const maxRate = FUNDING_SPEED[0].rateNumeric;
+              const pct = Math.max((fs.rateNumeric / maxRate) * 100, 3);
+              const isStardust = fs.company === "Stardust Solutions";
+              return (
+                <div key={fs.company} className="flex items-center gap-3 text-xs">
+                  <span className={`shrink-0 w-32 text-right ${isStardust ? "font-bold" : "text-muted-foreground"}`}>
+                    {fs.company}
+                  </span>
+                  <div className="flex-1 flex items-center gap-2">
+                    <div
+                      className={`h-5 rounded transition-all ${isStardust ? "bg-red-500" : "bg-muted-foreground/30"}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                    <span className={isStardust ? "font-bold text-red-700 dark:text-red-400" : "text-muted-foreground"}>
+                      {fs.ratePerYear}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Stardust raises at 3&ndash;4x the rate of the next fastest
+            geoengineering company. $75M in under 3 years &mdash; from a team
+            with zero published geoengineering research.
+          </p>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* SECTION 2.5: SILVERLINING COORDINATION */}
+      {/* ============================================================ */}
+      <section className="mt-10">
+        <h2 className="text-xl font-bold border-b border-border pb-2">
+          The Coordination: Research &rarr; Lobbying &rarr; Profit
+        </h2>
+        <p className="mt-3 text-sm text-muted-foreground">
+          The same people fund the research, the lobbying, and the deployment
+          company. This is the pipeline in action &mdash; traced through
+          SilverLining, a geoengineering nonprofit whose donors overlap with
+          Stardust&apos;s investors.
+        </p>
+
+        <div className="mt-4 space-y-0">
+          {SILVERLINING_TIMELINE.map((event, i) => (
+            <div key={i} className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-primary shrink-0 mt-1.5" />
+                {i < SILVERLINING_TIMELINE.length - 1 && (
+                  <div className="w-px flex-1 bg-border" />
+                )}
+              </div>
+              <div className="pb-5">
+                <p className="text-xs font-bold">{event.year}</p>
+                <p className="text-sm mt-0.5">{event.event}</p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {event.significance}
+                </p>
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {event.actors.map((a) => (
+                    <span
+                      key={a}
+                      className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
+                    >
+                      {a}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/20 p-4">
+          <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">
+            Sacca&apos;s Contradiction
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            In 2023, Sacca told media he had &ldquo;zero financial interests
+            beyond philanthropy&rdquo; in geoengineering and didn&apos;t believe
+            there should be private business models in the space. Two years
+            later, he led a $60M for-profit round in Stardust Solutions.
+          </p>
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Source:{" "}
+            <a
+              href="https://www.axios.com/pro/climate-deals/2023/09/21/chris-sacca-lowercarbon-al-gore-geoengineering"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Axios: Sacca gets salty (Sept 2023) &rarr;
+            </a>
           </p>
         </div>
       </section>
