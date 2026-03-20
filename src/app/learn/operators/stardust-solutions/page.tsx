@@ -406,8 +406,9 @@ export default function StardustDeepDivePage() {
         <p className="mt-2 text-sm text-red-700 dark:text-red-300">
           Stardust plans to begin releasing their secret particles at 18km
           altitude starting April 2026 — with zero public consultation, zero
-          published safety data, and no regulatory approval. CIEL has called
-          this &quot;reckless.&quot;
+          published safety data, and no regulatory approval. The Center for
+          International Environmental Law (CIEL) has called this
+          &quot;reckless.&quot;
         </p>
       </div>
 
