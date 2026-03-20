@@ -36,9 +36,14 @@ People and organizations to contact when the project is ready for public launch.
 
 ## State-Level Contacts
 
+- **Arkansas State Legislator (Rex's district)** — No geoengineering bill proposed yet. Draft letter ready in `Outgoing/Responses/arkansas-legislator-letter.md`. Bill filing started March 9, 2026 — active window. Find your rep at arkleg.state.ar.us.
 - **Louisiana DEQ** — Running the Act No. 95 reporting portal. Could integrate with SkyLedger.
 - **Florida complaint system administrators** — SB 56 created a public complaint system.
 - **Texas Weather Modification Advisory Board** — Most transparent state program.
+
+## Advocacy / Legislative Support
+
+- **Zero Geoengineering** (director@zerogeoengineering.com) — Helps people navigate the state legislative process for geoengineering bans. Draft outreach email ready in `Outgoing/Responses/zero-geoengineering-outreach.md`.
 
 ---
 
