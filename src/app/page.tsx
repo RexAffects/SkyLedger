@@ -31,28 +31,28 @@ const stats = [
 
 const learnTopics = [
   {
-    title: "What is weather modification?",
+    title: "The Facts",
     description:
-      "Cloud seeding, silver iodide, 9 active state programs, 70 years of history. What's confirmed, what's proposed, and what's unknown.",
-    href: "/about",
+      "Every claim cited. 70 years of programs, 9 active states, sworn testimony, GAO audit. One page, downloadable, shareable.",
+    href: "/learn/facts",
   },
   {
-    title: "Who are the companies involved?",
+    title: "Follow the Money",
     description:
-      "Weather Modification International, Rainmaker, Make Sunsets, Stardust Solutions — the operators, the funders, and the connections. Full profiles.",
+      "$150M+ from a small network of connected investors. Defense ties. Epstein connections. Political access. The funding pipeline mapped.",
+    href: "/learn/follow-the-money",
+  },
+  {
+    title: "Who's Doing It",
+    description:
+      "9 operator profiles with founders, funding rounds, investors, and red flags. Including Stardust Solutions — secret particles, nuclear scientists, $75M.",
     href: "/learn/operators",
   },
   {
-    title: "What did Congress say?",
+    title: "Legislation Tracker",
     description:
-      "The September 2025 hearing featured sworn testimony from scientists, EPA statements, and bipartisan acknowledgment that weather modification is real.",
-    href: "/learn/congressional-hearing",
-  },
-  {
-    title: "What are the states doing?",
-    description:
-      "3 states have enacted bans, 30+ have introduced bills. Florida made it a felony. The movement is accelerating.",
-    href: "/learn/state-bans",
+      "3 states have enacted bans. 30+ have bills pending. A federal ban is on the table. Track every bill, every vote, every penalty.",
+    href: "/learn/legislation",
   },
 ];
 
@@ -68,35 +68,77 @@ const dataSources = [
 export default function Home() {
   return (
     <div>
-      {/* Hero — Track Flights is the star */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-background py-20 sm:py-32">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-background dark:from-blue-950/20 py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
               What&apos;s flying over you?
             </h1>
             <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              See every aircraft above you right now. Who owns it, where
-              it&apos;s coming from, where it&apos;s going, and whether
-              it&apos;s a known weather modification operator &mdash; all in
-              real time.
+              Citizens are tracking planes, exposing operators, and passing laws.
+              SkyLedger gives you the tools to see it, prove it, and stop it.
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">
-              We don&apos;t make accusations. We present data from public
-              government sources. The facts speak for themselves.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <LinkButton href="/flights" size="lg">
-                Track Flights Above Me
-              </LinkButton>
-              <LinkButton href="/learn/state-bans" variant="outline" size="lg">
-                Learn What&apos;s Happening
-              </LinkButton>
-              <LinkButton href="/get-involved" variant="outline" size="lg">
-                Get Involved
-              </LinkButton>
-            </div>
           </div>
+
+          {/* Three Pillars */}
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3 max-w-4xl mx-auto">
+            <Link
+              href="/flights"
+              className="group rounded-xl border-2 border-primary bg-background p-6 text-center transition-all hover:shadow-lg hover:scale-[1.02]"
+            >
+              <p className="text-2xl font-bold group-hover:text-primary transition-colors">
+                Track Flights
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                Real-time aircraft tracking. See who owns every plane above you.
+                Flag suspicious aircraft. Submit photo evidence &mdash; we
+                capture the metadata automatically.
+              </p>
+              <p className="mt-4 text-sm text-primary font-medium">
+                Open tracker &rarr;
+              </p>
+            </Link>
+
+            <Link
+              href="/get-involved"
+              className="group rounded-xl border border-border bg-background p-6 text-center transition-all hover:shadow-lg hover:scale-[1.02] hover:border-primary/40"
+            >
+              <p className="text-2xl font-bold group-hover:text-primary transition-colors">
+                Take Action
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                FOIA request templates. Legislator letter generator. Printable
+                flyers. Support the federal lawsuit. Contact your
+                representatives today.
+              </p>
+              <p className="mt-4 text-sm text-primary font-medium">
+                Get involved &rarr;
+              </p>
+            </Link>
+
+            <Link
+              href="/learn"
+              className="group rounded-xl border border-border bg-background p-6 text-center transition-all hover:shadow-lg hover:scale-[1.02] hover:border-primary/40"
+            >
+              <p className="text-2xl font-bold group-hover:text-primary transition-colors">
+                Learn the Facts
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                Follow the money. Read the congressional testimony. See who&apos;s
+                funding this. Every claim cited with government records and
+                primary sources.
+              </p>
+              <p className="mt-4 text-sm text-primary font-medium">
+                Knowledge base &rarr;
+              </p>
+            </Link>
+          </div>
+
+          <p className="mt-8 text-center text-xs text-muted-foreground">
+            We don&apos;t make accusations. We present data from public
+            government sources. The facts speak for themselves.
+          </p>
         </div>
       </section>
 
@@ -264,7 +306,7 @@ export default function Home() {
                   Read the facts. Share them. Send someone the congressional
                   hearing page. Knowledge is the first step.
                 </p>
-                <LinkButton href="/learn/congressional-hearing" variant="outline" size="sm" className="mt-4">
+                <LinkButton href="/learn" variant="outline" size="sm" className="mt-4">
                   Read the Facts
                 </LinkButton>
               </CardContent>
@@ -281,7 +323,7 @@ export default function Home() {
                   Organizations like The GeoFight are building federal lawsuits.
                   Your state may have a bill pending right now.
                 </p>
-                <LinkButton href="/learn/pending-bills" variant="outline" size="sm" className="mt-4">
+                <LinkButton href="/learn/legislation" variant="outline" size="sm" className="mt-4">
                   See Your State
                 </LinkButton>
               </CardContent>
@@ -334,19 +376,19 @@ export default function Home() {
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight">
-            The people aren&apos;t connected. Let&apos;s fix that.
+            The data exists. The people aren&apos;t connected. Let&apos;s fix that.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            We all want the same thing: clean skies, transparent government, and
-            access to the truth. SkyLedger gives citizens the tools to document,
-            track, and act.
+            Flight records, FAA registrations, funding disclosures, congressional
+            testimony &mdash; it&apos;s all public. SkyLedger brings it together
+            so citizens can see, prove, and act.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <LinkButton href="/flights" size="lg">
               Track Flights Now
             </LinkButton>
-            <LinkButton href="/about" variant="outline" size="lg">
-              Read Our Methodology
+            <LinkButton href="/get-involved" variant="outline" size="lg">
+              Take Action
             </LinkButton>
           </div>
         </div>
