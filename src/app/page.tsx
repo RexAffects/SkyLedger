@@ -92,8 +92,10 @@ export default function Home() {
               </p>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
                 Real-time aircraft tracking. See who owns every plane above you.
-                Flag suspicious aircraft. Submit photo evidence &mdash; we
-                capture the metadata automatically.
+                Flag suspicious aircraft. Submit photo evidence. We
+                automatically capture your photo&apos;s time, date, and location
+                and cross-reference it with flight data to build verifiable
+                proof.
               </p>
               <p className="mt-4 text-sm text-primary font-medium">
                 Open tracker &rarr;
