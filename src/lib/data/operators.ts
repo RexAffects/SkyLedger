@@ -63,6 +63,12 @@ export const CATEGORY_LABELS: Record<OperatorCategory, string> = {
   funding: "Funding / Investment",
 };
 
+export interface RedFlag {
+  flag: string;
+  detail: string;
+  source?: OperatorSource;
+}
+
 export interface Operator {
   slug: string;
   name: string;
@@ -75,6 +81,7 @@ export interface Operator {
   status: "active" | "disbanded" | "under-investigation";
   totalFunding?: string;
   keyFacts: string[];
+  redFlags?: RedFlag[];
   people: Person[];
   funding: FundingRound[];
   connections: Connection[];
@@ -340,7 +347,7 @@ export const OPERATORS: Operator[] = [
     headquarters: "Outside Tel Aviv, Israel / Palo Alto, CA",
     website: "https://stardust-initiative.com",
     status: "active",
-    totalFunding: "$75M",
+    totalFunding: "$75M (more than double any other geoengineering operator — raised in under 3 years)",
     keyFacts: [
       "Accounts for ~65% of ALL geoengineering startup funding ($75M of $115.8M total)",
       "All three cofounders come from Israel's nuclear weapons establishment (Dimona/IAEC)",
@@ -350,6 +357,98 @@ export const OPERATORS: Operator[] = [
       "Hired independent governance consultant who recommended transparency — then ignored every recommendation",
       "Planning in-aircraft stratospheric experiments April 2026 with no public consultation",
       "Business model: defense contractor for climate — governments pay 'more than a billion dollars a year'",
+    ],
+    redFlags: [
+      {
+        flag: "Secret particle composition",
+        detail:
+          "Will not disclose what they plan to spray into the atmosphere. Patent pending. No external scientist can evaluate their safety claims because zero data has been published.",
+        source: {
+          label: "MIT Technology Review",
+          url: "https://www.technologyreview.com/2025/12/10/1129079/how-one-controversial-startup-hopes-to-cool-the-planet/",
+        },
+      },
+      {
+        flag: "Zero published research",
+        detail:
+          "No peer-reviewed papers on their particle's safety, effectiveness, or environmental impact. Cornell researcher Douglas MacMartin: they claim a 'magic aerosol particle' that cannot be trusted without published findings.",
+        source: {
+          label: "Undark investigation",
+          url: "https://undark.org/2025/03/17/stardust-geoengineering-profitable/",
+        },
+      },
+      {
+        flag: "Nuclear weapons program founders",
+        detail:
+          "All three co-founders come from Israel's nuclear weapons establishment (Negev Nuclear Research Center / Dimona and Israel Atomic Energy Commission). None have published a single paper on geoengineering, atmospheric science, or aerosols.",
+        source: {
+          label: "Bulletin of Atomic Scientists",
+          url: "https://thebulletin.org/2025/03/reach-for-the-stardust-former-israel-atomic-energy-commission-official-leads-controversial-geoengineering-start-up/",
+        },
+      },
+      {
+        flag: "Defense/intelligence seed money",
+        detail:
+          "Seed round ($15M) came from AWZ Ventures — a VC whose advisory board includes a former Mossad Director, former CIA Director, former MI5 Director General, former Unit 8200 Commander, and former IDF Chief of Staff. AWZ is formally partnered with MAFAT (Israeli Ministry of Defense R&D).",
+        source: {
+          label: "AWZ Ventures team page",
+          url: "https://www.awzventures.com/our-team",
+        },
+      },
+      {
+        flag: "Termination shock lock-in",
+        detail:
+          "Once stratospheric aerosol deployment starts, it cannot be stopped without catastrophic 'termination shock' — temperatures spike at 5-10x the rate of normal warming. Any government customer is locked into perpetual contracts. Perpetual dependency = perpetual revenue for whoever holds the patent.",
+        source: {
+          label: "Parker & Irvine, 2018 — Earth's Future (AGU)",
+          url: "https://agupubs.onlinelibrary.wiley.com/doi/10.1002/2017EF000735",
+        },
+      },
+      {
+        flag: "Ignored every governance recommendation",
+        detail:
+          "Hired Janos Pasztor (former UN Asst. Secretary-General) as governance consultant. He recommended transparency, public engagement, and a code of conduct. The company ignored every key recommendation. Pasztor donated his entire fee to UNRWA. Cornell's MacMartin: 'They've ignored every recommendation from everyone.'",
+        source: {
+          label: "Undark investigation",
+          url: "https://undark.org/2025/03/17/stardust-geoengineering-profitable/",
+        },
+      },
+      {
+        flag: "Secret lobbying of Congress",
+        detail:
+          "Hired Holland & Knight (K Street lobby firm) in Q1 2025. Failed to disclose the lobbying relationship for months as required by federal law. When caught by E&E News, Holland & Knight blamed a 'clerical error.' Refused to disclose payment amount or specific issues lobbied.",
+        source: {
+          label: "E&E News / Politico",
+          url: "https://www.eenews.net/articles/geoengineering-startup-hires-powerhouse-lobby-shop/",
+        },
+      },
+      {
+        flag: "600+ scientists oppose this",
+        detail:
+          "The Solar Geoengineering Non-Use Agreement — signed by 600+ academics and ~2,000 civil society organizations — calls for banning outdoor experiments, prohibiting patents, and no public funding for deployment. Stardust is doing the exact opposite of every measure.",
+        source: {
+          label: "Solar Geoengineering Non-Use Agreement",
+          url: "https://www.solargeoeng.org/non-use-agreement/open-letter/",
+        },
+      },
+      {
+        flag: "April 2026 experiments — no public consultation",
+        detail:
+          "Planning in-aircraft stratospheric experiments starting April 2026 in Israel. Zero public consultation. Zero published environmental or health impact assessments. Zero regulatory approval process. CIEL called the plans 'reckless.'",
+        source: {
+          label: "CIEL statement",
+          url: "https://www.ciel.org/news/us-israeli-start-up-announces-reckless-solar-geoengineering-experiments-from-april-2026/",
+        },
+      },
+      {
+        flag: "Growing legal exposure",
+        detail:
+          "3 US states have banned geoengineering (Florida made it a felony — up to 5 years prison, $100K fine). 34 states have proposed bans. The market Stardust needs is actively criminalizing their product.",
+        source: {
+          label: "SRM360 US bans tracker",
+          url: "https://srm360.org/us-bans/",
+        },
+      },
     ],
     people: [
       {

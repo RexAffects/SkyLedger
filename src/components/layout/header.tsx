@@ -6,7 +6,7 @@ import { SITE_NAME } from "@/lib/constants";
 
 const navItems = [
   { href: "/flights", label: "Track Flights" },
-  { href: "/learn/state-bans", label: "Learn" },
+  { href: "/learn", label: "Learn" },
   { href: "/get-involved", label: "Get Involved" },
   { href: "/learn/operators", label: "Operators" },
   { href: "/about", label: "About" },

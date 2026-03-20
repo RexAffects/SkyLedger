@@ -12,6 +12,7 @@ import {
   type Investor,
   type Connection,
   type OperatorSource,
+  type RedFlag,
 } from "@/lib/data/operators";
 
 export async function generateStaticParams() {
@@ -86,6 +87,17 @@ export default async function OperatorProfilePage({
               </li>
             ))}
           </ul>
+        </Section>
+      )}
+
+      {/* Red Flags */}
+      {op.redFlags && op.redFlags.length > 0 && (
+        <Section title="Red Flags">
+          <div className="space-y-3">
+            {op.redFlags.map((rf, i) => (
+              <RedFlagCard key={i} index={i + 1} redFlag={rf} />
+            ))}
+          </div>
         </Section>
       )}
 
@@ -309,6 +321,36 @@ function InvestorRow({ investor }: { investor: Investor }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function RedFlagCard({ index, redFlag }: { index: number; redFlag: RedFlag }) {
+  return (
+    <div className="rounded-lg border border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/30 p-4">
+      <div className="flex items-start gap-3">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold">
+          {index}
+        </span>
+        <div className="flex-1">
+          <p className="font-semibold text-red-900 dark:text-red-200">
+            {redFlag.flag}
+          </p>
+          <p className="mt-1 text-sm text-red-800 dark:text-red-300">
+            {redFlag.detail}
+          </p>
+          {redFlag.source && (
+            <a
+              href={redFlag.source.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block text-xs text-red-600 dark:text-red-400 hover:underline"
+            >
+              Source: {redFlag.source.label} &rarr;
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

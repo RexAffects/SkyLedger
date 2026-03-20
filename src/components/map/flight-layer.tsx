@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
+import { THREAT_LEVELS } from "@/lib/constants";
 import type { FlightTrail } from "./map-container";
 
 interface FlightData {
@@ -202,6 +203,10 @@ export function FlightLayer({
   const [showGround, setShowGround] = useState(true);
   const [showAltitudeOnMap, setShowAltitudeOnMap] = useState(false);
   const [watchOnly, setWatchOnly] = useState(false);
+  const [flaggedOnly, setFlaggedOnly] = useState(false);
+  const [flaggedAircraft, setFlaggedAircraft] = useState<
+    Map<string, { unique_reporters: number; threat_level: string }>
+  >(new Map());
 
   const trailsRef = useRef<
     Map<string, { positions: [number, number][]; tail_number: string | null }>
@@ -214,11 +219,26 @@ export function FlightLayer({
     setError(null);
 
     try {
-      const res = await fetch(
-        `/api/flights/nearby?lat=${mapCenter.lat}&lon=${mapCenter.lng}&radius=${radius}`
-      );
+      const [res, flagsRes] = await Promise.all([
+        fetch(`/api/flights/nearby?lat=${mapCenter.lat}&lon=${mapCenter.lng}&radius=${radius}`),
+        fetch("/api/flags/active").catch(() => null),
+      ]);
       if (!res.ok) throw new Error("Failed to fetch flights");
       const data = await res.json();
+
+      // Process community flags
+      const flagsMap = new Map<string, { unique_reporters: number; threat_level: string }>();
+      if (flagsRes?.ok) {
+        try {
+          const flagsData: { tail_number: string; icao_hex: string; unique_reporters: number; threat_level: string }[] = await flagsRes.json();
+          for (const flag of flagsData) {
+            flagsMap.set(flag.tail_number, { unique_reporters: flag.unique_reporters, threat_level: flag.threat_level });
+          }
+        } catch {
+          // Flags parsing failed, continue without them
+        }
+      }
+      setFlaggedAircraft(flagsMap);
 
       const transformed: FlightData[] = (data.flights || [])
         .filter((f: { lat?: number; lon?: number }) => f.lat && f.lon)
@@ -255,7 +275,20 @@ export function FlightLayer({
           }))
         .map((flight: FlightData) => {
           const { score, reasons } = scoreSuspicion(flight);
-          return { ...flight, suspicion_score: score, suspicion_reasons: reasons };
+          // Community flag boost
+          const flag = flight.tail_number ? flagsMap.get(flight.tail_number) : null;
+          let finalScore = score;
+          const finalReasons = [...reasons];
+          if (flag) {
+            if (flag.threat_level === "high") {
+              finalScore += 2;
+              finalReasons.push(`Community flagged (${flag.unique_reporters} reporters)`);
+            } else if (flag.threat_level === "medium") {
+              finalScore += 1;
+              finalReasons.push(`Community flagged (${flag.unique_reporters} reporters)`);
+            }
+          }
+          return { ...flight, suspicion_score: finalScore, suspicion_reasons: finalReasons };
         });
 
       // Accumulate trail positions
@@ -336,9 +369,10 @@ export function FlightLayer({
       allFlights.filter((f) => {
         if (!isVisible(getAltitudeBand(f.altitude_ft))) return false;
         if (watchOnly && f.suspicion_score < 2 && !f.is_known_wx_mod) return false;
+        if (flaggedOnly && !(f.tail_number && flaggedAircraft.has(f.tail_number))) return false;
         return true;
       }),
-    [allFlights, isVisible, watchOnly]
+    [allFlights, isVisible, watchOnly, flaggedOnly, flaggedAircraft]
   );
 
   // Update trails for map (only filtered flights)
@@ -485,6 +519,15 @@ export function FlightLayer({
             />
             Show only flagged aircraft (Watch + WX MOD)
           </label>
+          <label className="flex items-center gap-1.5 text-xs cursor-pointer font-medium">
+            <input
+              type="checkbox"
+              checked={flaggedOnly}
+              onChange={(e) => setFlaggedOnly(e.target.checked)}
+              className="rounded accent-yellow-500"
+            />
+            Flagged only (community reports)
+          </label>
           <label className="flex items-center gap-1.5 text-xs cursor-pointer">
             <input
               type="checkbox"
@@ -543,6 +586,18 @@ export function FlightLayer({
                         Interest ({flight.suspicion_score.toFixed(1)})
                       </span>
                     )}
+                    {flight.tail_number && flaggedAircraft.has(flight.tail_number) && (() => {
+                      const flag = flaggedAircraft.get(flight.tail_number!)!;
+                      return flag.threat_level === "high" ? (
+                        <span className={`text-xs px-1.5 py-0.5 rounded border font-medium ${THREAT_LEVELS.high.color} border-red-300 dark:border-red-700`}>
+                          Flagged ({flag.unique_reporters})
+                        </span>
+                      ) : (
+                        <span className={`text-xs px-1.5 py-0.5 rounded border font-medium ${THREAT_LEVELS.medium.color} border-yellow-300 dark:border-yellow-700`}>
+                          Flagged ({flag.unique_reporters})
+                        </span>
+                      );
+                    })()}
                     {tag.label && (
                       <span
                         className={`text-xs px-1.5 py-0.5 rounded border font-medium ${tag.className}`}
@@ -615,6 +670,10 @@ export function FlightLayer({
           <div className="flex items-center gap-1.5">
             <span className="inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">Interest</span>
             Some suspicion signals
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">Flagged</span>
+            Community-reported aircraft
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
@@ -820,6 +879,58 @@ function LearnMoreSection() {
             </div>
           </div>
 
+          {/* Community Flagging */}
+          <div className="rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/20 p-3">
+            <p className="font-semibold text-foreground mb-2">
+              Community Flagging
+            </p>
+            <p>
+              <strong>What it means:</strong> When you see a &quot;Flagged&quot;
+              badge, it means other SkyLedger users have independently reported
+              this aircraft as suspicious. This is crowd-sourced intelligence
+              &mdash; multiple people in different locations seeing the same
+              aircraft and flagging it.
+            </p>
+            <div className="mt-3 space-y-2">
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 mt-0.5 text-muted-foreground text-[10px] font-bold">
+                  1-2 reporters
+                </span>
+                <p>
+                  <strong>Noted.</strong> The flag is recorded but no badge
+                  is shown. Could be one person&apos;s observation.
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 mt-0.5 inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">
+                  3-4 reporters
+                </span>
+                <p>
+                  <strong>Yellow badge.</strong> Multiple independent reporters
+                  have flagged this aircraft. Suspicion score gets a +1 boost.
+                  Worth investigating.
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 mt-0.5 inline-block px-1.5 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-bold border border-red-300">
+                  5+ reporters
+                </span>
+                <p>
+                  <strong>Red badge + suspicion boost.</strong> Strong community
+                  consensus that this aircraft is suspicious. Suspicion score
+                  gets a +2 boost, pushing it higher in the list.
+                </p>
+              </div>
+            </div>
+            <p className="mt-3">
+              <strong>Anti-abuse:</strong> Flags are anonymous and rate-limited.
+              Each user can only flag a given aircraft once per 24 hours, and
+              the system requires multiple independent reporters before showing
+              badges or boosting scores. This prevents one person from
+              artificially inflating an aircraft&apos;s threat level.
+            </p>
+          </div>
+
           {/* How Scoring Works */}
           <div className="rounded-lg border border-border bg-muted/50 p-3">
             <p className="font-semibold text-foreground mb-2">
@@ -859,13 +970,21 @@ function LearnMoreSection() {
                 <span className="text-red-600">Commercial airline (penalty)</span>
                 <span className="font-mono font-bold text-red-600">-1</span>
               </div>
+              <div className="flex items-center justify-between">
+                <span>Community flagged — medium (3-4 reporters)</span>
+                <span className="font-mono font-bold">+1</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Community flagged — high (5+ reporters)</span>
+                <span className="font-mono font-bold">+2</span>
+              </div>
               <div className="flex items-center justify-between border-t border-border pt-1.5 mt-1.5">
                 <span className="font-medium">Known WX mod operator</span>
                 <span className="font-mono font-bold">10</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-medium">Maximum (non-operator)</span>
-                <span className="font-mono font-bold">7</span>
+                <span className="font-mono font-bold">9</span>
               </div>
             </div>
             <p className="mt-3">
