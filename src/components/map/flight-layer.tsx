@@ -517,7 +517,7 @@ export function FlightLayer({
               onChange={(e) => setWatchOnly(e.target.checked)}
               className="rounded accent-red-500"
             />
-            Show only flagged aircraft (Watch + WX MOD)
+            Show only notable aircraft (WX MOD + non-commercial)
           </label>
           <label className="flex items-center gap-1.5 text-xs cursor-pointer font-medium">
             <input
@@ -576,16 +576,7 @@ export function FlightLayer({
                         WX MOD
                       </Badge>
                     )}
-                    {!flight.is_known_wx_mod && flight.suspicion_score >= 4 && (
-                      <span className="text-xs px-1.5 py-0.5 rounded border font-medium bg-red-100 text-red-800 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-700">
-                        Watch ({flight.suspicion_score.toFixed(1)})
-                      </span>
-                    )}
-                    {!flight.is_known_wx_mod && flight.suspicion_score >= 2 && flight.suspicion_score < 4 && (
-                      <span className="text-xs px-1.5 py-0.5 rounded border font-medium bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-700">
-                        Interest ({flight.suspicion_score.toFixed(1)})
-                      </span>
-                    )}
+                    {/* Suspicion score drives sort order behind the scenes — no visible labels */}
                     {flight.tail_number && flaggedAircraft.has(flight.tail_number) && (() => {
                       const flag = flaggedAircraft.get(flight.tail_number!)!;
                       return flag.threat_level === "high" ? (
@@ -664,12 +655,8 @@ export function FlightLayer({
             Known weather mod operator
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="inline-block px-1.5 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-bold border border-red-300">Watch</span>
-            Multiple suspicion signals
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">Interest</span>
-            Some suspicion signals
+            <span className="inline-block px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[10px] font-bold border border-orange-300">Non-Comm</span>
+            Non-commercial aircraft
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">Flagged</span>
@@ -822,12 +809,13 @@ function LearnMoreSection() {
           {/* Tags Explained */}
           <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20 p-3">
             <p className="font-semibold text-foreground mb-2">
-              Tags: WX MOD, Watch, Interest
+              How Aircraft Are Sorted
             </p>
             <p>
-              Every aircraft gets automatically scored based on how closely it
-              matches the profile of a weather modification flight. The tags help
-              you cut through the noise and focus on what matters.
+              Aircraft are automatically sorted by how closely they match the
+              profile of a weather modification flight. Known operators always
+              appear first. The sorting considers altitude, aircraft type,
+              speed, and whether it&apos;s a commercial flight.
             </p>
             <div className="mt-3 space-y-2">
               <div className="flex items-start gap-2">
@@ -839,41 +827,29 @@ function LearnMoreSection() {
                   a company we&apos;ve confirmed does weather modification
                   (Weather Modification International, Idaho Power, Rainmaker,
                   Make Sunsets, etc.). These are flagged from FAA registration
-                  records. Automatic top priority.
+                  records. Always shown at the top.
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <span className="shrink-0 mt-0.5 inline-block px-1.5 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-bold border border-red-300">
-                  Watch
+                <span className="shrink-0 mt-0.5 inline-block px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[10px] font-bold border border-orange-300">
+                  Sorted higher
                 </span>
                 <p>
-                  <strong>Score 4+.</strong> Multiple signals match the cloud
-                  seeding profile. Worth clicking to investigate the owner.
-                  These are non-commercial, small aircraft at seeding altitude
-                  flying slow &mdash; the exact profile of an active cloud
-                  seeding flight.
-                </p>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="shrink-0 mt-0.5 inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">
-                  Interest
-                </span>
-                <p>
-                  <strong>Score 2-4.</strong> Some signals present but not the
-                  full profile. Could be a private plane, a training flight, or
-                  something worth a second look.
+                  Non-commercial aircraft at cloud seeding altitude (3-20K ft),
+                  especially small prop/turboprop planes flying slow &mdash;
+                  this is the exact profile of an active cloud seeding flight.
+                  Click to investigate the owner.
                 </p>
               </div>
               <div className="flex items-start gap-2">
                 <span className="shrink-0 mt-0.5 text-muted-foreground text-[10px]">
-                  No tag
+                  Sorted lower
                 </span>
                 <p>
-                  <strong>Score under 2.</strong> Likely a commercial airline or
-                  normal traffic. An American Airlines flight at 8,000 ft going
-                  from Nashville to New York scores low because it has an
-                  airline callsign &mdash; it&apos;s just climbing through the
-                  altitude band, not operating there.
+                  Commercial airlines and normal traffic. An American Airlines
+                  flight at 8,000 ft going from Nashville to New York appears
+                  lower because it has an airline callsign &mdash; it&apos;s
+                  just climbing through the altitude band, not operating there.
                 </p>
               </div>
             </div>

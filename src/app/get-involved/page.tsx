@@ -132,6 +132,93 @@ export default function GetInvolvedPage() {
         hours.
       </p>
 
+      {/* Phase 4 Action Hub */}
+      <section className="mt-10">
+        <h2 className="text-xl font-semibold">Action Tools</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Concrete tools to fight back &mdash; not just learn.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <Link href="/get-involved/legal" className="block group">
+            <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  Legal Action Hub
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                  Active efforts
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Federal lawsuits, FOIA campaigns, state-level legal work, your
+                rights, and how to support the organizations on the front lines.
+              </p>
+              <p className="mt-2 text-xs text-primary font-medium">
+                View legal resources &rarr;
+              </p>
+            </div>
+          </Link>
+          <Link href="/get-involved/foia" className="block group">
+            <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  FOIA Request Generator
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                  Interactive tool
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Generate pre-filled FOIA letters targeting EPA, NOAA, FAA, NSF,
+                and state agencies. Select a topic, enter your info, get a letter
+                you can send today.
+              </p>
+              <p className="mt-2 text-xs text-primary font-medium">
+                Build a FOIA request &rarr;
+              </p>
+            </div>
+          </Link>
+          <Link href="/get-involved/donate" className="block group">
+            <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  Support the Fight
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                  5 orgs
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Donate directly to the organizations doing the legal work, filing
+                the FOIAs, and building the cases. Tax-deductible options available.
+              </p>
+              <p className="mt-2 text-xs text-primary font-medium">
+                See donation options &rarr;
+              </p>
+            </div>
+          </Link>
+          <Link href="/get-involved/testing" className="block group">
+            <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  Test Your Environment
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                  DIY guide
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                How to collect and test soil, water, and snow samples for elevated
+                metals. Lab recommendations, chain of custody for legal use.
+              </p>
+              <p className="mt-2 text-xs text-primary font-medium">
+                Testing guide &rarr;
+              </p>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* Quick Actions */}
       <section className="mt-10">
         <h2 className="text-xl font-semibold">Start right now</h2>

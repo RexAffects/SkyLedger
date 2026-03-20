@@ -1,7 +1,7 @@
 export const SITE_NAME = "SkyLedger";
 export const SITE_DESCRIPTION =
   "Citizen-powered transparency platform for weather modification accountability. Track flights, document observations, access public records.";
-export const SITE_URL = "https://skyledger.app";
+export const SITE_URL = "https://skyledger.org";
 
 export const OBSERVATION_TYPES = [
   { value: "persistent_trail", label: "Persistent Trail" },

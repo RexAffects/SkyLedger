@@ -114,8 +114,8 @@ WHAT'S BEING DONE ABOUT IT
 
 WHAT YOU CAN DO
 
-1. Track flights over your area — see who owns them: skyledger.app/flights
-2. Learn more with cited sources: skyledger.app/learn/congressional-hearing
+1. Track flights over your area — see who owns them: skyledger.org/flights
+2. Learn more with cited sources: skyledger.org/learn/congressional-hearing
 3. Find your state's legislation status: srm360.org/us-bans
 4. Contact your Representative: house.gov/representatives/find-your-representative
 5. Support legal action: thegeofight.com (federal lawsuit fund)
@@ -123,7 +123,7 @@ WHAT YOU CAN DO
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Generated from SkyLedger — skyledger.app
+Generated from SkyLedger — skyledger.org
 Open source. Open data. Open skies.
 `;
 

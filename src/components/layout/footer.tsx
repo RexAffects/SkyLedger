@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <h3 className="text-sm font-semibold">{SITE_NAME}</h3>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -46,6 +46,43 @@ export function Footer() {
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Operator Profiles
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold">Take Action</h3>
+            <ul className="mt-2 space-y-2">
+              <li>
+                <Link
+                  href="/get-involved/legal"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Legal Action Hub
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/get-involved/foia"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  FOIA Generator
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/get-involved/donate"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Support the Fight
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/get-involved/testing"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Testing Guide
                 </Link>
               </li>
             </ul>
