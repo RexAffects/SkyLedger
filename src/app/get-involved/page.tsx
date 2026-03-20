@@ -178,6 +178,26 @@ export default function GetInvolvedPage() {
               </p>
             </div>
           </Link>
+          <Link href="/get-involved/contact-legislator" className="block group">
+            <div className="rounded-lg border-2 border-primary/40 p-5 h-full transition-all hover:border-primary hover:shadow-sm">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  Contact Your Legislator
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-primary text-primary-foreground">
+                  5 minutes
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Ready-to-send letter template, legislator lookup, and the exact
+                strategy that passed Florida&apos;s felony ban in 7 months.
+                Fill in your name and state — the rest is written.
+              </p>
+              <p className="mt-2 text-xs text-primary font-medium">
+                Get the template &rarr;
+              </p>
+            </div>
+          </Link>
           <Link href="/get-involved/donate" className="block group">
             <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
               <div className="flex items-center gap-2">

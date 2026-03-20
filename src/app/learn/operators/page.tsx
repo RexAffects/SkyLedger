@@ -10,11 +10,22 @@ export const metadata: Metadata = {
     "Detailed profiles of every known weather modification and geoengineering operator: founders, investors, funding, and connections. All sourced from public records.",
 };
 
+// Custom sort order — most funded / most notable first
+const OPERATOR_ORDER: Record<string, number> = {
+  "stardust-solutions": 1,
+  "rainmaker": 2,
+  "weather-modification-international": 3,
+  "make-sunsets": 4,
+  "reflect-orbital": 5,
+  "north-american-weather-consultants": 6,
+  "idaho-power": 7,
+};
+
 export default function OperatorsIndexPage() {
   // Group operators by category
-  const operatorCompanies = OPERATORS.filter(
-    (op) => op.category !== "funding" && op.category !== "research-advocacy"
-  );
+  const operatorCompanies = OPERATORS
+    .filter((op) => op.category !== "funding" && op.category !== "research-advocacy")
+    .sort((a, b) => (OPERATOR_ORDER[a.slug] ?? 99) - (OPERATOR_ORDER[b.slug] ?? 99));
   const fundingEntities = OPERATORS.filter(
     (op) => op.category === "funding" || op.category === "research-advocacy"
   );
@@ -65,17 +76,28 @@ export default function OperatorsIndexPage() {
                       </span>
                     )}
                   </div>
-                  <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
-                    {op.people.length > 0 && (
-                      <span>{op.people.length} key people</span>
-                    )}
-                    {op.funding.length > 0 && (
-                      <span>{op.funding.length} funding rounds</span>
-                    )}
-                    {op.connections.length > 0 && (
-                      <span>{op.connections.length} connections</span>
-                    )}
-                  </div>
+                  {op.listHighlights && op.listHighlights.length > 0 ? (
+                    <div className="mt-2 space-y-1">
+                      {op.listHighlights.map((hl, i) => (
+                        <p key={i} className="flex items-start gap-1.5 text-xs text-red-700 dark:text-red-400">
+                          <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500" />
+                          {hl}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
+                      {op.people.length > 0 && (
+                        <span>{op.people.length} key people</span>
+                      )}
+                      {op.funding.length > 0 && (
+                        <span>{op.funding.length} funding rounds</span>
+                      )}
+                      {op.connections.length > 0 && (
+                        <span>{op.connections.length} connections</span>
+                      )}
+                    </div>
+                  )}
                   <p className="mt-3 text-xs text-primary font-medium">
                     View full profile &rarr;
                   </p>

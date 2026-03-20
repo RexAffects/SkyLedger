@@ -102,7 +102,7 @@ const keyNumbers = [
   { value: "600+", label: "weather modification patents in the USPTO" },
   { value: "$150M+", label: "in geoengineering startup funding" },
   { value: "78%", label: "of NOAA reports contain errors (GAO, Feb 2026)" },
-  { value: "0", label: "fines issued by NOAA in 50+ years of authority" },
+  { value: "600+", label: "scientists signed a Non-Use Agreement calling for a ban" },
   { value: "3", label: "states have enacted bans" },
   { value: "30+", label: "states have introduced bills" },
 ];
@@ -244,6 +244,58 @@ export default function LearnPage() {
           can&apos;t be dismissed.
         </p>
         <div className="mt-4 space-y-3">
+          {/* Non-Use Agreement - Prominent */}
+          <div className="rounded-lg border-2 border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/30 p-5">
+            <div className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-lg font-bold">
+                600+
+              </span>
+              <div>
+                <h3 className="font-bold text-sm text-blue-900 dark:text-blue-100">
+                  Scientists Call for a Global Ban on Solar Geoengineering
+                </h3>
+                <p className="mt-1 text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+                  The Solar Geoengineering Non-Use Agreement has been signed by
+                  over 600 academics and nearly 2,000 civil society organizations
+                  from institutions worldwide. They call for banning outdoor
+                  experiments, prohibiting patents, and stopping public funding for
+                  deployment. Published as a peer-reviewed paper in{" "}
+                  <em>WIREs Climate Change</em> (Biermann et al., 2022).
+                </p>
+                <p className="mt-2 text-xs text-blue-700 dark:text-blue-400 font-medium">
+                  When someone says &ldquo;this is just conspiracy theory&rdquo;
+                  &mdash; point them here.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <a
+                    href="https://www.solargeoeng.org/non-use-agreement/signatories/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 transition-colors"
+                  >
+                    See every signatory &rarr;
+                  </a>
+                  <a
+                    href="https://www.solargeoeng.org/non-use-agreement/open-letter/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
+                  >
+                    Read the open letter &rarr;
+                  </a>
+                  <a
+                    href="https://wires.onlinelibrary.wiley.com/doi/10.1002/wcc.754"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
+                  >
+                    Peer-reviewed paper &rarr;
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="rounded-lg border border-border p-4">
             <h3 className="font-semibold text-sm">GAO Oversight Report (February 2026)</h3>
             <p className="mt-1 text-xs text-muted-foreground">

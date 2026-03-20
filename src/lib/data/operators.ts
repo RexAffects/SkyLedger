@@ -82,6 +82,7 @@ export interface Operator {
   totalFunding?: string;
   keyFacts: string[];
   redFlags?: RedFlag[];
+  listHighlights?: string[];
   people: Person[];
   funding: FundingRound[];
   connections: Connection[];
@@ -357,6 +358,12 @@ export const OPERATORS: Operator[] = [
       "Hired independent governance consultant who recommended transparency — then ignored every recommendation",
       "Planning in-aircraft stratospheric experiments April 2026 with no public consultation",
       "Business model: defense contractor for climate — governments pay 'more than a billion dollars a year'",
+    ],
+    listHighlights: [
+      "Advisory board includes former Mossad Director, CIA Director, MI5 Director General",
+      "Seed investor partnered with Israeli Ministry of Defense (MAFAT), Unit 8200, IDF Chief of Staff",
+      "All three founders from Israel's nuclear weapons program — zero atmospheric science credentials",
+      "10 documented red flags — secret particles, hidden lobbying, ignored governance recommendations",
     ],
     redFlags: [
       {
