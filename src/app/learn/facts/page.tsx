@@ -53,8 +53,8 @@ WHAT INDEPENDENT TESTING HAS FOUND
 • Direct atmospheric sampling from a NOAA flying lab (University of Maryland Cessna, BWI to Albany) found aluminum oxide and barium sulfate nanoparticles at altitude — confirmed via SEM and TEM analysis.
   Source: GeoengineeringWatch.org atmospheric sampling missions
 
-• KSLA News 12 had samples tested at an independent lab: barium at 6.8 parts per million — more than 3x the EPA toxic level.
-  Source: KSLA News 12 investigation, Southwest Arkansas (broadcast on local TV)
+• KSLA News 12 had atmospheric fallout samples from Stamps, Arkansas tested at an independent lab. Barium, lead, arsenic, chromium, cadmium, selenium, and silver were all detected.
+  Source: KSLA News 12 investigation, Southwest Arkansas (broadcast November 2007)
 
 • State-certified lab testing of rainwater found aluminum at 3,450 parts per billion.
   Source: State-certified laboratory analysis
@@ -162,6 +162,7 @@ export default function FactsPage() {
           <Fact
             claim="9 U.S. states actively run cloud seeding programs using silver iodide, dry ice, and other agents."
             source="NOAA Weather Modification Activity Reports, 15 CFR Part 908"
+            sourceUrl="https://library.noaa.gov/weather-climate/weather-modification-project-reports"
           />
           <Fact
             claim="The federal government has a documented history of weather modification including Operation Popeye (weaponizing monsoons in Vietnam, declassified) and Project Stormfury (hurricane seeding, 1960s-70s)."
@@ -170,7 +171,8 @@ export default function FactsPage() {
           />
           <Fact
             claim="Cloud seeding operators are required to report to NOAA — but a February 2026 GAO report found 78% of reports contain errors, 4 of 10 states had unreported activities, and NOAA has NEVER issued a single fine."
-            source="Government Accountability Office report, February 2026"
+            source="GAO-26-108013: Weather Modification Oversight, February 2026"
+            sourceUrl="https://www.gao.gov/products/gao-26-108013"
           />
         </div>
       </section>
@@ -218,26 +220,32 @@ export default function FactsPage() {
           <Fact
             claim="Direct atmospheric sampling from a NOAA flying lab (University of Maryland twin-engine Cessna, BWI to Albany) found aluminum oxide and barium sulfate nanoparticles at altitude — confirmed via scanning electron microscopy (SEM) and transmission electron microscopy (TEM)."
             source="GeoengineeringWatch.org atmospheric sampling missions with SEM/TEM lab analysis"
+            sourceUrl="https://geoengineeringwatch.org/climate-engineering-nanoparticles-in-our-atmosphere-lab-testing-confirms/"
           />
           <Fact
             claim="A second sampling mission on a Learjet (San Diego to Bay Area) using nanoparticle meters found elevated concentrations confined to the induced cloud layer — clean air above and below. Particles measured at 40-60 nanometers."
             source="GeoengineeringWatch.org West Coast sampling mission, peer-reviewed lab methodology"
+            sourceUrl="https://geoengineeringwatch.org/climate-engineering-nanoparticles-in-our-atmosphere-lab-testing-confirms/"
           />
           <Fact
-            claim="Independent lab testing aired on KSLA News 12 found barium at 6.8 parts per million in atmospheric fallout samples — more than 3 times the EPA toxic level."
-            source="KSLA News 12 investigation, Southwest Arkansas — broadcast on local television"
+            claim="KSLA News 12 in Shreveport aired an investigation where a citizen collected atmospheric fallout samples in Stamps, Arkansas. Lab testing found barium, lead, arsenic, chromium, cadmium, selenium, and silver present in the samples."
+            source="KSLA News 12 investigation, Southwest Arkansas — broadcast November 2007"
+            sourceUrl="https://geoengineeringwatch.org/lab-tests-2/"
           />
           <Fact
             claim="State-certified lab testing of rainwater found aluminum at 3,450 parts per billion — described as 'highly toxic rain.'"
             source="State-certified laboratory analysis of precipitation samples"
+            sourceUrl="https://geoengineeringwatch.org/lab-tests-2/"
           />
           <Fact
             claim="The Air Force conducted an 8-year study (1993-2001) titled 'In vitro toxicity of aluminum nanoparticles in rat alveolar macrophages' — finding that aluminum nanoparticle exposure suppresses the ability of white blood cells to defend against airborne infections. They knew."
             source="United States Air Force research study, 1993-2001"
+            sourceUrl="https://geoengineeringwatch.org/documents-2/"
           />
           <Fact
             claim="By 1977, 239 open-air biological tests had been conducted over unknowing US populations — documented in Congressional hearings."
-            source="Congressional hearing records, documented historical fact"
+            source="Congressional hearing records — documented historical fact"
+            sourceUrl="https://geoengineeringwatch.org/documents-2/"
           />
         </div>
       </section>
@@ -252,18 +260,22 @@ export default function FactsPage() {
             text="When you start to find constituents coming on the base that you're trying to remove from the base and engineer out through different industrial processes, that was a red flag for me."
             speaker="Kristen Meghan Edwards, USAF veteran (9 years active duty)"
             context="Bio-environmental engineer and whistleblower who tracked unauthorized heavy metals being brought onto Air Force bases via AF Form 3952 hazardous materials acquisition system"
+            sourceUrl="https://thehighwire.com/ark-videos/geoengineering-whistelblower-speaks-out/"
           />
           <Fact
             claim="Brigadier General Charles Jones (USAF retired) was assigned to the 42nd Tactical Reconnaissance Squadron to pinpoint the exact altitudes of all jet engine contrails across Europe, North Africa, and the Eastern Atlantic. He states definitively that modern trails are 'much different from' normal contrails."
             source="Brig. Gen. Charles Jones, USAF retired, 1953-1962 service"
+            sourceUrl="https://geoengineeringwatch.org/the-dimming-full-length-climate-engineering-documentary/"
           />
           <Fact
             claim="Major General Richard Roellig (USAF retired, 34-year career, top secret clearance, 10 years at Raytheon) began observing abnormal contrails near Davis-Monthan Air Force Base in Tucson, Arizona in 2017. He confirmed from insider knowledge that classified programs are compartmentalized — 'You only are told what you need to know.'"
             source="Maj. Gen. Richard Roellig, USAF retired, weapons systems acquisition"
+            sourceUrl="https://geoengineeringwatch.org/the-dimming-full-length-climate-engineering-documentary/"
           />
           <Fact
             claim="Project Cirrus (1947): The US military began hurricane manipulation programs. Operation Popeye: The US weaponized weather to create monsoons during the Vietnam War (declassified). Both are confirmed government programs."
             source="Declassified government records; Congressional record"
+            sourceUrl="https://geoengineeringwatch.org/documents-2/"
           />
         </div>
       </section>
@@ -294,8 +306,8 @@ export default function FactsPage() {
           />
           <Fact
             claim="Over 500 scientists worldwide have signed a Solar Engineering Non-Use Agreement calling for a ban on outdoor geoengineering experiments."
-            source="Dr. Pielke testimony; solargeoeng.org"
-            sourceUrl="/learn/congressional-hearing"
+            source="Solar Geoengineering Non-Use Agreement — Open Letter (585+ signatories)"
+            sourceUrl="https://www.solargeoeng.org/non-use-agreement/open-letter/"
           />
         </div>
       </section>
