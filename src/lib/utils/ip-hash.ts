@@ -6,7 +6,10 @@ import { createHash } from "crypto";
  * Raw IP is never stored.
  */
 export function hashReporter(ip: string): string {
-  const salt = process.env.FLAG_SALT || "default-salt";
+  const salt = process.env.FLAG_SALT;
+  if (!salt) {
+    throw new Error("FLAG_SALT environment variable is required");
+  }
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   return createHash("sha256").update(`${ip}:${salt}:${today}`).digest("hex");
 }

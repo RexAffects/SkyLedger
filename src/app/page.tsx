@@ -180,11 +180,11 @@ export default function Home() {
               everything public data can tell you about it.
             </p>
           </div>
-          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 label: "Who owns it",
-                detail: "FAA-registered owner name, city, state",
+                detail: "FAA-registered owner name, city, state, corporate entity piercing",
               },
               {
                 label: "Where it's going",
@@ -195,20 +195,12 @@ export default function Home() {
                 detail: "Aircraft make, model, year, photo",
               },
               {
+                label: "Live tracking",
+                detail: "Real-time position, speed, heading + flight trail drawn on the map",
+              },
+              {
                 label: "Is it flagged",
-                detail: "Known weather modification operators highlighted in red",
-              },
-              {
-                label: "Live position",
-                detail: "Altitude, speed, heading, updated every 10 seconds",
-              },
-              {
-                label: "Flight trail",
-                detail: "Watch its path draw on the map in real time",
-              },
-              {
-                label: "Altitude coding",
-                detail: "Orange = cloud seeding range, purple = high altitude",
+                detail: "Orange = cloud seeding range, purple = high altitude, red = known WX mod operator",
               },
               {
                 label: "Evidence grade",

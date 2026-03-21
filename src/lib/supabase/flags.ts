@@ -1,5 +1,20 @@
 import { createServiceClient } from "./server";
 
+// ============================================================
+// CONFIGURABLE THRESHOLDS (override via environment variables)
+// ============================================================
+const RATE_PER_AIRCRAFT_HOURS = parseInt(process.env.RATE_PER_AIRCRAFT_HOURS || "24");
+const RATE_HOURLY_LIMIT = parseInt(process.env.RATE_HOURLY_LIMIT || "5");
+const RATE_DAILY_LIMIT = parseInt(process.env.RATE_DAILY_LIMIT || "20");
+
+const THREAT_HIGH_REPORTERS = parseInt(process.env.THREAT_HIGH_REPORTERS || "5");
+const THREAT_MEDIUM_REPORTERS = parseInt(process.env.THREAT_MEDIUM_REPORTERS || "3");
+
+const ANOMALY_BURST_THRESHOLD = parseInt(process.env.ANOMALY_BURST_THRESHOLD || "10");
+const ANOMALY_SCATTER_THRESHOLD = parseInt(process.env.ANOMALY_SCATTER_THRESHOLD || "15");
+const ANOMALY_LOW_SCORE_FLAGS = parseInt(process.env.ANOMALY_LOW_SCORE_FLAGS || "5");
+const ANOMALY_LOW_SCORE_CEILING = parseInt(process.env.ANOMALY_LOW_SCORE_CEILING || "2");
+
 export interface FlightFlag {
   id: string;
   tail_number: string;
@@ -75,8 +90,8 @@ export async function checkRateLimits(
   const supabase = createServiceClient();
   const now = new Date();
 
-  // 1. Check: 1 flag per IP per aircraft per 24 hours
-  const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  // 1. Check: per-IP per-aircraft limit
+  const dayAgo = new Date(now.getTime() - RATE_PER_AIRCRAFT_HOURS * 60 * 60 * 1000).toISOString();
   const { count: perAircraftCount } = await supabase
     .from("flag_submissions")
     .select("*", { count: "exact", head: true })
@@ -87,11 +102,11 @@ export async function checkRateLimits(
   if ((perAircraftCount ?? 0) >= 1) {
     return {
       allowed: false,
-      reason: "You have already flagged this aircraft in the last 24 hours.",
+      reason: "You have already flagged this aircraft recently.",
     };
   }
 
-  // 2. Check: 5 total flags per IP per hour
+  // 2. Check: hourly limit
   const hourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
   const { count: hourlyCount } = await supabase
     .from("flag_submissions")
@@ -99,24 +114,24 @@ export async function checkRateLimits(
     .eq("reporter_hash", reporterHash)
     .gte("created_at", hourAgo);
 
-  if ((hourlyCount ?? 0) >= 5) {
+  if ((hourlyCount ?? 0) >= RATE_HOURLY_LIMIT) {
     return {
       allowed: false,
-      reason: "Rate limit reached. You can flag up to 5 aircraft per hour.",
+      reason: "Rate limit reached. Please try again later.",
     };
   }
 
-  // 3. Check: 20 total flags per IP per day
+  // 3. Check: daily limit
   const { count: dailyCount } = await supabase
     .from("flag_submissions")
     .select("*", { count: "exact", head: true })
     .eq("reporter_hash", reporterHash)
     .gte("created_at", dayAgo);
 
-  if ((dailyCount ?? 0) >= 20) {
+  if ((dailyCount ?? 0) >= RATE_DAILY_LIMIT) {
     return {
       allowed: false,
-      reason: "Daily limit reached. You can flag up to 20 aircraft per day.",
+      reason: "Daily limit reached. Please try again tomorrow.",
     };
   }
 
@@ -128,8 +143,8 @@ export async function checkRateLimits(
 // ============================================================
 
 function computeThreatLevel(uniqueReporters: number): "none" | "low" | "medium" | "high" {
-  if (uniqueReporters >= 5) return "high";
-  if (uniqueReporters >= 3) return "medium";
+  if (uniqueReporters >= THREAT_HIGH_REPORTERS) return "high";
+  if (uniqueReporters >= THREAT_MEDIUM_REPORTERS) return "medium";
   if (uniqueReporters >= 1) return "low";
   return "none";
 }
@@ -313,7 +328,7 @@ export async function checkAnomalies(
   const now = new Date();
   const tail = tailNumber.toUpperCase();
 
-  // 1. Burst detection: 10+ flags on one aircraft within 1 hour
+  // 1. Burst detection: too many flags on one aircraft within 1 hour
   const hourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
   const { count: burstCount } = await supabase
     .from("flag_submissions")
@@ -321,14 +336,14 @@ export async function checkAnomalies(
     .eq("tail_number", tail)
     .gte("created_at", hourAgo);
 
-  if ((burstCount ?? 0) >= 10) {
+  if ((burstCount ?? 0) >= ANOMALY_BURST_THRESHOLD) {
     await logAnomaly("burst", {
       message: `${burstCount} flags on ${tail} in the last hour`,
       tail_number: tail,
     }, tail);
   }
 
-  // 2. Scatter bomb: one IP flags 15+ different aircraft in a day
+  // 2. Scatter bomb: one IP flags too many different aircraft in a day
   const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
   const { data: scatterData } = await supabase
     .from("flag_submissions")
@@ -340,7 +355,7 @@ export async function checkAnomalies(
     (scatterData || []).map((s: { tail_number: string }) => s.tail_number)
   ).size;
 
-  if (uniqueTails >= 15) {
+  if (uniqueTails >= ANOMALY_SCATTER_THRESHOLD) {
     await logAnomaly("scatter_bomb", {
       message: `Reporter flagged ${uniqueTails} different aircraft in 24h`,
       reporter_hash: reporterHash,
@@ -348,14 +363,14 @@ export async function checkAnomalies(
     }, undefined, reporterHash);
   }
 
-  // 3. Low-score target: aircraft with suspicion score < 2 gets 5+ flags
-  if (suspicionScore !== undefined && suspicionScore < 2) {
+  // 3. Low-score target: low-suspicion aircraft getting flagged repeatedly
+  if (suspicionScore !== undefined && suspicionScore < ANOMALY_LOW_SCORE_CEILING) {
     const { count: lowScoreCount } = await supabase
       .from("flag_submissions")
       .select("*", { count: "exact", head: true })
       .eq("tail_number", tail);
 
-    if ((lowScoreCount ?? 0) >= 5) {
+    if ((lowScoreCount ?? 0) >= ANOMALY_LOW_SCORE_FLAGS) {
       await logAnomaly("low_score_target", {
         message: `Low-suspicion aircraft ${tail} (score ${suspicionScore}) has ${lowScoreCount} flags`,
         suspicion_score: suspicionScore,

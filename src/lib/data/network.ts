@@ -276,7 +276,163 @@ export const PIPELINE_STEPS: PipelineStep[] = [
 
 export const PLAYERS: NetworkPlayer[] = [
   // ──────────────────────────────────────────────────────────
-  // 1. CHRIS SACCA / LOWERCARBON CAPITAL
+  // 1. BILL GATES / FICER
+  // ──────────────────────────────────────────────────────────
+  {
+    slug: "gates-ficer",
+    name: "Bill Gates / FICER",
+    shortName: "Gates",
+    type: "research",
+    tagline:
+      "$8.5M+ in personal geoengineering research funding. Managed by a former weapons lab researcher. Explicitly 'not a Gates Foundation project.'",
+    keyStats: [
+      "$8.5M+ since 2007",
+      "Personal fund, not Foundation",
+      "Harvard SGRP + Breakthrough Energy",
+    ],
+    summary:
+      "Bill Gates has funded geoengineering research since 2007 through FICER (Fund for Innovative Climate and Energy Research), his personal geoengineering fund. FICER is explicitly 'not a Gates Foundation project' \u2014 it's personal money, harder to track. It has been managed by David Keith and Ken Caldeira (former Edward Teller Fellow at Lawrence Livermore weapons lab, now Breakthrough Energy Senior Scientist).",
+    sections: [
+      {
+        title: "FICER",
+        content: [
+          "$8.5M+ since 2007 \u2014 the longest-running source of private geoengineering funding.",
+          "Managed by David Keith (world's leading SRM researcher) and Ken Caldeira.",
+          "Ken Caldeira: former Edward Teller Fellow at Lawrence Livermore National Laboratory (nuclear weapons lab). Now Senior Scientist at Breakthrough Energy.",
+          "FICER is explicitly 'not a Gates Foundation project' \u2014 it's personal money, harder to track and less accountable.",
+        ],
+        sources: [
+          {
+            label: "Harvard SGRP funding page",
+            url: "https://geoengineering.environment.harvard.edu/funding",
+          },
+        ],
+      },
+      {
+        title: "Breakthrough Energy",
+        content: [
+          "Gates' climate investment vehicle. 28 billionaires participate.",
+          "Caldeira serves as Senior Scientist.",
+          "Both Sacca and Gates donate to Harvard SGRP \u2014 two sides of the same pipeline.",
+        ],
+      },
+    ],
+    operatorSlug: "bill-gates-ficer",
+    sources: [
+      {
+        label: "Harvard SGRP funding page",
+        url: "https://geoengineering.environment.harvard.edu/funding",
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  // 2. PETER THIEL
+  // ──────────────────────────────────────────────────────────
+  {
+    slug: "thiel",
+    name: "Peter Thiel",
+    shortName: "Thiel",
+    type: "individual",
+    tagline:
+      "Epstein invested $40M in his fund. Co-founded Palantir (Israeli defense partner). 'My bias is to defer to Israel.'",
+    keyStats: [
+      "$11B+ net worth",
+      "$40M from Epstein",
+      "Palantir \u2192 Israeli defense",
+    ],
+    summary:
+      "Peter Thiel is connected to geoengineering through the Thiel Fellowship and 1517 Fund, which funded Rainmaker's founder. He is not a direct Stardust investor, but he connects to the network through Palantir (co-founded with Lauder as early investor), Epstein ($40M in Thiel's fund), and the Israeli defense establishment.",
+    sections: [
+      {
+        title: "Geoengineering Connection",
+        content: [
+          "Augustus Doricko, Rainmaker's founder, received a Thiel Fellowship ($100K grant) in 2024.",
+          "1517 Fund (founded by former Thiel Fellowship team members, backed by Thiel money) invested in Rainmaker's $25M Series A.",
+          "Rainmaker: cloud-seeding drone company accused of contributing to catastrophic Texas flooding (July 2025).",
+          "Thiel-backed Rainmaker has lobbied to block state legislation restricting weather modification.",
+        ],
+        sources: [
+          {
+            label: "Zero Geoengineering: Thiel-backed firm blocks legislation",
+            url: "https://zerogeoengineering.com/2025/thiel-backed-cloud-seeding-firm-moves-to-block-state-legislation/",
+          },
+        ],
+      },
+      {
+        title: "Epstein Connections",
+        content: [
+          "Epstein invested $40M in Valar Ventures (co-founded by Thiel) in 2015-2016, now worth ~$170M.",
+          "Thiel personally solicited and maintained a business partnership with Epstein from 2014-2019.",
+          "Epstein spent years connecting Thiel with former Israeli PM/defense minister Ehud Barak, arranging at least 6 meetings.",
+          "Epstein steered Thiel toward two Israeli cybersecurity startups with roots in Unit 8200.",
+          "Carbyne (co-founded by Ehud Barak) became the first Israeli investment for Thiel's Founders Fund ($15M Series B, 2018) \u2014 deal arranged through Epstein.",
+          "Introduced to Epstein by Reid Hoffman (LinkedIn co-founder).",
+        ],
+        sources: [
+          {
+            label: "SF Standard: Epstein-Thiel-Israeli officials",
+            url: "https://sfstandard.com/2025/11/23/extended-courtship-linking-jeffrey-epstein-peter-thiel-israeli-officials/",
+          },
+          {
+            label: "Byline Times: Epstein co-owned fund with Thiel",
+            url: "https://bylinetimes.com/2026/02/04/jeffrey-epstein-and-peter-thiel-co-owned-venture-fund-as-thiels-palantir-entered-uk-government/",
+          },
+        ],
+      },
+      {
+        title: "Israeli Defense Ties",
+        content: [
+          "Co-founded Palantir Technologies \u2014 provides AI to US, UK, and Israeli defense/intelligence.",
+          "Palantir signed a strategic partnership with the Israeli Defense Ministry (January 2024) to supply war technology.",
+          "When asked about ethical concerns: 'My bias is to defer to Israel.'",
+          "Ronald Lauder is also an early Palantir investor \u2014 this is the strongest direct financial link between two key network nodes.",
+          "Palantir's AI reportedly used in Israeli operations in Gaza, including 'kill lists.'",
+        ],
+        sources: [
+          {
+            label: "Bloomberg: Palantir-Israel partnership",
+            url: "https://www.bloomberg.com/news/articles/2024-01-12/palantir-israel-agree-to-strategic-partnership-for-battle-tech",
+          },
+          {
+            label: "Responsible Statecraft: Thiel defers to Israel",
+            url: "https://responsiblestatecraft.org/peter-thiel-israel-palantir/",
+          },
+        ],
+      },
+      {
+        title: "Climate Views",
+        content: [
+          "Called climate science a 'fake field.'",
+          "Funds publications that question climate change and evolution.",
+          "Supports expanded fossil fuel use.",
+          "Yet backs geoengineering through the Thiel Fellowship/1517 Fund ecosystem.",
+        ],
+        sources: [
+          {
+            label: "DeSmog: Peter Thiel",
+            url: "https://www.desmog.com/peter-thiel/",
+          },
+        ],
+      },
+    ],
+    socialMedia: [
+      {
+        platform: "X",
+        handle: "@peterthiel",
+        url: "https://x.com/peterthiel",
+      },
+    ],
+    sources: [
+      {
+        label: "Boing Boing: Palantir's Israel partnership began with Epstein",
+        url: "https://boingboing.net/2026/03/10/palantirs-israel-partnership-began-with-epstein-introductions.html",
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  // 3. CHRIS SACCA / LOWERCARBON CAPITAL
   // ──────────────────────────────────────────────────────────
   {
     slug: "sacca-lowercarbon",
@@ -400,7 +556,7 @@ export const PLAYERS: NetworkPlayer[] = [
   },
 
   // ──────────────────────────────────────────────────────────
-  // 2. AWZ VENTURES
+  // 4. AWZ VENTURES
   // ──────────────────────────────────────────────────────────
   {
     slug: "awz-ventures",
@@ -548,7 +704,7 @@ export const PLAYERS: NetworkPlayer[] = [
   },
 
   // ──────────────────────────────────────────────────────────
-  // 3. RONALD LAUDER
+  // 5. RONALD LAUDER
   // ──────────────────────────────────────────────────────────
   {
     slug: "lauder",
@@ -666,112 +822,7 @@ export const PLAYERS: NetworkPlayer[] = [
   },
 
   // ──────────────────────────────────────────────────────────
-  // 4. PETER THIEL
-  // ──────────────────────────────────────────────────────────
-  {
-    slug: "thiel",
-    name: "Peter Thiel",
-    shortName: "Thiel",
-    type: "individual",
-    tagline:
-      "Epstein invested $40M in his fund. Co-founded Palantir (Israeli defense partner). 'My bias is to defer to Israel.'",
-    keyStats: [
-      "$11B+ net worth",
-      "$40M from Epstein",
-      "Palantir \u2192 Israeli defense",
-    ],
-    summary:
-      "Peter Thiel is connected to geoengineering through the Thiel Fellowship and 1517 Fund, which funded Rainmaker's founder. He is not a direct Stardust investor, but he connects to the network through Palantir (co-founded with Lauder as early investor), Epstein ($40M in Thiel's fund), and the Israeli defense establishment.",
-    sections: [
-      {
-        title: "Geoengineering Connection",
-        content: [
-          "Augustus Doricko, Rainmaker's founder, received a Thiel Fellowship ($100K grant) in 2024.",
-          "1517 Fund (founded by former Thiel Fellowship team members, backed by Thiel money) invested in Rainmaker's $25M Series A.",
-          "Rainmaker: cloud-seeding drone company accused of contributing to catastrophic Texas flooding (July 2025).",
-          "Thiel-backed Rainmaker has lobbied to block state legislation restricting weather modification.",
-        ],
-        sources: [
-          {
-            label: "Zero Geoengineering: Thiel-backed firm blocks legislation",
-            url: "https://zerogeoengineering.com/2025/thiel-backed-cloud-seeding-firm-moves-to-block-state-legislation/",
-          },
-        ],
-      },
-      {
-        title: "Epstein Connections",
-        content: [
-          "Epstein invested $40M in Valar Ventures (co-founded by Thiel) in 2015-2016, now worth ~$170M.",
-          "Thiel personally solicited and maintained a business partnership with Epstein from 2014-2019.",
-          "Epstein spent years connecting Thiel with former Israeli PM/defense minister Ehud Barak, arranging at least 6 meetings.",
-          "Epstein steered Thiel toward two Israeli cybersecurity startups with roots in Unit 8200.",
-          "Carbyne (co-founded by Ehud Barak) became the first Israeli investment for Thiel's Founders Fund ($15M Series B, 2018) \u2014 deal arranged through Epstein.",
-          "Introduced to Epstein by Reid Hoffman (LinkedIn co-founder).",
-        ],
-        sources: [
-          {
-            label: "SF Standard: Epstein-Thiel-Israeli officials",
-            url: "https://sfstandard.com/2025/11/23/extended-courtship-linking-jeffrey-epstein-peter-thiel-israeli-officials/",
-          },
-          {
-            label: "Byline Times: Epstein co-owned fund with Thiel",
-            url: "https://bylinetimes.com/2026/02/04/jeffrey-epstein-and-peter-thiel-co-owned-venture-fund-as-thiels-palantir-entered-uk-government/",
-          },
-        ],
-      },
-      {
-        title: "Israeli Defense Ties",
-        content: [
-          "Co-founded Palantir Technologies \u2014 provides AI to US, UK, and Israeli defense/intelligence.",
-          "Palantir signed a strategic partnership with the Israeli Defense Ministry (January 2024) to supply war technology.",
-          "When asked about ethical concerns: 'My bias is to defer to Israel.'",
-          "Ronald Lauder is also an early Palantir investor \u2014 this is the strongest direct financial link between two key network nodes.",
-          "Palantir's AI reportedly used in Israeli operations in Gaza, including 'kill lists.'",
-        ],
-        sources: [
-          {
-            label: "Bloomberg: Palantir-Israel partnership",
-            url: "https://www.bloomberg.com/news/articles/2024-01-12/palantir-israel-agree-to-strategic-partnership-for-battle-tech",
-          },
-          {
-            label: "Responsible Statecraft: Thiel defers to Israel",
-            url: "https://responsiblestatecraft.org/peter-thiel-israel-palantir/",
-          },
-        ],
-      },
-      {
-        title: "Climate Views",
-        content: [
-          "Called climate science a 'fake field.'",
-          "Funds publications that question climate change and evolution.",
-          "Supports expanded fossil fuel use.",
-          "Yet backs geoengineering through the Thiel Fellowship/1517 Fund ecosystem.",
-        ],
-        sources: [
-          {
-            label: "DeSmog: Peter Thiel",
-            url: "https://www.desmog.com/peter-thiel/",
-          },
-        ],
-      },
-    ],
-    socialMedia: [
-      {
-        platform: "X",
-        handle: "@peterthiel",
-        url: "https://x.com/peterthiel",
-      },
-    ],
-    sources: [
-      {
-        label: "Boing Boing: Palantir's Israel partnership began with Epstein",
-        url: "https://boingboing.net/2026/03/10/palantirs-israel-partnership-began-with-epstein-introductions.html",
-      },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  // 5. MATT COHLER
+  // 6. MATT COHLER
   // ──────────────────────────────────────────────────────────
   {
     slug: "cohler",
@@ -842,7 +893,7 @@ export const PLAYERS: NetworkPlayer[] = [
   },
 
   // ──────────────────────────────────────────────────────────
-  // 6. EXOR / AGNELLI-ELKANN FAMILY
+  // 7. EXOR / AGNELLI-ELKANN FAMILY
   // ──────────────────────────────────────────────────────────
   {
     slug: "exor-agnelli",
@@ -907,7 +958,7 @@ export const PLAYERS: NetworkPlayer[] = [
   },
 
   // ──────────────────────────────────────────────────────────
-  // 7. SOLAREDGE TECHNOLOGIES
+  // 8. SOLAREDGE TECHNOLOGIES
   // ──────────────────────────────────────────────────────────
   {
     slug: "solaredge",
@@ -954,57 +1005,6 @@ export const PLAYERS: NetworkPlayer[] = [
       {
         label: "Calcalist: SolarEdge founder",
         url: "https://www.calcalistech.com/ctech/articles/0,7340,L-3894732,00.html",
-      },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  // 8. BILL GATES / FICER
-  // ──────────────────────────────────────────────────────────
-  {
-    slug: "gates-ficer",
-    name: "Bill Gates / FICER",
-    shortName: "Gates",
-    type: "research",
-    tagline:
-      "$8.5M+ in personal geoengineering research funding. Managed by a former weapons lab researcher. Explicitly 'not a Gates Foundation project.'",
-    keyStats: [
-      "$8.5M+ since 2007",
-      "Personal fund, not Foundation",
-      "Harvard SGRP + Breakthrough Energy",
-    ],
-    summary:
-      "Bill Gates has funded geoengineering research since 2007 through FICER (Fund for Innovative Climate and Energy Research), his personal geoengineering fund. FICER is explicitly 'not a Gates Foundation project' \u2014 it's personal money, harder to track. It has been managed by David Keith and Ken Caldeira (former Edward Teller Fellow at Lawrence Livermore weapons lab, now Breakthrough Energy Senior Scientist).",
-    sections: [
-      {
-        title: "FICER",
-        content: [
-          "$8.5M+ since 2007 \u2014 the longest-running source of private geoengineering funding.",
-          "Managed by David Keith (world's leading SRM researcher) and Ken Caldeira.",
-          "Ken Caldeira: former Edward Teller Fellow at Lawrence Livermore National Laboratory (nuclear weapons lab). Now Senior Scientist at Breakthrough Energy.",
-          "FICER is explicitly 'not a Gates Foundation project' \u2014 it's personal money, harder to track and less accountable.",
-        ],
-        sources: [
-          {
-            label: "Harvard SGRP funding page",
-            url: "https://geoengineering.environment.harvard.edu/funding",
-          },
-        ],
-      },
-      {
-        title: "Breakthrough Energy",
-        content: [
-          "Gates' climate investment vehicle. 28 billionaires participate.",
-          "Caldeira serves as Senior Scientist.",
-          "Both Sacca and Gates donate to Harvard SGRP \u2014 two sides of the same pipeline.",
-        ],
-      },
-    ],
-    operatorSlug: "bill-gates-ficer",
-    sources: [
-      {
-        label: "Harvard SGRP funding page",
-        url: "https://geoengineering.environment.harvard.edu/funding",
       },
     ],
   },
