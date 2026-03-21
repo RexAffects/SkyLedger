@@ -10,6 +10,9 @@
  * Known weather modification operators to flag:
  */
 
+import { getCachedRegistration, cacheRegistration } from "@/lib/supabase/faa-cache";
+import { detectLLC, getStateRegistryUrl, type LLCDetection } from "@/lib/utils/llc-detect";
+
 export interface FAARegistration {
   tailNumber: string;
   serialNumber: string;
@@ -26,6 +29,7 @@ export interface FAARegistration {
   status: string;
   isKnownWeatherMod: boolean;
   operatorNotes: string;
+  llcDetection?: LLCDetection & { stateRegistryUrl: string | null };
 }
 
 // Known weather modification operators — built from canonical data in operators.ts
@@ -33,17 +37,30 @@ import { buildWxModLookup } from "@/lib/data/operators";
 const KNOWN_WX_MOD_OPERATORS: Record<string, string> = buildWxModLookup();
 
 /**
- * Look up aircraft registration by tail number using the FAA API.
+ * Look up aircraft registration by tail number.
+ * Cache-first: checks Supabase faa_cache before scraping FAA.
+ * Also runs LLC detection on the owner name.
  */
 export async function lookupTailNumber(
   tailNumber: string
 ): Promise<FAARegistration | null> {
-  // Clean the tail number (remove N prefix for API, add it back)
   const cleaned = tailNumber.toUpperCase().replace(/^N/, "");
+  const normalizedTail = `N${cleaned}`;
 
+  // 1. Check cache first
   try {
-    // Use the FAA registry inquiry API
-    const url = `https://registry.faa.gov/AircraftInquiry/Search/NNumberResult?nNumberTxt=N${cleaned}`;
+    const cached = await getCachedRegistration(normalizedTail);
+    if (cached) {
+      // Re-run LLC detection on cached data (cheap, ensures fresh patterns)
+      return attachLLCDetection(cached);
+    }
+  } catch {
+    // Cache miss or error — continue to FAA scrape
+  }
+
+  // 2. Cache miss — scrape FAA
+  try {
+    const url = `https://registry.faa.gov/AircraftInquiry/Search/NNumberResult?nNumberTxt=${normalizedTail}`;
 
     const res = await fetch(url, {
       headers: {
@@ -54,13 +71,33 @@ export async function lookupTailNumber(
     if (!res.ok) return null;
 
     const html = await res.text();
+    const registration = parseRegistrationHTML(html, normalizedTail);
 
-    // Parse key fields from the HTML response
-    const registration = parseRegistrationHTML(html, `N${cleaned}`);
-    return registration;
+    if (!registration) return null;
+
+    // 3. Store in cache (fire-and-forget)
+    cacheRegistration(normalizedTail, registration).catch(() => {});
+
+    // 4. Attach LLC detection
+    return attachLLCDetection(registration);
   } catch {
     return null;
   }
+}
+
+/**
+ * Attach LLC detection info to an FAA registration.
+ */
+function attachLLCDetection(reg: FAARegistration): FAARegistration {
+  const detection = detectLLC(reg.ownerName, reg.ownerState);
+  const stateRegistryUrl = detection.registrationState
+    ? getStateRegistryUrl(detection.registrationState)
+    : null;
+
+  return {
+    ...reg,
+    llcDetection: { ...detection, stateRegistryUrl },
+  };
 }
 
 function parseRegistrationHTML(

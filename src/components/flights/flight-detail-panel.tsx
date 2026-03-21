@@ -9,6 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getOperatorSlugFromOwnerName } from "@/lib/data/operators";
 import { FlagAircraftDialog } from "./flag-aircraft-dialog";
 import { THREAT_LEVELS } from "@/lib/constants";
+import {
+  pinAircraft,
+  unpinAircraft,
+  isAircraftPinned,
+} from "@/components/map/flight-layer";
 
 interface CommunityFlags {
   flag_count: number;
@@ -33,6 +38,16 @@ interface FlightDetail {
     country: string | null;
     is_known_wx_mod: boolean;
     operator_notes: string;
+    is_llc: boolean;
+    llc_info: {
+      entity_type: string | null;
+      pierced_owner: string | null;
+      pierced_source: string | null;
+      confidence: string | null;
+      formation_state: string | null;
+      state_registry_url: string | null;
+      status: string;
+    } | null;
   };
   registration: {
     make: string;
@@ -87,6 +102,24 @@ export function FlightDetailPanel({
   const [data, setData] = useState<FlightDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<{
+    summary: {
+      total_sightings: number;
+      total_days_seen: number;
+      first_seen_at: string;
+      last_seen_at: string;
+      primary_region: string | null;
+      avg_altitude_ft: number | null;
+      common_times: Record<string, number>;
+    } | null;
+    positions: Array<{
+      latitude: number;
+      longitude: number;
+      altitude_ft: number | null;
+      observed_at: string;
+    }>;
+  } | null>(null);
+  const [isPinned, setIsPinned] = useState(false);
 
   useEffect(() => {
     async function fetchDetail() {
@@ -112,6 +145,23 @@ export function FlightDetailPanel({
 
     fetchDetail();
   }, [hex, callsign, tail]);
+
+  // Fetch flight history
+  useEffect(() => {
+    const tailNumber = tail || data?.tail_number;
+    if (!tailNumber) return;
+
+    setIsPinned(isAircraftPinned(tailNumber));
+
+    fetch(`/api/flight-history?tail=${encodeURIComponent(tailNumber)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((result) => {
+        if (result) setHistory(result);
+      })
+      .catch(() => {
+        // Silent fail
+      });
+  }, [tail, data?.tail_number]);
 
   if (loading) {
     return (
@@ -249,6 +299,105 @@ export function FlightDetailPanel({
           </div>
         )}
 
+        {/* Flight History */}
+        <Section title="History">
+          {history?.summary ? (
+            <div className="space-y-2">
+              <p className="text-sm">
+                This aircraft has been tracked{" "}
+                <span className="font-semibold">
+                  {history.summary.total_sightings} time
+                  {history.summary.total_sightings !== 1 ? "s" : ""}
+                </span>{" "}
+                across{" "}
+                <span className="font-semibold">
+                  {history.summary.total_days_seen} day
+                  {history.summary.total_days_seen !== 1 ? "s" : ""}
+                </span>
+                .
+              </p>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                <DetailRow
+                  label="First seen"
+                  value={new Date(
+                    history.summary.first_seen_at
+                  ).toLocaleDateString()}
+                />
+                <DetailRow
+                  label="Last seen"
+                  value={
+                    new Date(history.summary.last_seen_at).toDateString() ===
+                    new Date().toDateString()
+                      ? "Today"
+                      : new Date(
+                          history.summary.last_seen_at
+                        ).toLocaleDateString()
+                  }
+                />
+                {history.summary.avg_altitude_ft && (
+                  <DetailRow
+                    label="Avg altitude"
+                    value={`${history.summary.avg_altitude_ft.toLocaleString()} ft`}
+                  />
+                )}
+                {history.summary.common_times &&
+                  Object.keys(history.summary.common_times).length > 0 && (
+                    <DetailRow
+                      label="Most active"
+                      value={Object.entries(history.summary.common_times)
+                        .sort(([, a], [, b]) => b - a)
+                        .slice(0, 2)
+                        .map(
+                          ([period]) =>
+                            period.charAt(0).toUpperCase() + period.slice(1)
+                        )
+                        .join(", ")}
+                    />
+                  )}
+              </div>
+              {history.summary.primary_region && (
+                <DetailRow
+                  label="Primary area"
+                  value={history.summary.primary_region}
+                />
+              )}
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              {data?.tail_number
+                ? "First sighting. This aircraft will now be tracked."
+                : "No tail number — history requires a registered tail number."}
+            </p>
+          )}
+        </Section>
+
+        {/* Pin / Unpin Button */}
+        {(data?.tail_number || tail) && (
+          <button
+            onClick={() => {
+              const t = (data?.tail_number || tail)!;
+              if (isPinned) {
+                unpinAircraft(t);
+                setIsPinned(false);
+              } else {
+                pinAircraft(t);
+                setIsPinned(true);
+              }
+            }}
+            className={`w-full text-left text-xs px-3 py-2 rounded-lg border transition-colors ${
+              isPinned
+                ? "border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-950/30 dark:text-blue-300"
+                : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/50"
+            }`}
+          >
+            {isPinned ? (
+              <>Tracking this aircraft. Click to unpin.</>
+            ) : (
+              <>Track this aircraft — pin for history logging</>
+            )}
+          </button>
+        )}
+
         {/* Route */}
         <Section title="Route">
           {data.route.origin || data.route.destination ? (
@@ -328,10 +477,20 @@ export function FlightDetailPanel({
 
         {/* Owner */}
         <Section title="Owner">
-          <DetailRow
-            label="Name"
-            value={data.owner.name || "Unknown"}
-          />
+          <div className="flex items-center gap-2">
+            <DetailRow
+              label="Name"
+              value={data.owner.name || "Unknown"}
+            />
+            {data.owner.is_llc && (
+              <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200 border-amber-300 dark:border-amber-700 text-[10px]">
+                <svg className="w-3 h-3 mr-0.5 inline" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                </svg>
+                Corporate Entity
+              </Badge>
+            )}
+          </div>
           {(data.owner.city || data.owner.state) && (
             <DetailRow
               label="Location"
@@ -341,6 +500,45 @@ export function FlightDetailPanel({
                   .join(", ")
               }
             />
+          )}
+          {/* LLC Piercing Info */}
+          {data.owner.is_llc && data.owner.llc_info && (
+            <div className="mt-2 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-2.5">
+              {data.owner.llc_info.pierced_owner ? (
+                <>
+                  <p className="text-xs font-medium text-amber-900 dark:text-amber-100">
+                    Actual Owner: {data.owner.llc_info.pierced_owner}
+                  </p>
+                  {data.owner.llc_info.confidence && (
+                    <Badge className="mt-1 text-[10px] bg-amber-200/50 dark:bg-amber-800/50 text-amber-800 dark:text-amber-200">
+                      {data.owner.llc_info.confidence} confidence
+                    </Badge>
+                  )}
+                  {data.owner.llc_info.formation_state && (
+                    <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-1">
+                      Formed in {data.owner.llc_info.formation_state}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="text-xs text-amber-800 dark:text-amber-200">
+                    This aircraft is registered to a corporate entity. The real owner is hidden behind{" "}
+                    <span className="font-medium">{data.owner.llc_info.entity_type?.toUpperCase() || "LLC"}</span> registration.
+                  </p>
+                  {data.owner.llc_info.state_registry_url && (
+                    <a
+                      href={data.owner.llc_info.state_registry_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-amber-800 dark:text-amber-200 hover:underline"
+                    >
+                      Search {data.owner.state || "State"} Registry &rarr;
+                    </a>
+                  )}
+                </>
+              )}
+            </div>
           )}
         </Section>
 

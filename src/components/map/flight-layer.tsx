@@ -185,6 +185,42 @@ interface FlightLayerProps {
 
 const MAX_TRAIL_POINTS = 180;
 
+// Read pinned aircraft from localStorage
+function getPinnedAircraft(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const stored = localStorage.getItem("skyledger_pinned_aircraft");
+    if (stored) return new Set(JSON.parse(stored) as string[]);
+  } catch {
+    // ignore parse errors
+  }
+  return new Set();
+}
+
+export function pinAircraft(tail: string): void {
+  const pinned = getPinnedAircraft();
+  pinned.add(tail.toUpperCase());
+  localStorage.setItem(
+    "skyledger_pinned_aircraft",
+    JSON.stringify([...pinned])
+  );
+  window.dispatchEvent(new Event("skyledger_pins_changed"));
+}
+
+export function unpinAircraft(tail: string): void {
+  const pinned = getPinnedAircraft();
+  pinned.delete(tail.toUpperCase());
+  localStorage.setItem(
+    "skyledger_pinned_aircraft",
+    JSON.stringify([...pinned])
+  );
+  window.dispatchEvent(new Event("skyledger_pins_changed"));
+}
+
+export function isAircraftPinned(tail: string): boolean {
+  return getPinnedAircraft().has(tail.toUpperCase());
+}
+
 export function FlightLayer({
   mapCenter,
   radius = 50,
@@ -207,6 +243,9 @@ export function FlightLayer({
   const [flaggedAircraft, setFlaggedAircraft] = useState<
     Map<string, { unique_reporters: number; threat_level: string }>
   >(new Map());
+  const [pinnedAircraft, setPinnedAircraft] = useState<Set<string>>(
+    getPinnedAircraft
+  );
 
   const trailsRef = useRef<
     Map<string, { positions: [number, number][]; tail_number: string | null }>
@@ -404,6 +443,74 @@ export function FlightLayer({
     const interval = setInterval(fetchFlights, 10000);
     return () => clearInterval(interval);
   }, [fetchFlights]);
+
+  // Listen for pin changes from detail panel
+  useEffect(() => {
+    const handler = () => setPinnedAircraft(getPinnedAircraft());
+    window.addEventListener("skyledger_pins_changed", handler);
+    return () => window.removeEventListener("skyledger_pins_changed", handler);
+  }, []);
+
+  // Background history logger — every 60 seconds, post qualifying flights
+  const historyTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    function logHistory() {
+      const qualifying = allFlights
+        .map((flight) => {
+          // Determine track_reason
+          let reason: string | null = null;
+          if (flight.is_known_wx_mod) {
+            reason = "known_operator";
+          } else if (
+            flight.tail_number &&
+            flaggedAircraft.has(flight.tail_number)
+          ) {
+            reason = "community_flagged";
+          } else if (flight.suspicion_score >= 4) {
+            reason = "high_suspicion";
+          } else if (
+            flight.tail_number &&
+            pinnedAircraft.has(flight.tail_number.toUpperCase())
+          ) {
+            reason = "manual_pin";
+          }
+          return reason ? { flight, reason } : null;
+        })
+        .filter(
+          (x): x is { flight: FlightData; reason: string } => x !== null
+        );
+
+      if (qualifying.length === 0) return;
+
+      const payload = qualifying.map(({ flight, reason }) => ({
+        icao_hex: flight.icao_hex,
+        tail_number: flight.tail_number,
+        callsign: flight.callsign,
+        latitude: flight.latitude,
+        longitude: flight.longitude,
+        altitude_ft: flight.altitude_ft,
+        speed_kts: flight.speed_kts,
+        heading: flight.heading,
+        track_reason: reason,
+        suspicion_score: flight.suspicion_score,
+      }));
+
+      fetch("/api/flight-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).catch(() => {
+        // Silent fail — history logging shouldn't break the UI
+      });
+    }
+
+    // Start 60-second interval (offset from the 10-second fetch)
+    historyTimerRef.current = setInterval(logHistory, 60000);
+    return () => {
+      if (historyTimerRef.current) clearInterval(historyTimerRef.current);
+    };
+  }, [allFlights, flaggedAircraft, pinnedAircraft]);
 
   // Band counts (from all flights, not filtered)
   const bandCounts = allFlights.reduce(

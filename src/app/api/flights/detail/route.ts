@@ -3,6 +3,8 @@ import { lookupRoute, lookupAircraftByHex, lookupRouteHexDB } from "@/lib/api/ad
 import { lookupTailNumber } from "@/lib/api/faa";
 import { fetchAircraftByHex } from "@/lib/api/adsb";
 import { getFlag } from "@/lib/supabase/flags";
+import { getLLCLookup, createPendingLLCLookup } from "@/lib/supabase/llc-lookups";
+import { getStateRegistryUrl } from "@/lib/utils/llc-detect";
 
 /**
  * GET /api/flights/detail?hex=A1B2C3&callsign=UAL123&tail=N12345
@@ -68,6 +70,16 @@ export async function GET(request: NextRequest) {
         null,
       is_known_wx_mod: faaData?.isKnownWeatherMod || false,
       operator_notes: faaData?.operatorNotes || "",
+      is_llc: faaData?.llcDetection?.isLLC || false,
+      llc_info: null as {
+        entity_type: string | null;
+        pierced_owner: string | null;
+        pierced_source: string | null;
+        confidence: string | null;
+        formation_state: string | null;
+        state_registry_url: string | null;
+        status: string;
+      } | null,
     },
 
     // FAA registration details
@@ -158,6 +170,41 @@ export async function GET(request: NextRequest) {
       }
     } catch (err) {
       console.error("Error fetching community flags:", err);
+    }
+  }
+
+  // LLC piercing lookup
+  if (result.owner.is_llc && result.owner.name) {
+    try {
+      // Check if we already have LLC data
+      let llcData = await getLLCLookup(result.owner.name);
+
+      // If not, create a pending entry
+      if (!llcData) {
+        const registryUrl =
+          faaData?.llcDetection?.stateRegistryUrl ||
+          getStateRegistryUrl(result.owner.state || "");
+        llcData = await createPendingLLCLookup(
+          result.owner.name,
+          result.owner.state,
+          faaData?.llcDetection?.entityType || null,
+          registryUrl
+        );
+      }
+
+      if (llcData) {
+        result.owner.llc_info = {
+          entity_type: llcData.entity_type,
+          pierced_owner: llcData.pierced_owner,
+          pierced_source: llcData.pierced_source,
+          confidence: llcData.confidence,
+          formation_state: llcData.formation_state,
+          state_registry_url: llcData.state_registry_url,
+          status: llcData.status,
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching LLC lookup:", err);
     }
   }
 

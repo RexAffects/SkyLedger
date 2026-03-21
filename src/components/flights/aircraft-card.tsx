@@ -19,6 +19,12 @@ interface RegistrationData {
   isKnownWeatherMod: boolean;
   operatorNotes: string;
   status: string;
+  llcDetection?: {
+    isLLC: boolean;
+    entityType: string | null;
+    registrationState: string | null;
+    stateRegistryUrl: string | null;
+  };
 }
 
 interface LookupResult {
@@ -111,7 +117,30 @@ export function AircraftLookup() {
             <CardContent className="space-y-3">
               {result.registration ? (
                 <>
-                  <DetailRow label="Owner" value={result.registration.ownerName} />
+                  <div className="flex items-center gap-2">
+                    <DetailRow label="Owner" value={result.registration.ownerName} />
+                    {result.registration.llcDetection?.isLLC && (
+                      <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200 border-amber-300 dark:border-amber-700 text-[10px] shrink-0">
+                        Corporate Entity
+                      </Badge>
+                    )}
+                  </div>
+                  {result.registration.llcDetection?.isLLC && result.registration.llcDetection.stateRegistryUrl && (
+                    <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-2">
+                      <p className="text-xs text-amber-800 dark:text-amber-200">
+                        Registered to {result.registration.llcDetection.entityType?.toUpperCase() || "LLC"}.
+                        Real owner may be hidden.
+                      </p>
+                      <a
+                        href={result.registration.llcDetection.stateRegistryUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-amber-800 dark:text-amber-200 hover:underline"
+                      >
+                        Search {result.registration.ownerState || "State"} Registry &rarr;
+                      </a>
+                    </div>
+                  )}
                   <DetailRow
                     label="Location"
                     value={`${result.registration.ownerCity}, ${result.registration.ownerState}`}

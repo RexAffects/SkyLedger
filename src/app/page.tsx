@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 
@@ -228,6 +229,60 @@ export default function Home() {
           <div className="mt-8 text-center">
             <LinkButton href="/flights" size="lg">
               Open Flight Tracker
+            </LinkButton>
+          </div>
+        </div>
+      </section>
+
+      {/* Submit a Photo CTA */}
+      <section className="border-t border-border bg-muted/30 py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight">
+              See something? Photograph it.
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              Your phone is a documentation tool. Every photo submitted to
+              SkyLedger is automatically GPS-tagged, timestamped, and{" "}
+              <span className="group relative inline-block">
+                <span className="border-b border-dotted border-muted-foreground/50 cursor-help">
+                  SHA-256 hashed
+                </span>
+                <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 rounded-lg border border-border bg-popover p-3 text-xs text-popover-foreground shadow-lg opacity-0 transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto z-50">
+                  <span className="font-semibold block mb-1">
+                    What does this mean?
+                  </span>
+                  Every photo gets a unique digital fingerprint (SHA-256 hash) at
+                  the moment of upload. If anyone changes even one pixel, the hash
+                  changes — proving the image is unaltered. This is the same
+                  integrity standard used in federal digital evidence proceedings
+                  (FRE 902(13)/(14)).
+                  <span className="absolute left-1/2 top-full -translate-x-1/2 -mt-px border-4 border-transparent border-t-border" />
+                </span>
+              </span>{" "}
+              &mdash; creating a tamper-proof record that can&apos;t be altered
+              after the fact.
+            </p>
+          </div>
+          <div className="mt-12 mx-auto max-w-4xl">
+            <div className="rounded-xl overflow-hidden border border-border shadow-sm">
+              <Image
+                src="/images/trail-examples.jpg"
+                alt="Examples of citizen-submitted sky observations showing various trail patterns and atmospheric phenomena"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                priority={false}
+              />
+            </div>
+            <p className="mt-3 text-center text-xs text-muted-foreground">
+              Real observations from citizens across the country. Photos like
+              these help build the public record.
+            </p>
+          </div>
+          <div className="mt-8 text-center">
+            <LinkButton href="/reports/new" size="lg">
+              Submit an Observation
             </LinkButton>
           </div>
         </div>
