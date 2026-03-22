@@ -396,20 +396,67 @@ export default function StardustDeepDivePage() {
       {/* Urgent Banner */}
       <div className="mt-6 rounded-lg border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 p-5">
         <div className="flex items-center gap-2">
-          <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-red-600 text-white">
-            TIME-SENSITIVE
+          <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-red-600 text-white animate-pulse">
+            APRIL 2026
           </span>
           <h2 className="font-bold text-red-800 dark:text-red-200">
-            Outdoor Experiments Planned April 2026
+            Experiments Starting Now
           </h2>
         </div>
-        <p className="mt-2 text-sm text-red-700 dark:text-red-300">
-          Stardust plans to begin releasing their secret particles at 18km
-          altitude starting April 2026 — with zero public consultation, zero
-          published safety data, and no regulatory approval. The Center for
-          International Environmental Law (CIEL) has called this
-          &quot;reckless.&quot;
+        <p className="mt-3 text-sm text-red-800 dark:text-red-200 font-medium">
+          An Israeli company is preparing to release secret, patented particles
+          into the stratosphere — and they won&apos;t tell anyone what&apos;s in
+          them.
         </p>
+        <ul className="mt-3 space-y-2 text-sm text-red-700 dark:text-red-300">
+          <li className="flex items-start gap-2">
+            <span className="shrink-0 mt-0.5 font-bold">&bull;</span>
+            <span>
+              <span className="font-semibold">Zero published data.</span> No
+              peer-reviewed research. No public safety assessment. No public
+              consultation.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="shrink-0 mt-0.5 font-bold">&bull;</span>
+            <span>
+              <span className="font-semibold">Suspiciously funded.</span> $75M
+              raised in under two years — more than double every other
+              geoengineering company combined. The largest investment in this
+              industry&apos;s history.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="shrink-0 mt-0.5 font-bold">&bull;</span>
+            <span>
+              <span className="font-semibold">
+                Intelligence and defense ties.
+              </span>{" "}
+              Their lead investor&apos;s advisory board includes a former Mossad
+              Chief of Intelligence, a former IDF Unit 8200 commander, and
+              former directors of the CIA, FBI, and MI5.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="shrink-0 mt-0.5 font-bold">&bull;</span>
+            <span>
+              A Cornell scientist says their safety claims{" "}
+              <span className="font-semibold">
+                &quot;cannot be trusted.&quot;
+              </span>{" "}
+              The Center for International Environmental Law calls their plans{" "}
+              <span className="font-semibold">&quot;reckless.&quot;</span>
+            </span>
+          </li>
+        </ul>
+        <div className="mt-4">
+          <a
+            href="#particles"
+            className="inline-flex items-center gap-1 text-sm font-bold text-red-800 dark:text-red-200 hover:underline"
+          >
+            Read the full investigation &darr;
+          </a>
+        </div>
       </div>
 
       {/* Table of Contents */}
