@@ -45,17 +45,20 @@ export function FlightsView() {
   // Compass / device orientation
   const smoothHeadingRef = useRef(0);
   const rafRef = useRef<number>(0);
+  const gotOrientationData = useRef(false);
 
   useEffect(() => {
     if (!compassMode) {
       setHeading(0);
       smoothHeadingRef.current = 0;
+      gotOrientationData.current = false;
       return;
     }
 
     let rawHeading = 0;
 
     const handler = (e: DeviceOrientationEvent) => {
+      gotOrientationData.current = true;
       // iOS provides webkitCompassHeading (degrees clockwise from north)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const ios = (e as any).webkitCompassHeading as number | undefined;
@@ -96,12 +99,37 @@ export function FlightsView() {
     }
 
     window.addEventListener(eventName, handler as EventListener);
-    // Also listen to standard event as fallback
     if (eventName !== "deviceorientation") {
       window.addEventListener("deviceorientation", handler as EventListener);
     }
 
+    // If no data arrives after 3 seconds, show help
+    const timeout = setTimeout(() => {
+      if (!gotOrientationData.current) {
+        setCompassMode(false);
+        cancelAnimationFrame(rafRef.current);
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+
+        if (isIOS) {
+          setCompassError(
+            "ios"
+          );
+        } else if (isAndroid) {
+          setCompassError(
+            "android"
+          );
+        } else {
+          setCompassError(
+            "desktop"
+          );
+        }
+      }
+    }, 3000);
+
     return () => {
+      clearTimeout(timeout);
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener(eventName, handler as EventListener);
       window.removeEventListener("deviceorientation", handler as EventListener);
@@ -115,18 +143,18 @@ export function FlightsView() {
       return;
     }
 
-    // iOS 13+ requires permission request
+    // iOS 13+ requires permission request — must be triggered by user gesture
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const DOE = DeviceOrientationEvent as any;
     if (typeof DOE.requestPermission === "function") {
       try {
         const permission = await DOE.requestPermission();
         if (permission !== "granted") {
-          setCompassError("Permission denied");
+          setCompassError("ios-denied");
           return;
         }
       } catch {
-        setCompassError("Permission denied");
+        setCompassError("ios-denied");
         return;
       }
     }
@@ -335,10 +363,75 @@ export function FlightsView() {
                     </div>
                   )}
 
-                  {/* Compass error */}
+                  {/* Compass help / error notification */}
                   {compassError && (
-                    <div className="absolute bottom-2 left-2 right-2 z-[1001] bg-destructive/90 text-destructive-foreground text-xs rounded-md px-3 py-1.5 text-center">
-                      Compass: {compassError}
+                    <div className="absolute inset-x-2 bottom-2 z-[1001] bg-background/95 border border-border rounded-lg shadow-lg p-3 text-xs">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="space-y-1.5">
+                          <p className="font-semibold text-sm text-foreground">
+                            {compassError === "desktop"
+                              ? "Compass requires a mobile device"
+                              : "Compass orientation not available"}
+                          </p>
+
+                          {compassError === "ios" && (
+                            <>
+                              <p className="text-muted-foreground">
+                                Your iPhone may have motion access disabled. To enable:
+                              </p>
+                              <ol className="text-muted-foreground list-decimal list-inside space-y-0.5">
+                                <li>Open <strong>Settings</strong> on your iPhone</li>
+                                <li>Scroll to <strong>Safari</strong> (or your browser)</li>
+                                <li>Enable <strong>Motion &amp; Orientation Access</strong></li>
+                                <li>Return here and tap the compass button again</li>
+                              </ol>
+                            </>
+                          )}
+
+                          {compassError === "ios-denied" && (
+                            <>
+                              <p className="text-muted-foreground">
+                                Motion permission was denied. To fix:
+                              </p>
+                              <ol className="text-muted-foreground list-decimal list-inside space-y-0.5">
+                                <li>Open <strong>Settings &gt; Safari</strong></li>
+                                <li>Enable <strong>Motion &amp; Orientation Access</strong></li>
+                                <li>Come back to this page and <strong>reload</strong></li>
+                                <li>Tap the compass button — you&apos;ll be asked again</li>
+                              </ol>
+                            </>
+                          )}
+
+                          {compassError === "android" && (
+                            <>
+                              <p className="text-muted-foreground">
+                                Your browser may be blocking sensor access. Try:
+                              </p>
+                              <ol className="text-muted-foreground list-decimal list-inside space-y-0.5">
+                                <li>Tap the <strong>lock icon</strong> in your address bar</li>
+                                <li>Tap <strong>Permissions</strong> or <strong>Site settings</strong></li>
+                                <li>Enable <strong>Motion sensors</strong></li>
+                                <li>If not listed, try <strong>Chrome</strong> — it has the best sensor support</li>
+                              </ol>
+                            </>
+                          )}
+
+                          {compassError === "desktop" && (
+                            <p className="text-muted-foreground">
+                              Live compass orientation uses your phone&apos;s gyroscope and
+                              magnetometer. Open this page on your phone to use it.
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => setCompassError(null)}
+                          className="shrink-0 text-muted-foreground hover:text-foreground"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" d="M18 6 6 18M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   )}
 
