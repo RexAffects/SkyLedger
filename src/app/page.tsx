@@ -146,17 +146,19 @@ export default function Home() {
             </Link>
           </p>
 
+        </div>
+
           {/* Urgent: April 2026 experiments */}
           <Link
             href="/learn/operators/stardust-solutions#experiments"
-            className="block mt-8 max-w-4xl mx-auto"
+            className="block mt-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
           >
             <div className="rounded-xl border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 p-6 transition-all hover:border-red-400 hover:shadow-lg">
               <div className="flex items-center justify-center gap-2">
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-600 text-white">
                   URGENT
                 </span>
-                <span className="text-lg font-bold text-red-800 dark:text-red-200">
+                <span className="text-lg sm:text-xl font-bold text-red-800 dark:text-red-200">
                   April 2026 &mdash; Experiments Starting
                 </span>
               </div>
@@ -172,7 +174,6 @@ export default function Home() {
               </p>
             </div>
           </Link>
-        </div>
       </section>
 
       {/* Stats bar */}

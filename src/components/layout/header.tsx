@@ -8,7 +8,7 @@ const navItems = [
   { href: "/flights", label: "Track Flights" },
   { href: "/learn", label: "Learn" },
   { href: "/get-involved", label: "Get Involved" },
-  { href: "/learn/operators", label: "Operators" },
+  { href: "/learn/operators", label: "Funders" },
   { href: "/about", label: "About" },
 ];
 
