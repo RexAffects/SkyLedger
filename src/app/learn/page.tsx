@@ -208,12 +208,40 @@ export default function LearnPage() {
       {/* ============================================================ */}
       <section className="mt-10">
         <h2 className="text-lg font-semibold">
-          Operators &amp; Money
+          Who&apos;s Behind It
         </h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Who&apos;s doing it, who&apos;s funding it, and how much money is
-          flowing in.
+          The companies, the founders, the investors, and where the money is
+          coming from.
         </p>
+
+        {/* Urgent: April 2026 experiments */}
+        <Link
+          href="/learn/operators/stardust-solutions#experiments"
+          className="block mt-4"
+        >
+          <div className="rounded-lg border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 p-4 transition-all hover:border-red-400 hover:shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-600 text-white">
+                URGENT
+              </span>
+              <span className="text-sm font-bold text-red-800 dark:text-red-200">
+                April 2026 — Experiments Starting
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-red-700 dark:text-red-300 leading-relaxed">
+              An Israeli company is preparing to release secret
+              &ldquo;magic&rdquo; particles into the stratosphere &mdash; with
+              zero published safety data and no public consultation. A Cornell
+              scientist says their claims &ldquo;cannot be trusted.&rdquo; CIEL
+              calls the plans &ldquo;reckless.&rdquo;
+            </p>
+            <p className="mt-2 text-xs text-red-600 dark:text-red-400 font-medium">
+              Read the full investigation &rarr;
+            </p>
+          </div>
+        </Link>
+
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {operators.map((card) => (
             <TopicCardComponent key={card.href} card={card} />
