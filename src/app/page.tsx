@@ -139,7 +139,10 @@ export default function Home() {
 
           <p className="mt-8 text-center text-xs text-muted-foreground">
             We don&apos;t make accusations. We present data from public
-            government sources. The facts speak for themselves.
+            government sources.{" "}
+            <Link href="/learn/facts" className="underline hover:text-primary transition-colors">
+              The facts speak for themselves.
+            </Link>
           </p>
         </div>
       </section>
