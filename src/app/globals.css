@@ -143,27 +143,42 @@
   animation: radar-ping 1.5s ease-out infinite;
 }
 
-/* Cloud-style navbar bottom edge */
+/* Cloud-style navbar: content scrolls up into puffy clouds */
 .header-cloud {
   position: relative;
   border-bottom: none;
+  overflow: visible;
 }
 
+/* Cloud layer: semi-transparent background that lets content peek through */
+.header-cloud::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--background);
+  opacity: 0.85;
+  z-index: -1;
+}
+
+/* Puffy cloud bumps hanging below the header */
 .header-cloud::after {
   content: "";
   position: absolute;
-  left: -5%;
-  right: -5%;
-  bottom: -20px;
-  height: 28px;
+  left: -2%;
+  right: -2%;
+  top: 100%;
+  height: 40px;
   pointer-events: none;
+  z-index: 1;
   background:
-    radial-gradient(ellipse 70px 22px at 8% 0%, var(--background) 70%, transparent 71%),
-    radial-gradient(ellipse 90px 24px at 20% 0%, var(--background) 70%, transparent 71%),
-    radial-gradient(ellipse 60px 20px at 32% 0%, var(--background) 70%, transparent 71%),
-    radial-gradient(ellipse 100px 26px at 46% 0%, var(--background) 70%, transparent 71%),
-    radial-gradient(ellipse 75px 22px at 58% 0%, var(--background) 70%, transparent 71%),
-    radial-gradient(ellipse 85px 24px at 70% 0%, var(--background) 70%, transparent 71%),
-    radial-gradient(ellipse 65px 20px at 82% 0%, var(--background) 70%, transparent 71%),
-    radial-gradient(ellipse 95px 26px at 95% 0%, var(--background) 70%, transparent 71%);
+    radial-gradient(ellipse 120px 36px at 5% 0%, var(--background) 60%, transparent 61%),
+    radial-gradient(ellipse 160px 40px at 18% 0%, var(--background) 58%, transparent 59%),
+    radial-gradient(ellipse 100px 30px at 30% 0%, var(--background) 62%, transparent 63%),
+    radial-gradient(ellipse 180px 44px at 44% 0%, var(--background) 56%, transparent 57%),
+    radial-gradient(ellipse 130px 34px at 56% 0%, var(--background) 60%, transparent 61%),
+    radial-gradient(ellipse 150px 38px at 68% 0%, var(--background) 58%, transparent 59%),
+    radial-gradient(ellipse 110px 32px at 80% 0%, var(--background) 62%, transparent 63%),
+    radial-gradient(ellipse 170px 42px at 94% 0%, var(--background) 56%, transparent 57%);
+  opacity: 0.9;
+  filter: blur(2px);
 }
