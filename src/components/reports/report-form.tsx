@@ -165,7 +165,7 @@ export function ReportForm() {
               Submit Another
             </Button>
             <a href="/reports" className={buttonVariants({ variant: "outline" })}>
-              View All Reports
+              View Evidence Ledger
             </a>
           </div>
         </CardContent>

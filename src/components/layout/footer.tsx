@@ -29,7 +29,7 @@ export function Footer() {
                   href="/reports"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Reports
+                  Evidence Ledger
                 </Link>
               </li>
               <li>

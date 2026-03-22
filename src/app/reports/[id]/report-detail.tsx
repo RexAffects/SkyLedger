@@ -42,7 +42,7 @@ export function ReportDetail({ id }: ReportDetailProps) {
           This observation may have been removed or the ID is invalid.
         </p>
         <Link href="/reports" className={`${buttonVariants({ variant: "outline" })} mt-4`}>
-          View all reports
+          View Evidence Ledger
         </Link>
       </div>
     );
@@ -60,7 +60,7 @@ export function ReportDetail({ id }: ReportDetailProps) {
           href="/reports"
           className="text-sm text-muted-foreground hover:text-foreground"
         >
-          &larr; Back to reports
+          &larr; Back to Evidence Ledger
         </Link>
       </div>
 
