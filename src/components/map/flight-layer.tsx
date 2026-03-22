@@ -476,6 +476,7 @@ export function FlightLayer({
           positions: [...trail.positions],
           color: f.is_known_wx_mod ? "#ef4444" : TRAIL_COLORS[band],
           altitude_ft: f.altitude_ft,
+          heading: f.heading,
           showAltitude: showAltitudeOnMap,
         };
       });

@@ -13,6 +13,7 @@ export interface FlightTrail {
   positions: [number, number][]; // [lat, lng][]
   color: string;
   altitude_ft: number;
+  heading: number;
   showAltitude?: boolean;
 }
 
@@ -102,6 +103,8 @@ function MapInner({
     CircleMarker: typeof import("react-leaflet").CircleMarker;
     Tooltip: typeof import("react-leaflet").Tooltip;
     useMapEvents: typeof import("react-leaflet").useMapEvents;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    L: any;
   } | null>(null);
 
   useEffect(() => {
@@ -124,6 +127,7 @@ function MapInner({
           CircleMarker: rl.CircleMarker,
           Tooltip: rl.Tooltip,
           useMapEvents: rl.useMapEvents,
+          L: leaflet.default,
         });
       }
     );
@@ -266,17 +270,15 @@ function MapInner({
               }}
             />
 
-            {/* Current position dot */}
-            <CircleMarker
-              center={currentPos}
-              radius={6}
-              pathOptions={{
-                color: trail.color,
-                fillColor: trail.color,
-                fillOpacity: 1,
-                weight: 2,
-                className: onFlightDotClick ? "cursor-pointer" : undefined,
-              }}
+            {/* Current position arrow */}
+            <Marker
+              position={currentPos}
+              icon={MapComponents.L.divIcon({
+                className: "",
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+                html: `<svg viewBox="0 0 20 20" width="20" height="20" style="transform:rotate(${trail.heading}deg);filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))${onFlightDotClick ? ";cursor:pointer" : ""}"><polygon points="10,1 4,17 10,13 16,17" fill="${trail.color}" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>`,
+              })}
               eventHandlers={
                 onFlightDotClick
                   ? { click: () => onFlightDotClick(trail.icao_hex) }
@@ -296,7 +298,7 @@ function MapInner({
                   )}
                 </span>
               </Tooltip>
-            </CircleMarker>
+            </Marker>
           </span>
         );
       })}
