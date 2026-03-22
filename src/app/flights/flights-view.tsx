@@ -263,18 +263,22 @@ export function FlightsView() {
             <div className="space-y-6">
               <div className="grid gap-6 lg:grid-cols-2">
                 {/* Map */}
-                <div className="relative overflow-hidden rounded-lg bg-[#f2efe9] dark:bg-[#2b2b2b]">
+                <div
+                  className="relative overflow-hidden rounded-lg"
+                  style={{ height: 400 }}
+                >
                   <div
                     style={compassMode ? {
-                      transform: (() => {
-                        // Dynamic scale: exactly enough to fill corners at current angle
-                        const t = ((heading % 90) + 90) % 90;
-                        const r = (t > 45 ? 90 - t : t) * Math.PI / 180;
-                        const s = Math.cos(r) + Math.sin(r);
-                        return `rotate(${-heading}deg) scale(${s.toFixed(4)})`;
-                      })(),
+                      position: "absolute" as const,
+                      top: "-21%",
+                      left: "-21%",
+                      width: "142%",
+                      height: "142%",
+                      transform: `rotate(${-heading}deg)`,
                       transformOrigin: "center center",
-                    } : undefined}
+                    } : {
+                      height: "100%",
+                    }}
                   >
                     <MapContainer
                       center={
@@ -283,7 +287,7 @@ export function FlightsView() {
                           : undefined
                       }
                       zoom={10}
-                      className="h-[400px] w-full"
+                      className="h-full w-full"
                       flightTrails={flightTrails}
                       onFlightDotClick={handleFlightDotClick}
                       compassHeading={compassMode ? heading : undefined}
