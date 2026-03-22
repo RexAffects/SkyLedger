@@ -285,8 +285,12 @@ function MapInner({
                   : undefined
               }
             >
-              <Tooltip permanent direction="right" offset={[10, 0]}>
-                <span className="text-xs font-mono font-semibold" style={labelStyle}>
+              <Tooltip permanent interactive direction="right" offset={[10, 0]}>
+                <span
+                  className={`text-xs font-mono font-semibold ${onFlightDotClick ? "cursor-pointer hover:underline" : ""}`}
+                  style={labelStyle}
+                  onClick={onFlightDotClick ? (e) => { e.stopPropagation(); onFlightDotClick(trail.icao_hex); } : undefined}
+                >
                   {trail.tail_number || trail.icao_hex}
                   {trail.showAltitude && (
                     <span className="font-normal text-gray-500">
