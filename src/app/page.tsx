@@ -145,6 +145,33 @@ export default function Home() {
               The facts speak for themselves.
             </Link>
           </p>
+
+          {/* Urgent: April 2026 experiments */}
+          <Link
+            href="/learn/operators/stardust-solutions#experiments"
+            className="block mt-8 max-w-4xl mx-auto"
+          >
+            <div className="rounded-xl border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 p-6 transition-all hover:border-red-400 hover:shadow-lg">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-600 text-white">
+                  URGENT
+                </span>
+                <span className="text-lg font-bold text-red-800 dark:text-red-200">
+                  April 2026 &mdash; Experiments Starting
+                </span>
+              </div>
+              <p className="mt-3 text-sm text-red-700 dark:text-red-300 leading-relaxed text-center max-w-2xl mx-auto">
+                An Israeli company is preparing to release secret
+                &ldquo;magic&rdquo; particles into the stratosphere &mdash; with
+                zero published safety data and no public consultation. A Cornell
+                scientist says their claims &ldquo;cannot be trusted.&rdquo;
+                CIEL calls the plans &ldquo;reckless.&rdquo;
+              </p>
+              <p className="mt-3 text-sm text-red-600 dark:text-red-400 font-medium text-center">
+                Read the full investigation &rarr;
+              </p>
+            </div>
+          </Link>
         </div>
       </section>
 
