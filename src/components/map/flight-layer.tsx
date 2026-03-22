@@ -183,6 +183,7 @@ interface FlightLayerProps {
   onTrailsUpdate?: (trails: FlightTrail[]) => void;
   onFirstFetch?: (count: number) => void;
   onFlightsChange?: (flights: FlightData[]) => void;
+  highlightedIcao?: string | null;
 }
 
 const MAX_TRAIL_POINTS = 180;
@@ -248,6 +249,7 @@ export function FlightLayer({
   onTrailsUpdate,
   onFirstFetch,
   onFlightsChange,
+  highlightedIcao,
 }: FlightLayerProps) {
   const [allFlights, setAllFlights] = useState<FlightData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -710,17 +712,22 @@ export function FlightLayer({
           const tag = ALTITUDE_TAGS[band];
           const trail = trailsRef.current.get(flight.icao_hex);
           const hasTrail = trail && trail.positions.length >= 2;
+          const isHighlighted = highlightedIcao === flight.icao_hex;
 
           return (
-            <button
+            <FlightCard
               key={flight.icao_hex}
+              flight={flight}
+              isHighlighted={isHighlighted}
               onClick={() => onFlightSelect?.(flight)}
-              className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                band === "cloud_seeding"
-                  ? "border-orange-200 bg-orange-50/50 hover:bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20 dark:hover:bg-orange-950/40"
-                  : band === "high_altitude"
-                    ? "border-purple-200 bg-purple-50/50 hover:bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20 dark:hover:bg-purple-950/40"
-                    : "border-border hover:bg-muted/50"
+              className={`w-full text-left p-3 rounded-lg border transition-all duration-300 ${
+                isHighlighted
+                  ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-primary shadow-lg"
+                  : band === "cloud_seeding"
+                    ? "border-orange-200 bg-orange-50/50 hover:bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20 dark:hover:bg-orange-950/40"
+                    : band === "high_altitude"
+                      ? "border-purple-200 bg-purple-50/50 hover:bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20 dark:hover:bg-purple-950/40"
+                      : "border-border hover:bg-muted/50"
               }`}
             >
               <div className="flex items-start justify-between">
@@ -788,7 +795,7 @@ export function FlightLayer({
                   {flight.suspicion_reasons.join(" · ")}
                 </p>
               )}
-            </button>
+            </FlightCard>
           );
         })}
 
@@ -846,6 +853,34 @@ export function FlightLayer({
       {/* Learn More */}
       <LearnMoreSection />
     </div>
+  );
+}
+
+/** Wrapper that auto-scrolls into view within the list when highlighted */
+function FlightCard({
+  isHighlighted,
+  className,
+  onClick,
+  children,
+}: {
+  flight: FlightData;
+  isHighlighted: boolean;
+  className: string;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isHighlighted && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [isHighlighted]);
+
+  return (
+    <button ref={ref} onClick={onClick} className={className}>
+      {children}
+    </button>
   );
 }
 

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { AircraftLookup } from "@/components/flights/aircraft-card";
-import { FlightLayer, type FlightData } from "@/components/map/flight-layer";
+import { FlightLayer } from "@/components/map/flight-layer";
 import { FlightDetailPanel } from "@/components/flights/flight-detail-panel";
 import { MapContainer, type FlightTrail } from "@/components/map/map-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,26 +27,13 @@ export function FlightsView() {
   const scanPhaseRef = useRef(scanPhase);
   scanPhaseRef.current = scanPhase;
   const detailPanelRef = useRef<HTMLDivElement>(null);
-  const flightsRef = useRef<FlightData[]>([]);
+  const [highlightedIcao, setHighlightedIcao] = useState<string | null>(null);
   const [compassMode, setCompassMode] = useState(false);
   const [heading, setHeading] = useState(0);
   const [compassError, setCompassError] = useState<string | null>(null);
 
-  const handleFlightsChange = useCallback((flights: FlightData[]) => {
-    flightsRef.current = flights;
-  }, []);
-
   const handleFlightDotClick = useCallback((icaoHex: string) => {
-    const flight = flightsRef.current.find((f) => f.icao_hex === icaoHex);
-    if (flight) {
-      setSelectedFlight({
-        tail_number: flight.tail_number,
-        callsign: flight.callsign,
-        icao_hex: flight.icao_hex,
-        latitude: flight.latitude,
-        longitude: flight.longitude,
-      });
-    }
+    setHighlightedIcao(icaoHex);
   }, []);
 
   useEffect(() => {
@@ -375,16 +362,17 @@ export function FlightsView() {
                     radius={radius}
                     onTrailsUpdate={handleTrailsUpdate}
                     onFirstFetch={handleFirstFetch}
-                    onFlightsChange={handleFlightsChange}
-                    onFlightSelect={(flight) =>
+                    highlightedIcao={highlightedIcao}
+                    onFlightSelect={(flight) => {
+                      setHighlightedIcao(null);
                       setSelectedFlight({
                         tail_number: flight.tail_number,
                         callsign: flight.callsign,
                         icao_hex: flight.icao_hex,
                         latitude: flight.latitude,
                         longitude: flight.longitude,
-                      })
-                    }
+                      });
+                    }}
                   />
                 </div>
               </div>
