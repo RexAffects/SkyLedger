@@ -234,21 +234,20 @@ function MapInner({
               weight: 1,
             }}
           />
-          {/* Inner dot */}
-          <CircleMarker
-            center={userLocation}
-            radius={8}
-            pathOptions={{
-              color: "#ffffff",
-              fillColor: "#3b82f6",
-              fillOpacity: 1,
-              weight: 3,
-            }}
-          >
-            <Tooltip permanent direction="bottom" offset={[0, 10]}>
-              <span className="text-xs font-semibold">You</span>
-            </Tooltip>
-          </CircleMarker>
+          {/* Inner dot + label */}
+          <Marker
+            position={userLocation}
+            interactive={false}
+            icon={MapComponents.L.divIcon({
+              className: "",
+              iconSize: [16, 16],
+              iconAnchor: [8, 8],
+              html: `<div style="position:relative;width:16px;height:16px">
+                <svg viewBox="0 0 16 16" width="16" height="16" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))"><circle cx="8" cy="8" r="7" fill="#3b82f6" stroke="#fff" stroke-width="3"/></svg>
+                <span style="position:absolute;left:50%;top:18px;transform:translateX(-50%)${typeof compassHeading === "number" ? ` rotate(${compassHeading}deg)` : ""};white-space:nowrap;font-size:11px;font-weight:600;color:#1a1a1a;background:rgba(255,255,255,.9);padding:1px 5px;border-radius:3px;border:1px solid rgba(0,0,0,.15);box-shadow:0 1px 3px rgba(0,0,0,.15)">You</span>
+              </div>`,
+            })}
+          />
         </>
       )}
 
