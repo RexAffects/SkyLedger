@@ -158,26 +158,6 @@ export default function GetInvolvedPage() {
               </p>
             </div>
           </Link>
-          <Link href="/get-involved/foia" className="block group">
-            <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                  FOIA Request Generator
-                </h3>
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                  Interactive tool
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Generate pre-filled FOIA letters targeting EPA, NOAA, FAA, NSF,
-                and state agencies. Select a topic, enter your info, get a letter
-                you can send today.
-              </p>
-              <p className="mt-2 text-xs text-primary font-medium">
-                Build a FOIA request &rarr;
-              </p>
-            </div>
-          </Link>
           <Link href="/get-involved/contact-legislator" className="block group">
             <div className="rounded-lg border-2 border-primary/40 p-5 h-full transition-all hover:border-primary hover:shadow-sm">
               <div className="flex items-center gap-2">
@@ -214,6 +194,26 @@ export default function GetInvolvedPage() {
               </p>
               <p className="mt-2 text-xs text-primary font-medium">
                 See donation options &rarr;
+              </p>
+            </div>
+          </Link>
+          <Link href="/get-involved/foia" className="block group">
+            <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  FOIA Request Generator
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                  Interactive tool
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Generate pre-filled FOIA letters targeting EPA, NOAA, FAA, NSF,
+                and state agencies. Select a topic, enter your info, get a letter
+                you can send today.
+              </p>
+              <p className="mt-2 text-xs text-primary font-medium">
+                Build a FOIA request &rarr;
               </p>
             </div>
           </Link>
