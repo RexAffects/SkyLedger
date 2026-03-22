@@ -112,8 +112,8 @@ export default function Home() {
               </p>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
                 Ready-to-send legislator letters. Printable flyers. Request
-                government records. Support the federal lawsuit. Contact your
-                representatives today.
+                government records. Support the federal lawsuit. Donate to the
+                organizations on the front lines.
               </p>
               <p className="mt-4 text-sm text-primary font-medium">
                 Get involved &rarr;
