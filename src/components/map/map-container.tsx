@@ -159,9 +159,14 @@ function MapInner({
       className={className}
       style={{ borderRadius: "0.5rem" }}
     >
-      {/* Counter-rotate entire tooltip boxes so they stay upright in compass mode */}
+      {/* Counter-rotate tooltip boxes in compass mode, pivoting from their anchor edge */}
       {typeof compassHeading === "number" && (
-        <style>{`.leaflet-tooltip { rotate: ${compassHeading}deg; }`}</style>
+        <style>{`
+          .leaflet-tooltip-right { transform-origin: left center; rotate: ${compassHeading}deg; }
+          .leaflet-tooltip-left { transform-origin: right center; rotate: ${compassHeading}deg; }
+          .leaflet-tooltip-top { transform-origin: center bottom; rotate: ${compassHeading}deg; }
+          .leaflet-tooltip-bottom { transform-origin: center top; rotate: ${compassHeading}deg; }
+        `}</style>
       )}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
