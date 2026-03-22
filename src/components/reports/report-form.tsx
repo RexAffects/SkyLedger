@@ -184,7 +184,6 @@ export function ReportForm() {
           <Input
             type="file"
             accept="image/*"
-            capture="environment"
             onChange={handlePhotoChange}
           />
           {processing && (

@@ -85,6 +85,14 @@ export function Footer() {
                   Testing Guide
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/learn/protect-yourself"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Protect Yourself
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
