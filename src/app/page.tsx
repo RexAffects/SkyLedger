@@ -77,8 +77,9 @@ export default function Home() {
               What&apos;s flying over you?
             </h1>
             <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              Citizens are tracking planes, exposing operators, and passing laws.
-              SkyLedger gives you the tools to see it, prove it, and stop it.
+              SkyLedger gives everyday citizens a real way to do something
+              about it &mdash; track flights, build evidence, follow the money,
+              and join the movement passing laws across America.
             </p>
           </div>
 
@@ -110,8 +111,8 @@ export default function Home() {
                 Take Action
               </p>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                FOIA request templates. Legislator letter generator. Printable
-                flyers. Support the federal lawsuit. Contact your
+                Ready-to-send legislator letters. Printable flyers. Request
+                government records. Support the federal lawsuit. Contact your
                 representatives today.
               </p>
               <p className="mt-4 text-sm text-primary font-medium">
