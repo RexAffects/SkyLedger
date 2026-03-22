@@ -100,6 +100,25 @@ export function PhotoEvidenceDialog({
       const report = await submitReport(reportData);
 
       if (report) {
+        // Archive photo to email (non-blocking)
+        fetch("/api/reports/archive", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            photo_data_url: photoPreview,
+            tail_number: tailNumber,
+            observation_type: observationType,
+            latitude: latitude || 0,
+            longitude: longitude || 0,
+            observed_at: new Date().toISOString(),
+            trail_behavior: trailBehavior || null,
+            notes: notes || null,
+            evidence_hash: evidenceHash,
+            exif_data: exifData,
+            report_id: report.id,
+          }),
+        }).catch(() => {});
+
         setResult({
           success: true,
           message: "Photo evidence submitted and pinned to this aircraft.",
@@ -198,7 +217,6 @@ export function PhotoEvidenceDialog({
                 <Input
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   onChange={handlePhotoChange}
                   className="mt-1"
                 />

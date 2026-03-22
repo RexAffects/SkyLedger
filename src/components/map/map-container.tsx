@@ -22,6 +22,7 @@ interface MapContainerProps {
   center?: [number, number];
   zoom?: number;
   onMapClick?: (lat: number, lng: number) => void;
+  onFlightDotClick?: (icaoHex: string) => void;
   className?: string;
   userLocation?: [number, number];
 }
@@ -32,6 +33,7 @@ export function MapContainer({
   center = DEFAULT_MAP_CENTER,
   zoom = DEFAULT_MAP_ZOOM,
   onMapClick,
+  onFlightDotClick,
   className = "h-[600px] w-full",
   userLocation,
 }: MapContainerProps) {
@@ -56,6 +58,7 @@ export function MapContainer({
       center={center}
       zoom={zoom}
       onMapClick={onMapClick}
+      onFlightDotClick={onFlightDotClick}
       className={className}
       userLocation={userLocation}
     />
@@ -68,6 +71,7 @@ function MapInner({
   center,
   zoom,
   onMapClick,
+  onFlightDotClick,
   className,
   userLocation,
 }: MapContainerProps) {
@@ -230,7 +234,13 @@ function MapInner({
                 fillColor: trail.color,
                 fillOpacity: 1,
                 weight: 2,
+                className: onFlightDotClick ? "cursor-pointer" : undefined,
               }}
+              eventHandlers={
+                onFlightDotClick
+                  ? { click: () => onFlightDotClick(trail.icao_hex) }
+                  : undefined
+              }
             >
               <Tooltip permanent direction="right" offset={[10, 0]}>
                 <span className="text-xs font-mono font-semibold">

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { THREAT_LEVELS } from "@/lib/constants";
 import type { FlightTrail } from "./map-container";
 
-interface FlightData {
+export interface FlightData {
   icao_hex: string;
   tail_number: string | null;
   callsign: string | null;
@@ -182,6 +182,7 @@ interface FlightLayerProps {
   onFlightSelect?: (flight: FlightData) => void;
   onTrailsUpdate?: (trails: FlightTrail[]) => void;
   onFirstFetch?: (count: number) => void;
+  onFlightsChange?: (flights: FlightData[]) => void;
 }
 
 const MAX_TRAIL_POINTS = 180;
@@ -246,6 +247,7 @@ export function FlightLayer({
   onFlightSelect,
   onTrailsUpdate,
   onFirstFetch,
+  onFlightsChange,
 }: FlightLayerProps) {
   const [allFlights, setAllFlights] = useState<FlightData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -414,6 +416,7 @@ export function FlightLayer({
       });
 
       setAllFlights(transformed);
+      onFlightsChange?.(transformed);
       setLastFetch(Date.now());
 
       if (!firstFetchDoneRef.current) {
