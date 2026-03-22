@@ -155,21 +155,50 @@ export default function Home() {
           >
             <div className="rounded-xl border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 p-6 transition-all hover:border-red-400 hover:shadow-lg">
               <div className="flex items-center justify-center gap-2">
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-600 text-white">
-                  URGENT
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-600 text-white animate-pulse">
+                  APRIL 2026
                 </span>
                 <span className="text-lg sm:text-xl font-bold text-red-800 dark:text-red-200">
-                  April 2026 &mdash; Experiments Starting
+                  Experiments Starting Now
                 </span>
               </div>
-              <p className="mt-3 text-sm text-red-700 dark:text-red-300 leading-relaxed text-center max-w-2xl mx-auto">
-                An Israeli company is preparing to release secret
-                &ldquo;magic&rdquo; particles into the stratosphere &mdash; with
-                zero published safety data and no public consultation. A Cornell
-                scientist says their claims &ldquo;cannot be trusted.&rdquo;
-                CIEL calls the plans &ldquo;reckless.&rdquo;
+              <p className="mt-3 text-sm text-red-800 dark:text-red-200 font-medium text-center max-w-2xl mx-auto">
+                An Israeli company is preparing to release secret, patented
+                particles into the stratosphere &mdash; and they won&apos;t tell
+                anyone what&apos;s in them.
               </p>
-              <p className="mt-3 text-sm text-red-600 dark:text-red-400 font-medium text-center">
+              <ul className="mt-3 space-y-2 text-sm text-red-700 dark:text-red-300 max-w-2xl mx-auto text-left">
+                <li>
+                  <span className="font-semibold">Zero published data.</span> No
+                  peer-reviewed research. No public safety assessment. No public
+                  consultation.
+                </li>
+                <li>
+                  <span className="font-semibold">Suspiciously funded.</span>{" "}
+                  $75M raised in under two years &mdash; more than double every
+                  other geoengineering company combined.
+                </li>
+                <li>
+                  <span className="font-semibold">
+                    Intelligence and defense ties.
+                  </span>{" "}
+                  Their lead investor&apos;s advisory board includes a former
+                  Mossad Chief of Intelligence, a former IDF Unit 8200
+                  commander, and former directors of the CIA, FBI, and MI5.
+                </li>
+                <li>
+                  A Cornell scientist says their safety claims{" "}
+                  <span className="font-semibold">
+                    &ldquo;cannot be trusted.&rdquo;
+                  </span>{" "}
+                  The Center for International Environmental Law calls their
+                  plans{" "}
+                  <span className="font-semibold">
+                    &ldquo;reckless.&rdquo;
+                  </span>
+                </li>
+              </ul>
+              <p className="mt-4 text-sm text-red-600 dark:text-red-400 font-bold text-center">
                 Read the full investigation &rarr;
               </p>
             </div>
