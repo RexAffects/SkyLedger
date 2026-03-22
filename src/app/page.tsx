@@ -244,7 +244,7 @@ export default function Home() {
             {[
               {
                 label: "Who owns it",
-                detail: "FAA-registered owner name, city, state. Corporate entity piercing — see who's behind the LLC.",
+                detail: "FAA-registered owner name, city, state. See who's behind the LLC.",
               },
               {
                 label: "Where it's going",
