@@ -159,14 +159,9 @@ function MapInner({
       className={className}
       style={{ borderRadius: "0.5rem" }}
     >
-      {/* Counter-rotate tooltip boxes in compass mode, pivoting from their anchor edge */}
+      {/* Counter-rotate "You" tooltip in compass mode */}
       {typeof compassHeading === "number" && (
-        <style>{`
-          .leaflet-tooltip-right { transform-origin: left center; rotate: ${compassHeading}deg; }
-          .leaflet-tooltip-left { transform-origin: right center; rotate: ${compassHeading}deg; }
-          .leaflet-tooltip-top { transform-origin: center bottom; rotate: ${compassHeading}deg; }
-          .leaflet-tooltip-bottom { transform-origin: center top; rotate: ${compassHeading}deg; }
-        `}</style>
+        <style>{`.leaflet-tooltip-bottom { transform-origin: center top; rotate: ${compassHeading}deg; }`}</style>
       )}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -275,35 +270,24 @@ function MapInner({
               }}
             />
 
-            {/* Current position arrow */}
+            {/* Current position arrow + label (same DOM element so label stays pinned) */}
             <Marker
               position={currentPos}
               icon={MapComponents.L.divIcon({
                 className: "",
                 iconSize: [20, 20],
                 iconAnchor: [10, 10],
-                html: `<svg viewBox="0 0 20 20" width="20" height="20" style="transform:rotate(${trail.heading}deg);filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))${onFlightDotClick ? ";cursor:pointer" : ""}"><polygon points="10,1 4,17 10,13 16,17" fill="${trail.color}" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>`,
+                html: `<div style="position:relative;width:20px;height:20px${onFlightDotClick ? ";cursor:pointer" : ""}">
+                  <svg viewBox="0 0 20 20" width="20" height="20" style="transform:rotate(${trail.heading}deg);filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))"><polygon points="10,1 4,17 10,13 16,17" fill="${trail.color}" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                  <span style="position:absolute;left:22px;top:50%;transform:translateY(-50%)${typeof compassHeading === "number" ? ` rotate(${compassHeading}deg)` : ""};transform-origin:left center;white-space:nowrap;font-size:11px;font-family:ui-monospace,SFMono-Regular,monospace;font-weight:600;color:#1a1a1a;background:rgba(255,255,255,.9);padding:1px 5px;border-radius:3px;border:1px solid rgba(0,0,0,.15);box-shadow:0 1px 3px rgba(0,0,0,.15);pointer-events:auto${onFlightDotClick ? ";cursor:pointer" : ""}">${trail.tail_number || trail.icao_hex}${trail.showAltitude ? ` <span style="font-weight:400;color:#6b7280">${trail.altitude_ft.toLocaleString()} ft</span>` : ""}</span>
+                </div>`,
               })}
               eventHandlers={
                 onFlightDotClick
                   ? { click: () => onFlightDotClick(trail.icao_hex) }
                   : undefined
               }
-            >
-              <Tooltip permanent interactive direction="right" offset={[10, 0]}>
-                <span
-                  className={`text-xs font-mono font-semibold ${onFlightDotClick ? "cursor-pointer hover:underline" : ""}`}
-                  onClick={onFlightDotClick ? (e) => { e.stopPropagation(); onFlightDotClick(trail.icao_hex); } : undefined}
-                >
-                  {trail.tail_number || trail.icao_hex}
-                  {trail.showAltitude && (
-                    <span className="font-normal text-gray-500">
-                      {" "}{trail.altitude_ft.toLocaleString()} ft
-                    </span>
-                  )}
-                </span>
-              </Tooltip>
-            </Marker>
+            />
           </span>
         );
       })}

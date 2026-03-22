@@ -267,7 +267,7 @@ export function FlightsView() {
                   <div
                     style={{
                       transform: compassMode
-                        ? `rotate(${-heading}deg)`
+                        ? `rotate(${-heading}deg) scale(1.05)`
                         : undefined,
                       transformOrigin: "center center",
                     }}
