@@ -409,14 +409,19 @@ export function FlightsView() {
                           {compassError === "android" && (
                             <>
                               <p className="text-muted-foreground">
-                                Your browser may be blocking sensor access. Try:
+                                Motion sensors need to be enabled in Chrome. To turn on:
                               </p>
                               <ol className="text-muted-foreground list-decimal list-inside space-y-0.5">
-                                <li>Tap the <strong>lock icon</strong> in your address bar</li>
-                                <li>Tap <strong>Permissions</strong> or <strong>Site settings</strong></li>
-                                <li>Enable <strong>Motion sensors</strong></li>
-                                <li>If not listed, try <strong>Chrome</strong> — it has the best sensor support</li>
+                                <li>Tap the <strong>three dots menu</strong> (bottom-right)</li>
+                                <li>Tap <strong>Settings</strong></li>
+                                <li>Under General, tap <strong>Site Settings</strong></li>
+                                <li>Under Permissions, tap <strong>Motion Sensors</strong></li>
+                                <li>Enable <strong>&quot;Sites can use motion sensors&quot;</strong></li>
+                                <li>Return here and tap the compass button again</li>
                               </ol>
+                              <p className="text-muted-foreground mt-1">
+                                Using a different browser? Look for motion/sensor permissions in your browser&apos;s site settings.
+                              </p>
                             </>
                           )}
 
