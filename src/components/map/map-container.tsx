@@ -23,6 +23,7 @@ interface MapContainerProps {
   zoom?: number;
   onMapClick?: (lat: number, lng: number) => void;
   onFlightDotClick?: (icaoHex: string) => void;
+  compassHeading?: number;
   className?: string;
   userLocation?: [number, number];
 }
@@ -34,6 +35,7 @@ export function MapContainer({
   zoom = DEFAULT_MAP_ZOOM,
   onMapClick,
   onFlightDotClick,
+  compassHeading,
   className = "h-[600px] w-full",
   userLocation,
 }: MapContainerProps) {
@@ -59,10 +61,24 @@ export function MapContainer({
       zoom={zoom}
       onMapClick={onMapClick}
       onFlightDotClick={onFlightDotClick}
+      compassHeading={compassHeading}
       className={className}
       userLocation={userLocation}
     />
   );
+}
+
+/** Project a point from lat/lng at a bearing (degrees) by a distance (degrees). */
+function projectPoint(
+  lat: number,
+  lng: number,
+  bearingDeg: number,
+  distanceDeg: number
+): [number, number] {
+  const rad = (bearingDeg * Math.PI) / 180;
+  const dLat = distanceDeg * Math.cos(rad);
+  const dLng = (distanceDeg * Math.sin(rad)) / Math.cos((lat * Math.PI) / 180);
+  return [lat + dLat, lng + dLng];
 }
 
 function MapInner({
@@ -72,6 +88,7 @@ function MapInner({
   zoom,
   onMapClick,
   onFlightDotClick,
+  compassHeading,
   className,
   userLocation,
 }: MapContainerProps) {
@@ -81,6 +98,7 @@ function MapInner({
     Marker: typeof import("react-leaflet").Marker;
     Popup: typeof import("react-leaflet").Popup;
     Polyline: typeof import("react-leaflet").Polyline;
+    Polygon: typeof import("react-leaflet").Polygon;
     CircleMarker: typeof import("react-leaflet").CircleMarker;
     Tooltip: typeof import("react-leaflet").Tooltip;
     useMapEvents: typeof import("react-leaflet").useMapEvents;
@@ -102,6 +120,7 @@ function MapInner({
           Marker: rl.Marker,
           Popup: rl.Popup,
           Polyline: rl.Polyline,
+          Polygon: rl.Polygon,
           CircleMarker: rl.CircleMarker,
           Tooltip: rl.Tooltip,
           useMapEvents: rl.useMapEvents,
@@ -124,9 +143,16 @@ function MapInner({
     Marker,
     Popup,
     Polyline,
+    Polygon,
     CircleMarker,
     Tooltip,
   } = MapComponents;
+
+  // Counter-rotation for labels when compass mode is active
+  const labelStyle: React.CSSProperties | undefined =
+    typeof compassHeading === "number"
+      ? { display: "inline-block", transform: `rotate(${compassHeading}deg)` }
+      : undefined;
 
   return (
     <LeafletMap
@@ -178,6 +204,23 @@ function MapInner({
       {/* User location pin */}
       {userLocation && (
         <>
+          {/* Direction cone when compass is active */}
+          {typeof compassHeading === "number" && (
+            <Polygon
+              positions={[
+                userLocation,
+                projectPoint(userLocation[0], userLocation[1], compassHeading - 20, 0.018),
+                projectPoint(userLocation[0], userLocation[1], compassHeading, 0.025),
+                projectPoint(userLocation[0], userLocation[1], compassHeading + 20, 0.018),
+              ]}
+              pathOptions={{
+                color: "#3b82f6",
+                fillColor: "#3b82f6",
+                fillOpacity: 0.25,
+                weight: 0,
+              }}
+            />
+          )}
           {/* Halo */}
           <CircleMarker
             center={userLocation}
@@ -201,7 +244,7 @@ function MapInner({
             }}
           >
             <Tooltip permanent direction="bottom" offset={[0, 10]}>
-              <span className="text-xs font-semibold">You</span>
+              <span className="text-xs font-semibold" style={labelStyle}>You</span>
             </Tooltip>
           </CircleMarker>
         </>
@@ -243,7 +286,7 @@ function MapInner({
               }
             >
               <Tooltip permanent direction="right" offset={[10, 0]}>
-                <span className="text-xs font-mono font-semibold">
+                <span className="text-xs font-mono font-semibold" style={labelStyle}>
                   {trail.tail_number || trail.icao_hex}
                   {trail.showAltitude && (
                     <span className="font-normal text-gray-500">

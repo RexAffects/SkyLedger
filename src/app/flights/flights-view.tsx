@@ -210,11 +210,11 @@ export function FlightsView() {
             <div className="space-y-6">
               <div className="grid gap-6 lg:grid-cols-2">
                 {/* Map */}
-                <div className="relative overflow-hidden rounded-lg">
+                <div className="relative overflow-hidden rounded-lg bg-[#f2efe9] dark:bg-[#2b2b2b]">
                   <div
                     style={{
                       transform: compassMode
-                        ? `rotate(${-heading}deg) scale(1.42)`
+                        ? `rotate(${-heading}deg)`
                         : undefined,
                       transformOrigin: "center center",
                       transition: "transform 0.15s ease-out",
@@ -230,6 +230,7 @@ export function FlightsView() {
                       className="h-[400px] w-full"
                       flightTrails={flightTrails}
                       onFlightDotClick={handleFlightDotClick}
+                      compassHeading={compassMode ? heading : undefined}
                       userLocation={
                         mapCenter
                           ? [mapCenter.lat, mapCenter.lng]
