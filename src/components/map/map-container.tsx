@@ -23,6 +23,7 @@ interface MapContainerProps {
   zoom?: number;
   onMapClick?: (lat: number, lng: number) => void;
   className?: string;
+  userLocation?: [number, number];
 }
 
 export function MapContainer({
@@ -32,6 +33,7 @@ export function MapContainer({
   zoom = DEFAULT_MAP_ZOOM,
   onMapClick,
   className = "h-[600px] w-full",
+  userLocation,
 }: MapContainerProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -55,6 +57,7 @@ export function MapContainer({
       zoom={zoom}
       onMapClick={onMapClick}
       className={className}
+      userLocation={userLocation}
     />
   );
 }
@@ -66,6 +69,7 @@ function MapInner({
   zoom,
   onMapClick,
   className,
+  userLocation,
 }: MapContainerProps) {
   const [MapComponents, setMapComponents] = useState<{
     MapContainer: typeof import("react-leaflet").MapContainer;
@@ -166,6 +170,38 @@ function MapInner({
           </Popup>
         </Marker>
       ))}
+
+      {/* User location pin */}
+      {userLocation && (
+        <>
+          {/* Halo */}
+          <CircleMarker
+            center={userLocation}
+            radius={20}
+            pathOptions={{
+              color: "#3b82f6",
+              fillColor: "#3b82f6",
+              fillOpacity: 0.15,
+              weight: 1,
+            }}
+          />
+          {/* Inner dot */}
+          <CircleMarker
+            center={userLocation}
+            radius={8}
+            pathOptions={{
+              color: "#ffffff",
+              fillColor: "#3b82f6",
+              fillOpacity: 1,
+              weight: 3,
+            }}
+          >
+            <Tooltip permanent direction="bottom" offset={[0, 10]}>
+              <span className="text-xs font-semibold">You</span>
+            </Tooltip>
+          </CircleMarker>
+        </>
+      )}
 
       {/* Flight trails */}
       {flightTrails?.map((trail) => {

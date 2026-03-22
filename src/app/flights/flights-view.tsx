@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { AircraftLookup } from "@/components/flights/aircraft-card";
 import { FlightLayer } from "@/components/map/flight-layer";
 import { FlightDetailPanel } from "@/components/flights/flight-detail-panel";
@@ -20,18 +20,32 @@ export function FlightsView() {
   } | null>(null);
   const [flightTrails, setFlightTrails] = useState<FlightTrail[]>([]);
   const [radius, setRadius] = useState(50);
+  const [scanPhase, setScanPhase] = useState<
+    "idle" | "locating" | "scanning" | "found" | "tracking"
+  >("idle");
+  const [foundCount, setFoundCount] = useState(0);
+  const scanPhaseRef = useRef(scanPhase);
+  scanPhaseRef.current = scanPhase;
 
   const handleTrailsUpdate = useCallback((trails: FlightTrail[]) => {
     setFlightTrails(trails);
   }, []);
 
+  const handleFirstFetch = useCallback((count: number) => {
+    setFoundCount(count);
+    setScanPhase("found");
+    setTimeout(() => setScanPhase("tracking"), 2000);
+  }, []);
+
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) return;
+    setScanPhase("locating");
     navigator.geolocation.getCurrentPosition((pos) => {
       setMapCenter({
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
       });
+      setScanPhase("scanning");
       setShowFlights(true);
     });
   };
@@ -75,7 +89,7 @@ export function FlightsView() {
           </div>
           <p className="text-xs text-muted-foreground mt-2">
             Click any aircraft to see full details including owner, route, and
-            airports. Data refreshes every 10 seconds.
+            airports. Data refreshes every 5–10 seconds.
           </p>
         </CardHeader>
         <CardContent>
@@ -109,7 +123,7 @@ export function FlightsView() {
             <div className="space-y-6">
               <div className="grid gap-6 lg:grid-cols-2">
                 {/* Map */}
-                <div>
+                <div className="relative">
                   <MapContainer
                     center={
                       mapCenter
@@ -119,6 +133,11 @@ export function FlightsView() {
                     zoom={10}
                     className="h-[400px] w-full"
                     flightTrails={flightTrails}
+                    userLocation={
+                      mapCenter
+                        ? [mapCenter.lat, mapCenter.lng]
+                        : undefined
+                    }
                     reports={
                       selectedFlight
                         ? [
@@ -145,6 +164,36 @@ export function FlightsView() {
                         : []
                     }
                   />
+                  {/* Scanning overlay */}
+                  {scanPhase !== "tracking" && scanPhase !== "idle" && (
+                    <div className="absolute inset-0 z-[1000] flex flex-col items-center justify-center bg-background/80 rounded-lg pointer-events-none">
+                      <div className="relative w-24 h-24">
+                        <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radar-ping" />
+                        <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radar-ping" style={{ animationDelay: "0.5s" }} />
+                        <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radar-ping" style={{ animationDelay: "1s" }} />
+                        <div className="absolute inset-3 rounded-full bg-primary/10 flex items-center justify-center">
+                          <svg
+                            className="h-8 w-8 text-primary"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      <p className="mt-4 text-sm font-medium">
+                        {scanPhase === "locating" && "Getting your location..."}
+                        {scanPhase === "scanning" && "Scanning airspace..."}
+                        {scanPhase === "found" && `Found ${foundCount} aircraft`}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Flight list */}
@@ -153,6 +202,7 @@ export function FlightsView() {
                     mapCenter={mapCenter}
                     radius={radius}
                     onTrailsUpdate={handleTrailsUpdate}
+                    onFirstFetch={handleFirstFetch}
                     onFlightSelect={(flight) =>
                       setSelectedFlight({
                         tail_number: flight.tail_number,

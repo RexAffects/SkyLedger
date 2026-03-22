@@ -181,9 +181,28 @@ interface FlightLayerProps {
   radius?: number;
   onFlightSelect?: (flight: FlightData) => void;
   onTrailsUpdate?: (trails: FlightTrail[]) => void;
+  onFirstFetch?: (count: number) => void;
 }
 
 const MAX_TRAIL_POINTS = 180;
+
+/**
+ * Project a position backwards along a heading by a given distance.
+ * Used to create an initial trail segment so flights appear with trails immediately.
+ */
+function projectBackward(
+  lat: number,
+  lng: number,
+  headingDeg: number,
+  distanceNm: number
+): [number, number] {
+  const reverseHeadingRad = ((headingDeg + 180) % 360) * (Math.PI / 180);
+  const distanceDeg = distanceNm / 60;
+  const dLat = distanceDeg * Math.cos(reverseHeadingRad);
+  const dLng =
+    distanceDeg * Math.sin(reverseHeadingRad) / Math.cos(lat * (Math.PI / 180));
+  return [lat + dLat, lng + dLng];
+}
 
 // Read pinned aircraft from localStorage
 function getPinnedAircraft(): Set<string> {
@@ -226,6 +245,7 @@ export function FlightLayer({
   radius = 50,
   onFlightSelect,
   onTrailsUpdate,
+  onFirstFetch,
 }: FlightLayerProps) {
   const [allFlights, setAllFlights] = useState<FlightData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -250,6 +270,7 @@ export function FlightLayer({
   const trailsRef = useRef<
     Map<string, { positions: [number, number][]; tail_number: string | null }>
   >(new Map());
+  const firstFetchDoneRef = useRef(false);
 
   const fetchFlights = useCallback(async () => {
     if (!mapCenter) return;
@@ -349,8 +370,23 @@ export function FlightLayer({
           }
           existing.tail_number = flight.tail_number;
         } else {
+          // Project a short trail backwards based on heading + speed
+          // so the map shows trails from the very first poll
+          const positions: [number, number][] = [];
+          if (flight.heading > 0 && flight.speed_kts > 0) {
+            const hoursBack = 30 / 3600; // 30 seconds of travel
+            const distanceNm = flight.speed_kts * hoursBack;
+            const backPos = projectBackward(
+              flight.latitude,
+              flight.longitude,
+              flight.heading,
+              distanceNm
+            );
+            positions.push(backPos);
+          }
+          positions.push(newPos);
           trailsRef.current.set(flight.icao_hex, {
-            positions: [newPos],
+            positions,
             tail_number: flight.tail_number,
           });
         }
@@ -379,6 +415,11 @@ export function FlightLayer({
 
       setAllFlights(transformed);
       setLastFetch(Date.now());
+
+      if (!firstFetchDoneRef.current) {
+        firstFetchDoneRef.current = true;
+        onFirstFetch?.(transformed.length);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -439,9 +480,21 @@ export function FlightLayer({
 
   useEffect(() => {
     trailsRef.current.clear();
+    firstFetchDoneRef.current = false;
     fetchFlights();
-    const interval = setInterval(fetchFlights, 10000);
-    return () => clearInterval(interval);
+
+    // Fast polling (5s) for first 60 seconds, then relax to 10s
+    let intervalId = setInterval(fetchFlights, 5000);
+
+    const slowdownTimer = setTimeout(() => {
+      clearInterval(intervalId);
+      intervalId = setInterval(fetchFlights, 10000);
+    }, 60000);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(slowdownTimer);
+    };
   }, [fetchFlights]);
 
   // Listen for pin changes from detail panel
