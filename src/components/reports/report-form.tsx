@@ -119,6 +119,27 @@ export function ReportForm() {
     });
 
     if (result) {
+      // Archive photo to email (non-blocking)
+      if (photoPreview) {
+        fetch("/api/reports/archive", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            photo_data_url: photoPreview,
+            tail_number: null,
+            observation_type: formData.observation_type,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            observed_at: formData.observed_at,
+            trail_behavior: formData.trail_behavior,
+            notes: formData.notes || null,
+            evidence_hash: formData.evidence_hash,
+            exif_data: formData.exif_data,
+            report_id: result.id,
+          }),
+        }).catch(() => {});
+      }
+
       setSubmitted(true);
     }
   };
