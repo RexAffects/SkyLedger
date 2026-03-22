@@ -148,12 +148,6 @@ function MapInner({
     Tooltip,
   } = MapComponents;
 
-  // Counter-rotation for labels when compass mode is active
-  const labelStyle: React.CSSProperties | undefined =
-    typeof compassHeading === "number"
-      ? { display: "inline-block", transform: `rotate(${compassHeading}deg)` }
-      : undefined;
-
   return (
     <LeafletMap
       center={center}
@@ -161,6 +155,10 @@ function MapInner({
       className={className}
       style={{ borderRadius: "0.5rem" }}
     >
+      {/* Counter-rotate entire tooltip boxes so they stay upright in compass mode */}
+      {typeof compassHeading === "number" && (
+        <style>{`.leaflet-tooltip { rotate: ${compassHeading}deg; }`}</style>
+      )}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -244,7 +242,7 @@ function MapInner({
             }}
           >
             <Tooltip permanent direction="bottom" offset={[0, 10]}>
-              <span className="text-xs font-semibold" style={labelStyle}>You</span>
+              <span className="text-xs font-semibold">You</span>
             </Tooltip>
           </CircleMarker>
         </>
@@ -288,7 +286,6 @@ function MapInner({
               <Tooltip permanent interactive direction="right" offset={[10, 0]}>
                 <span
                   className={`text-xs font-mono font-semibold ${onFlightDotClick ? "cursor-pointer hover:underline" : ""}`}
-                  style={labelStyle}
                   onClick={onFlightDotClick ? (e) => { e.stopPropagation(); onFlightDotClick(trail.icao_hex); } : undefined}
                 >
                   {trail.tail_number || trail.icao_hex}

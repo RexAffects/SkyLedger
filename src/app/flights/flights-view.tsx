@@ -43,30 +43,50 @@ export function FlightsView() {
   }, [selectedFlight]);
 
   // Compass / device orientation
+  const smoothHeadingRef = useRef(0);
+  const rafRef = useRef<number>(0);
+
   useEffect(() => {
     if (!compassMode) {
       setHeading(0);
+      smoothHeadingRef.current = 0;
       return;
     }
+
+    let rawHeading = 0;
 
     const handler = (e: DeviceOrientationEvent) => {
       // iOS provides webkitCompassHeading (degrees clockwise from north)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const ios = (e as any).webkitCompassHeading as number | undefined;
       if (typeof ios === "number" && !isNaN(ios)) {
-        setHeading(ios);
+        rawHeading = ios;
         return;
       }
       // Android: alpha is counterclockwise from north when absolute
       if (e.alpha !== null && e.absolute) {
-        setHeading(360 - e.alpha);
+        rawHeading = 360 - e.alpha;
         return;
       }
       // Fallback: non-absolute alpha (less reliable but still useful)
       if (e.alpha !== null) {
-        setHeading(360 - e.alpha);
+        rawHeading = 360 - e.alpha;
       }
     };
+
+    // Smooth heading updates synced to animation frames
+    const tick = () => {
+      const prev = smoothHeadingRef.current;
+      // Shortest angular distance (handles 359° → 1° wraparound)
+      let diff = rawHeading - prev;
+      if (diff > 180) diff -= 360;
+      if (diff < -180) diff += 360;
+      const next = (prev + diff * 0.25 + 360) % 360;
+      smoothHeadingRef.current = next;
+      setHeading(next);
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
 
     // Try absolute orientation first (Android), fall back to standard
     let eventName = "deviceorientationabsolute";
@@ -82,6 +102,7 @@ export function FlightsView() {
     }
 
     return () => {
+      cancelAnimationFrame(rafRef.current);
       window.removeEventListener(eventName, handler as EventListener);
       window.removeEventListener("deviceorientation", handler as EventListener);
     };
@@ -217,7 +238,6 @@ export function FlightsView() {
                         ? `rotate(${-heading}deg)`
                         : undefined,
                       transformOrigin: "center center",
-                      transition: "transform 0.15s ease-out",
                     }}
                   >
                     <MapContainer
@@ -285,7 +305,6 @@ export function FlightsView() {
                           transform: compassMode
                             ? `rotate(${heading}deg)`
                             : undefined,
-                          transition: "transform 0.15s ease-out",
                         }}
                       >
                         {/* Compass needle: red half points north */}
@@ -306,7 +325,6 @@ export function FlightsView() {
                         style={{
                           display: "inline-block",
                           transform: `rotate(${-heading}deg)`,
-                          transition: "transform 0.15s ease-out",
                         }}
                       >
                         N
