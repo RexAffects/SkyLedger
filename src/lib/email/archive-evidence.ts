@@ -23,7 +23,10 @@ export async function archiveEvidence(data: ArchiveData): Promise<void> {
   const password = process.env.GMAIL_APP_PASSWORD;
 
   if (!address || !password) {
-    console.warn("GMAIL_ADDRESS or GMAIL_APP_PASSWORD not set — skipping archive");
+    console.warn("GMAIL_ADDRESS or GMAIL_APP_PASSWORD not set — skipping archive", {
+      hasAddress: !!address,
+      hasPassword: !!password,
+    });
     return;
   }
 

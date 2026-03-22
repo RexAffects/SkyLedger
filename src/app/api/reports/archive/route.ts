@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { archiveEvidence } from "@/lib/email/archive-evidence";
 
+// Allow larger request bodies for base64 photo data
+export const maxDuration = 30;
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -26,8 +29,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Fire and forget — don't block the response
-    archiveEvidence({
+    // Must await — serverless functions terminate after response is sent
+    await archiveEvidence({
       photoDataUrl: photo_data_url,
       tailNumber: tail_number || null,
       observationType: observation_type,
@@ -39,15 +42,14 @@ export async function POST(request: Request) {
       evidenceHash: evidence_hash,
       exifData: exif_data || null,
       reportId: report_id,
-    }).catch((err) => {
-      console.error("Failed to archive evidence email:", err);
     });
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error("Archive evidence error:", err);
     return NextResponse.json(
-      { error: "Invalid request" },
-      { status: 400 }
+      { error: "Failed to archive" },
+      { status: 500 }
     );
   }
 }
