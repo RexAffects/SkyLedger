@@ -58,23 +58,27 @@ export function FlightsView() {
     let rawHeading = 0;
 
     const handler = (e: DeviceOrientationEvent) => {
-      gotOrientationData.current = true;
       // iOS provides webkitCompassHeading (degrees clockwise from north)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const ios = (e as any).webkitCompassHeading as number | undefined;
       if (typeof ios === "number" && !isNaN(ios)) {
+        gotOrientationData.current = true;
         rawHeading = ios;
         return;
       }
       // Android: alpha is counterclockwise from north when absolute
       if (e.alpha !== null && e.absolute) {
+        gotOrientationData.current = true;
         rawHeading = 360 - e.alpha;
         return;
       }
       // Fallback: non-absolute alpha (less reliable but still useful)
       if (e.alpha !== null) {
+        gotOrientationData.current = true;
         rawHeading = 360 - e.alpha;
       }
+      // If event fired but alpha is null — sensor not providing data,
+      // gotOrientationData stays false so the timeout will catch it
     };
 
     // Smooth heading updates synced to animation frames
