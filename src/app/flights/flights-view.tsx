@@ -28,6 +28,9 @@ export function FlightsView() {
   scanPhaseRef.current = scanPhase;
   const detailPanelRef = useRef<HTMLDivElement>(null);
   const flightsRef = useRef<FlightData[]>([]);
+  const [compassMode, setCompassMode] = useState(false);
+  const [heading, setHeading] = useState(0);
+  const [compassError, setCompassError] = useState<string | null>(null);
 
   const handleFlightsChange = useCallback((flights: FlightData[]) => {
     flightsRef.current = flights;
@@ -51,6 +54,78 @@ export function FlightsView() {
       detailPanelRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [selectedFlight]);
+
+  // Compass / device orientation
+  useEffect(() => {
+    if (!compassMode) {
+      setHeading(0);
+      return;
+    }
+
+    const handler = (e: DeviceOrientationEvent) => {
+      // iOS provides webkitCompassHeading (degrees clockwise from north)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ios = (e as any).webkitCompassHeading as number | undefined;
+      if (typeof ios === "number" && !isNaN(ios)) {
+        setHeading(ios);
+        return;
+      }
+      // Android: alpha is counterclockwise from north when absolute
+      if (e.alpha !== null && e.absolute) {
+        setHeading(360 - e.alpha);
+        return;
+      }
+      // Fallback: non-absolute alpha (less reliable but still useful)
+      if (e.alpha !== null) {
+        setHeading(360 - e.alpha);
+      }
+    };
+
+    // Try absolute orientation first (Android), fall back to standard
+    let eventName = "deviceorientationabsolute";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(window as any).DeviceOrientationAbsoluteEvent) {
+      eventName = "deviceorientation";
+    }
+
+    window.addEventListener(eventName, handler as EventListener);
+    // Also listen to standard event as fallback
+    if (eventName !== "deviceorientation") {
+      window.addEventListener("deviceorientation", handler as EventListener);
+    }
+
+    return () => {
+      window.removeEventListener(eventName, handler as EventListener);
+      window.removeEventListener("deviceorientation", handler as EventListener);
+    };
+  }, [compassMode]);
+
+  const handleCompassToggle = useCallback(async () => {
+    if (compassMode) {
+      setCompassMode(false);
+      setCompassError(null);
+      return;
+    }
+
+    // iOS 13+ requires permission request
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const DOE = DeviceOrientationEvent as any;
+    if (typeof DOE.requestPermission === "function") {
+      try {
+        const permission = await DOE.requestPermission();
+        if (permission !== "granted") {
+          setCompassError("Permission denied");
+          return;
+        }
+      } catch {
+        setCompassError("Permission denied");
+        return;
+      }
+    }
+
+    setCompassError(null);
+    setCompassMode(true);
+  }, [compassMode]);
 
   const handleTrailsUpdate = useCallback((trails: FlightTrail[]) => {
     setFlightTrails(trails);
@@ -148,48 +223,119 @@ export function FlightsView() {
             <div className="space-y-6">
               <div className="grid gap-6 lg:grid-cols-2">
                 {/* Map */}
-                <div className="relative">
-                  <MapContainer
-                    center={
-                      mapCenter
-                        ? [mapCenter.lat, mapCenter.lng]
-                        : undefined
-                    }
-                    zoom={10}
-                    className="h-[400px] w-full"
-                    flightTrails={flightTrails}
-                    onFlightDotClick={handleFlightDotClick}
-                    userLocation={
-                      mapCenter
-                        ? [mapCenter.lat, mapCenter.lng]
-                        : undefined
-                    }
-                    reports={
-                      selectedFlight
-                        ? [
-                            {
-                              id: selectedFlight.icao_hex,
-                              latitude: selectedFlight.latitude,
-                              longitude: selectedFlight.longitude,
-                              observed_at: new Date().toISOString(),
-                              observation_type: "aircraft",
-                              aircraft_count: null,
-                              duration_minutes: null,
-                              trail_behavior: null,
-                              notes: selectedFlight.tail_number || selectedFlight.icao_hex,
-                              photo_urls: [],
-                              evidence_hash: "",
-                              exif_data: null,
-                              weather_conditions: null,
-                              verification_level: 3,
-                              status: "active",
-                              created_at: new Date().toISOString(),
-                              tail_number: selectedFlight.tail_number || null,
-                            },
-                          ]
-                        : []
-                    }
-                  />
+                <div className="relative overflow-hidden rounded-lg">
+                  <div
+                    style={{
+                      transform: compassMode
+                        ? `rotate(${-heading}deg) scale(1.42)`
+                        : undefined,
+                      transformOrigin: "center center",
+                      transition: "transform 0.15s ease-out",
+                    }}
+                  >
+                    <MapContainer
+                      center={
+                        mapCenter
+                          ? [mapCenter.lat, mapCenter.lng]
+                          : undefined
+                      }
+                      zoom={10}
+                      className="h-[400px] w-full"
+                      flightTrails={flightTrails}
+                      onFlightDotClick={handleFlightDotClick}
+                      userLocation={
+                        mapCenter
+                          ? [mapCenter.lat, mapCenter.lng]
+                          : undefined
+                      }
+                      reports={
+                        selectedFlight
+                          ? [
+                              {
+                                id: selectedFlight.icao_hex,
+                                latitude: selectedFlight.latitude,
+                                longitude: selectedFlight.longitude,
+                                observed_at: new Date().toISOString(),
+                                observation_type: "aircraft",
+                                aircraft_count: null,
+                                duration_minutes: null,
+                                trail_behavior: null,
+                                notes: selectedFlight.tail_number || selectedFlight.icao_hex,
+                                photo_urls: [],
+                                evidence_hash: "",
+                                exif_data: null,
+                                weather_conditions: null,
+                                verification_level: 3,
+                                status: "active",
+                                created_at: new Date().toISOString(),
+                                tail_number: selectedFlight.tail_number || null,
+                              },
+                            ]
+                          : []
+                      }
+                    />
+                  </div>
+
+                  {/* Compass toggle button */}
+                  {showFlights && (
+                    <button
+                      onClick={handleCompassToggle}
+                      className={`absolute top-2 right-2 z-[1001] w-9 h-9 rounded-full border-2 flex items-center justify-center shadow-md transition-colors ${
+                        compassMode
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "bg-background/90 border-border text-muted-foreground hover:bg-muted"
+                      }`}
+                      title={compassMode ? "Disable compass" : "Orient map to your direction"}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                        fill="none"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        style={{
+                          transform: compassMode
+                            ? `rotate(${heading}deg)`
+                            : undefined,
+                          transition: "transform 0.15s ease-out",
+                        }}
+                      >
+                        {/* Compass needle: red half points north */}
+                        <polygon points="12,2 9,12 12,10 15,12" fill="currentColor" stroke="none" opacity={compassMode ? 1 : 0.6} />
+                        <polygon points="12,22 9,12 12,14 15,12" fill="currentColor" stroke="none" opacity={0.25} />
+                        <circle cx="12" cy="12" r="10" strokeWidth="1.5" fill="none" />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* North indicator when compass is active */}
+                  {compassMode && (
+                    <div
+                      className="absolute top-2 left-2 z-[1001] flex items-center gap-1 bg-background/90 rounded-full px-2 py-1 border border-border shadow-sm"
+                    >
+                      <span
+                        className="text-red-500 text-xs font-bold"
+                        style={{
+                          display: "inline-block",
+                          transform: `rotate(${-heading}deg)`,
+                          transition: "transform 0.15s ease-out",
+                        }}
+                      >
+                        N
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {Math.round(heading)}°
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Compass error */}
+                  {compassError && (
+                    <div className="absolute bottom-2 left-2 right-2 z-[1001] bg-destructive/90 text-destructive-foreground text-xs rounded-md px-3 py-1.5 text-center">
+                      Compass: {compassError}
+                    </div>
+                  )}
+
                   {/* Scanning overlay */}
                   {scanPhase !== "tracking" && scanPhase !== "idle" && (
                     <div className="absolute inset-0 z-[1000] flex flex-col items-center justify-center bg-background/80 rounded-lg pointer-events-none">
