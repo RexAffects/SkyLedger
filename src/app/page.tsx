@@ -89,17 +89,16 @@ export default function Home() {
               className="group rounded-xl border-2 border-primary bg-background p-6 text-center transition-all hover:shadow-lg hover:scale-[1.02]"
             >
               <p className="text-2xl font-bold group-hover:text-primary transition-colors">
-                Track Flights
+                Track &amp; Tag
               </p>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                Real-time aircraft tracking. See who owns every plane above you.
-                Flag suspicious aircraft. Submit photo evidence. We
-                automatically capture your photo&apos;s time, date, and location
-                and cross-reference it with flight data to build verifiable
-                proof.
+                See something overhead? Track it live. Identify the operator.
+                Tag known cloud seeders. Submit photo evidence &mdash; we
+                cross-reference your photo&apos;s time and location with live
+                flight data automatically.
               </p>
               <p className="mt-4 text-sm text-primary font-medium">
-                Open tracker &rarr;
+                Track it now &rarr;
               </p>
             </Link>
 
@@ -434,7 +433,7 @@ export default function Home() {
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <LinkButton href="/flights" size="lg">
-              Track Flights Now
+              Track &amp; Tag Now
             </LinkButton>
             <LinkButton href="/get-involved" variant="outline" size="lg">
               Take Action
