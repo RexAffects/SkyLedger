@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { AircraftLookup } from "@/components/flights/aircraft-card";
 import { FlightLayer } from "@/components/map/flight-layer";
 import { FlightDetailPanel } from "@/components/flights/flight-detail-panel";
@@ -26,6 +26,13 @@ export function FlightsView() {
   const [foundCount, setFoundCount] = useState(0);
   const scanPhaseRef = useRef(scanPhase);
   scanPhaseRef.current = scanPhase;
+  const detailPanelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selectedFlight && detailPanelRef.current) {
+      detailPanelRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedFlight]);
 
   const handleTrailsUpdate = useCallback((trails: FlightTrail[]) => {
     setFlightTrails(trails);
@@ -218,12 +225,14 @@ export function FlightsView() {
 
               {/* Detail Panel — appears when you click on an aircraft */}
               {selectedFlight && (
+                <div ref={detailPanelRef}>
                 <FlightDetailPanel
                   hex={selectedFlight.icao_hex}
                   callsign={selectedFlight.callsign || undefined}
                   tail={selectedFlight.tail_number || undefined}
                   onClose={() => setSelectedFlight(null)}
                 />
+                </div>
               )}
             </div>
           )}
