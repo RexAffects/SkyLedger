@@ -186,7 +186,7 @@ export default function Home() {
             {[
               {
                 label: "Who owns it",
-                detail: "FAA-registered owner name, city, state, corporate entity piercing",
+                detail: "FAA-registered owner name, city, state. Corporate entity piercing — see who's behind the LLC.",
               },
               {
                 label: "Where it's going",
@@ -201,12 +201,12 @@ export default function Home() {
                 detail: "Real-time position, speed, heading + flight trail drawn on the map",
               },
               {
-                label: "Is it flagged",
-                detail: "Orange = cloud seeding range, purple = high altitude, red = known WX mod operator",
+                label: "Tagged & logged",
+                detail: "Known cloud seeding operators are tagged and logged in the public ledger. Orange = seeding-range aircraft, purple = high altitude, red = known weather modification operator.",
               },
               {
-                label: "Evidence grade",
-                detail: "All data from government sources, SHA-256 hashed",
+                label: "Tamper-proof record",
+                detail: "Every data point from government sources. SHA-256 hashed — the same integrity standard used in federal court.",
               },
             ].map((item) => (
               <div
