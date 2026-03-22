@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
 import type { CitizenReport } from "@/lib/types";
 
@@ -173,6 +173,12 @@ function MapInner({
           useMapEvents={MapComponents.useMapEvents}
         />
       )}
+      {typeof compassHeading === "number" && (
+        <CompassDragHandler
+          compassHeading={compassHeading}
+          useMapEvents={MapComponents.useMapEvents}
+        />
+      )}
 
       {/* Citizen report markers */}
       {reports?.map((report) => (
@@ -306,5 +312,113 @@ function ClickHandler({
       onClick(e.latlng.lat, e.latlng.lng);
     },
   });
+  return null;
+}
+
+/**
+ * When compass mode is active, Leaflet's built-in drag handler operates in
+ * unrotated screen space, making panning feel broken. This component disables
+ * the default drag, captures touch/mouse events, rotates the delta vector by
+ * the compass heading, and applies the corrected pan via map.panBy().
+ *
+ * Pinch-to-zoom is left untouched (only single-finger drags are intercepted).
+ */
+function CompassDragHandler({
+  compassHeading,
+  useMapEvents,
+}: {
+  compassHeading: number;
+  useMapEvents: typeof import("react-leaflet").useMapEvents;
+}) {
+  const headingRef = useRef(compassHeading);
+  headingRef.current = compassHeading;
+
+  const map = useMapEvents({});
+
+  useEffect(() => {
+    map.dragging.disable();
+    const container = map.getContainer();
+
+    // --- Touch (mobile) ---
+    let touchDragging = false;
+    let lastTouch = { x: 0, y: 0 };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        touchDragging = true;
+        lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      } else {
+        touchDragging = false; // multi-touch → let Leaflet zoom handle it
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!touchDragging || e.touches.length !== 1) {
+        touchDragging = false;
+        return;
+      }
+      e.preventDefault(); // prevent page scroll
+
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastTouch.x;
+      const dy = touch.clientY - lastTouch.y;
+      lastTouch = { x: touch.clientX, y: touch.clientY };
+
+      const h = headingRef.current * (Math.PI / 180);
+      const mapDx = dx * Math.cos(h) - dy * Math.sin(h);
+      const mapDy = dx * Math.sin(h) + dy * Math.cos(h);
+      map.panBy([-mapDx, -mapDy], { animate: false });
+    };
+
+    const onTouchEnd = () => {
+      touchDragging = false;
+    };
+
+    // --- Mouse (desktop) ---
+    let mouseDragging = false;
+    let lastMouse = { x: 0, y: 0 };
+
+    const onMouseDown = (e: MouseEvent) => {
+      mouseDragging = true;
+      lastMouse = { x: e.clientX, y: e.clientY };
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!mouseDragging) return;
+
+      const dx = e.clientX - lastMouse.x;
+      const dy = e.clientY - lastMouse.y;
+      lastMouse = { x: e.clientX, y: e.clientY };
+
+      const h = headingRef.current * (Math.PI / 180);
+      const mapDx = dx * Math.cos(h) - dy * Math.sin(h);
+      const mapDy = dx * Math.sin(h) + dy * Math.cos(h);
+      map.panBy([-mapDx, -mapDy], { animate: false });
+    };
+
+    const onMouseUp = () => {
+      mouseDragging = false;
+    };
+
+    container.addEventListener("touchstart", onTouchStart, { passive: false });
+    container.addEventListener("touchmove", onTouchMove, { passive: false });
+    container.addEventListener("touchend", onTouchEnd);
+    container.addEventListener("touchcancel", onTouchEnd);
+    container.addEventListener("mousedown", onMouseDown);
+    container.addEventListener("mousemove", onMouseMove);
+    container.addEventListener("mouseup", onMouseUp);
+
+    return () => {
+      map.dragging.enable();
+      container.removeEventListener("touchstart", onTouchStart);
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
+      container.removeEventListener("touchcancel", onTouchEnd);
+      container.removeEventListener("mousedown", onMouseDown);
+      container.removeEventListener("mousemove", onMouseMove);
+      container.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [map]);
+
   return null;
 }
