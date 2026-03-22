@@ -265,12 +265,16 @@ export function FlightsView() {
                 {/* Map */}
                 <div className="relative overflow-hidden rounded-lg bg-[#f2efe9] dark:bg-[#2b2b2b]">
                   <div
-                    style={{
-                      transform: compassMode
-                        ? `rotate(${-heading}deg) scale(1.05)`
-                        : undefined,
+                    style={compassMode ? {
+                      transform: (() => {
+                        // Dynamic scale: exactly enough to fill corners at current angle
+                        const t = ((heading % 90) + 90) % 90;
+                        const r = (t > 45 ? 90 - t : t) * Math.PI / 180;
+                        const s = Math.cos(r) + Math.sin(r);
+                        return `rotate(${-heading}deg) scale(${s.toFixed(4)})`;
+                      })(),
                       transformOrigin: "center center",
-                    }}
+                    } : undefined}
                   >
                     <MapContainer
                       center={
