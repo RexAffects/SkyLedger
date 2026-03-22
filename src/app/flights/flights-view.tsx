@@ -139,6 +139,7 @@ export function FlightsView() {
                               verification_level: 3,
                               status: "active",
                               created_at: new Date().toISOString(),
+                              tail_number: selectedFlight.tail_number || null,
                             },
                           ]
                         : []

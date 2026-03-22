@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getOperatorSlugFromOwnerName } from "@/lib/data/operators";
 import { FlagAircraftDialog } from "./flag-aircraft-dialog";
+import { PhotoEvidenceDialog } from "./photo-evidence-dialog";
 import { THREAT_LEVELS } from "@/lib/constants";
 import {
   pinAircraft,
@@ -592,15 +593,24 @@ export function FlightDetailPanel({
           </div>
         </div>
 
-        {/* Flag Button */}
+        {/* Action Buttons */}
         {data.tail_number && (
-          <FlagAircraftDialog
-            tailNumber={data.tail_number}
-            icaoHex={data.icao_hex}
-            latitude={data.position?.latitude}
-            longitude={data.position?.longitude}
-            altitudeFt={data.position?.altitude_ft}
-          />
+          <div className="space-y-2">
+            <PhotoEvidenceDialog
+              tailNumber={data.tail_number}
+              icaoHex={data.icao_hex}
+              latitude={data.position?.latitude}
+              longitude={data.position?.longitude}
+              altitudeFt={data.position?.altitude_ft}
+            />
+            <FlagAircraftDialog
+              tailNumber={data.tail_number}
+              icaoHex={data.icao_hex}
+              latitude={data.position?.latitude}
+              longitude={data.position?.longitude}
+              altitudeFt={data.position?.altitude_ft}
+            />
+          </div>
         )}
       </CardContent>
     </Card>

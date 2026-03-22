@@ -15,6 +15,7 @@ export interface CitizenReport {
   verification_level: number;
   status: string;
   created_at: string;
+  tail_number: string | null;
 }
 
 export interface ReportFormData {

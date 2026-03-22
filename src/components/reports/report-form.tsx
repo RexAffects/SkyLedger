@@ -115,6 +115,7 @@ export function ReportForm() {
       evidence_hash: formData.evidence_hash || "no-photo",
       exif_data: formData.exif_data,
       weather_conditions: null,
+      tail_number: null,
     });
 
     if (result) {
@@ -239,6 +240,7 @@ export function ReportForm() {
                       verification_level: 1,
                       status: "active",
                       created_at: new Date().toISOString(),
+                      tail_number: null,
                     },
                   ]
                 : []

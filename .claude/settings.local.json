@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Github/SkyLedger -name *seed* -o -name *mock* -o -name *fixture*)",
+      "Bash(find /c/Github/SkyLedger/src -name *cron* -o -name *job* -o -name *task* -o -name *worker*)",
+      "Bash(find C:GithubSkyLedger -type f \\\\\\(-name *.sql -o -name *migration* -o -name *schema* \\\\\\) ! -path */node_modules/*)",
+      "Bash(npx next:*)",
+      "Bash(npx tsc:*)",
+      "Bash(grep -r \"compress\\\\|resize\\\\|optimize\\\\|thumbnail\\\\|quality\" /c/Github/SkyLedger/src --include=*.ts --include=*.tsx)",
+      "Bash(xargs grep:*)",
+      "Bash(ls:*)",
+      "Bash(find /c/Github/SkyLedger -name schema* -o -name database* -o -name migrations*)",
+      "Bash(grep -r \"\\\\.from\\\\|\\\\.insert\\\\|\\\\.select\\\\|\\\\.update\\\\|\\\\.delete\" /c/Github/SkyLedger/src/lib/supabase --include=*.ts)"
+    ]
+  }
+}
