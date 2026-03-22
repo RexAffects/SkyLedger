@@ -92,7 +92,7 @@ const operators: TopicCard[] = [
     tagColor:
       "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
     highlight:
-      "$150M+ in geoengineering startup funding. One company raised $75M in under 3 years from defense-intelligence-connected investors.",
+      "$150M+ in geoengineering startup funding. One Israeli company operating in the U.S. raised $75M in under 3 years — seed money from investors connected to Mossad, the CIA, and Israel's nuclear weapons program.",
   },
 ];
 

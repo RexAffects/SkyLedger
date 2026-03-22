@@ -133,7 +133,7 @@ export default function Home() {
                 primary sources.
               </p>
               <p className="mt-4 text-sm text-primary font-medium">
-                Knowledge base &rarr;
+                Look at the whole picture &rarr;
               </p>
             </Link>
           </div>
