@@ -48,7 +48,7 @@ const en = {
         "No peer-reviewed research. No public safety assessment. No public consultation.",
       bullet2Label: "Suspiciously funded.",
       bullet2:
-        "$75M raised in under two years \u2014 more than double every other geoengineering company combined.",
+        "$75M raised in under two years \u2014 more than all other geoengineering startups combined.",
       bullet3Label: "Intelligence and defense ties.",
       bullet3:
         "Their lead investor\u2019s advisory board includes a former Mossad Chief of Intelligence, a former IDF Unit 8200 commander, and former directors of the CIA, FBI, and MI5.",
@@ -244,7 +244,7 @@ const es: typeof en = {
         "Sin investigaci\u00F3n revisada por pares. Sin evaluaci\u00F3n de seguridad p\u00FAblica. Sin consulta p\u00FAblica.",
       bullet2Label: "Financiamiento sospechoso.",
       bullet2:
-        "$75M recaudados en menos de dos a\u00F1os \u2014 m\u00E1s del doble que todas las dem\u00E1s empresas de geoingenier\u00EDa combinadas.",
+        "$75M recaudados en menos de dos a\u00F1os \u2014 m\u00E1s que todas las dem\u00E1s startups de geoingenier\u00EDa combinadas.",
       bullet3Label: "V\u00EDnculos con inteligencia y defensa.",
       bullet3:
         "La junta asesora de su inversionista principal incluye un exjefe de inteligencia del Mossad, un excomandante de la Unidad 8200 de las FDI, y exdirectores de la CIA, FBI y MI5.",

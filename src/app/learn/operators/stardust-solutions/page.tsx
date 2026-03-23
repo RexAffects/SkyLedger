@@ -421,8 +421,8 @@ export default function StardustDeepDivePage() {
             <span className="shrink-0 mt-0.5 font-bold">&bull;</span>
             <span>
               <span className="font-semibold">Suspiciously funded.</span> $75M
-              raised in under two years — more than double every other
-              geoengineering company combined. The largest investment in this
+              raised in under two years — more than all other geoengineering
+              startups combined. The largest investment in this
               industry&apos;s history.
             </span>
           </li>
