@@ -152,13 +152,13 @@ const ALTITUDE_TAGS: Record<
   { label: string; className: string; sortPriority: number }
 > = {
   cloud_seeding: {
-    label: "Cloud Seeding Alt",
+    label: "Low-Mid Alt",
     className:
       "bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-700",
     sortPriority: 0,
   },
   high_altitude: {
-    label: "High Altitude",
+    label: "Upper Alt",
     className:
       "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-700",
     sortPriority: 1,
@@ -622,7 +622,7 @@ export function FlightLayer({
               className="rounded accent-orange-500"
             />
             <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-            Cloud Seeding Alt
+            Low-Mid (3-20K ft)
             {bandCounts.cloud_seeding > 0 && (
               <span className="text-muted-foreground">
                 ({bandCounts.cloud_seeding})
@@ -637,7 +637,7 @@ export function FlightLayer({
               className="rounded accent-purple-500"
             />
             <span className="inline-block w-2 h-2 rounded-full bg-purple-400" />
-            High Altitude
+            Upper (25-45K ft)
             {bandCounts.high_altitude > 0 && (
               <span className="text-muted-foreground">
                 ({bandCounts.high_altitude})
@@ -815,8 +815,57 @@ export function FlightLayer({
         )}
       </div>
 
-      {/* Legend */}
+      {/* Quick Guide */}
       <div className="border-t border-border pt-3">
+        <p className="text-xs font-medium text-muted-foreground mb-2">
+          What am I looking at?
+        </p>
+        <div className="rounded-lg border border-border bg-background p-3 text-xs text-muted-foreground space-y-2 mb-3">
+          <p>
+            <strong className="text-foreground">Most trails are normal.</strong>{" "}
+            Commercial jets at cruise altitude (25-45K ft) leave contrails
+            &mdash; water vapor that freezes in cold air. Whether they persist
+            or vanish depends on humidity at that altitude, not what&apos;s being
+            sprayed. A lingering trail on a humid day is expected physics.
+          </p>
+          <p>
+            <strong className="text-foreground">What&apos;s actually worth watching:</strong>{" "}
+            Non-commercial aircraft, aircraft owned by known weather modification
+            companies, or unusual patterns (grids, on/off trails). Click any aircraft
+            to see who owns it &mdash; that&apos;s the real answer.
+          </p>
+          <div className="border-t border-border pt-2 mt-2 space-y-1.5">
+            <p className="font-semibold text-foreground text-[11px]">
+              Cloud seeding vs. stratospheric aerosol injection (SAI)
+            </p>
+            <div className="flex items-start gap-1.5">
+              <span className="mt-0.5 inline-block w-2 h-2 shrink-0 rounded-full bg-orange-400" />
+              <p>
+                <strong className="text-foreground">Cloud seeding</strong> (3-20K ft)
+                &mdash; Aircraft fly into clouds and release silver iodide or
+                similar particles to trigger rain or snow. Done openly by companies
+                like Weather Modification International with state permits. 9 states
+                have active programs.
+              </p>
+            </div>
+            <div className="flex items-start gap-1.5">
+              <span className="mt-0.5 inline-block w-2 h-2 shrink-0 rounded-full bg-purple-400" />
+              <p>
+                <strong className="text-foreground">SAI / geoengineering</strong> (25-45K+ ft)
+                &mdash; Releasing reflective particles into the stratosphere to
+                block sunlight. This is what Stardust Solutions plans to do with
+                secret, patented particles. No confirmed large-scale deployment,
+                but research programs exist and 3 states have banned it.
+              </p>
+            </div>
+            <p className="text-[10px] text-muted-foreground/70 italic">
+              Both happen at different altitudes for different reasons. The
+              tracker color-codes by altitude so you can tell which range
+              you&apos;re looking at.
+            </p>
+          </div>
+        </div>
+
         <p className="text-xs font-medium text-muted-foreground mb-2">
           Tags &amp; Trail Colors
         </p>
@@ -835,11 +884,11 @@ export function FlightLayer({
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
-            Cloud Seeding Alt (3-20K ft)
+            Low-Mid Alt (3-20K ft)
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-purple-400" />
-            High Altitude (25-45K ft)
+            Upper Alt (25-45K ft)
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-500" />
@@ -847,7 +896,7 @@ export function FlightLayer({
           </div>
         </div>
         <p className="mt-2 text-[10px] text-muted-foreground/70">
-          Scoring: non-commercial + small aircraft + seeding altitude + low speed + tail number callsign. Airlines passing through are scored low.
+          Altitude alone doesn&apos;t mean anything suspicious. Click the aircraft to see who owns it &mdash; that&apos;s what matters.
         </p>
       </div>
 
@@ -912,12 +961,12 @@ function LearnMoreSection() {
 
       {expanded && (
         <div className="mt-3 space-y-4 text-xs text-muted-foreground leading-relaxed">
-          {/* Cloud Seeding */}
+          {/* Cloud Seeding Range */}
           <div className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/20 p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
               <p className="font-semibold text-foreground">
-                Cloud Seeding Altitude (3,000 - 20,000 ft)
+                Low-Mid Altitude (3,000 - 20,000 ft) &mdash; Cloud Seeding Range
               </p>
               <span className="ml-auto text-xs px-1.5 py-0.5 rounded border border-green-300 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/30 dark:text-green-300">
                 High Confidence
@@ -966,12 +1015,12 @@ function LearnMoreSection() {
             </p>
           </div>
 
-          {/* High Altitude */}
+          {/* Upper Altitude / SAI Range */}
           <div className="rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20 p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-purple-400" />
               <p className="font-semibold text-foreground">
-                High Altitude (25,000 - 45,000 ft)
+                Upper Altitude (25,000 - 45,000 ft) &mdash; Cruise &amp; SAI Range
               </p>
               <span className="ml-auto text-xs px-1.5 py-0.5 rounded border border-yellow-300 bg-yellow-50 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
                 Moderate Confidence

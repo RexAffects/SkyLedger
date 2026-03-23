@@ -91,7 +91,7 @@ const en = {
         "Real-time position, speed, heading + flight trail drawn on the map",
       taggedLabel: "Tagged & logged",
       taggedDetail:
-        "Known cloud seeding operators are tagged and logged in the public ledger. Orange = seeding-range aircraft, purple = high altitude, red = known weather modification operator.",
+        "Known weather modification operators are tagged and logged in the public ledger. Orange = low-mid altitude (where cloud seeding operates), purple = upper altitude (cruise & SAI range), red = known weather modification operator.",
       tamperLabel: "Tamper-proof record",
       tamperDetail:
         "Every data point from government sources. SHA-256 hashed \u2014 the same integrity standard used in federal court.",
@@ -290,7 +290,7 @@ const es: typeof en = {
         "Posici\u00F3n, velocidad y rumbo en tiempo real + ruta de vuelo dibujada en el mapa",
       taggedLabel: "Etiquetado y registrado",
       taggedDetail:
-        "Los operadores conocidos de siembra de nubes est\u00E1n etiquetados y registrados en el libro p\u00FAblico. Naranja = aeronave en rango de siembra, p\u00FArpura = gran altitud, rojo = operador conocido de modificaci\u00F3n clim\u00E1tica.",
+        "Los operadores conocidos de modificaci\u00F3n clim\u00E1tica est\u00E1n etiquetados y registrados en el libro p\u00FAblico. Naranja = altitud baja-media (donde opera la siembra de nubes), p\u00FArpura = altitud superior (rango de crucero y SAI), rojo = operador conocido de modificaci\u00F3n clim\u00E1tica.",
       tamperLabel: "Registro a prueba de manipulaci\u00F3n",
       tamperDetail:
         "Cada dato proviene de fuentes gubernamentales. Hash SHA-256 \u2014 el mismo est\u00E1ndar de integridad usado en tribunales federales.",
