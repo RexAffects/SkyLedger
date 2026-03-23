@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -43,7 +43,10 @@ export function PhotoEvidenceDialog({
   const [trailBehavior, setTrailBehavior] = useState("");
   const [notes, setNotes] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [processingStep, setProcessingStep] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [submitStep, setSubmitStep] = useState("");
+  const submittingRef = useRef(false);
   const [result, setResult] = useState<{
     success: boolean;
     message: string;
@@ -56,31 +59,39 @@ export function PhotoEvidenceDialog({
       if (!file) return;
 
       setProcessing(true);
+      setProcessingStep("Reading photo...");
 
       const reader = new FileReader();
       reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
       reader.readAsDataURL(file);
 
-      const [exif, hash] = await Promise.all([
-        extractExif(file),
-        hashFile(file),
-      ]);
+      setProcessingStep("Extracting GPS & EXIF metadata...");
+      const exifPromise = extractExif(file);
+
+      setProcessingStep("Generating tamper-proof SHA-256 hash...");
+      const hashPromise = hashFile(file);
+
+      const [exif, hash] = await Promise.all([exifPromise, hashPromise]);
 
       setPhoto(file);
       setEvidenceHash(hash);
       setExifData(exif as unknown as Record<string, unknown>);
+      setProcessingStep("");
       setProcessing(false);
     },
     []
   );
 
   async function handleSubmit() {
-    if (!photo || !photoPreview) return;
+    if (!photo || !photoPreview || submittingRef.current) return;
 
+    submittingRef.current = true;
     setSubmitting(true);
     setResult(null);
 
     try {
+      setSubmitStep("Verifying tamper-proof hash...");
+
       const reportData = {
         latitude: latitude || 0,
         longitude: longitude || 0,
@@ -97,9 +108,11 @@ export function PhotoEvidenceDialog({
         tail_number: tailNumber,
       };
 
+      setSubmitStep("Storing photo & GPS data for proof...");
       const report = await submitReport(reportData);
 
       if (report) {
+        setSubmitStep("Archiving evidence record...");
         // Archive photo to email (non-blocking)
         fetch("/api/reports/archive", {
           method: "POST",
@@ -137,6 +150,8 @@ export function PhotoEvidenceDialog({
       });
     } finally {
       setSubmitting(false);
+      setSubmitStep("");
+      submittingRef.current = false;
     }
   }
 
@@ -221,9 +236,15 @@ export function PhotoEvidenceDialog({
                   className="mt-1"
                 />
                 {processing && (
-                  <p className="text-[11px] text-muted-foreground mt-1">
-                    Processing photo...
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <svg className="h-3 w-3 animate-spin text-muted-foreground" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    <p className="text-[11px] text-muted-foreground">
+                      {processingStep || "Processing photo..."}
+                    </p>
+                  </div>
                 )}
                 {photoPreview && (
                   <div className="mt-2 space-y-2">
@@ -320,8 +341,20 @@ export function PhotoEvidenceDialog({
               </p>
             </div>
 
+            {submitting && submitStep && (
+              <div className="flex items-center gap-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 px-3 py-2">
+                <svg className="h-3.5 w-3.5 animate-spin text-blue-600 dark:text-blue-400 shrink-0" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                <p className="text-xs font-medium text-blue-700 dark:text-blue-300">
+                  {submitStep}
+                </p>
+              </div>
+            )}
+
             <DialogFooter>
-              <Button variant="outline" size="sm" onClick={handleClose}>
+              <Button variant="outline" size="sm" onClick={handleClose} disabled={submitting}>
                 Cancel
               </Button>
               <Button
