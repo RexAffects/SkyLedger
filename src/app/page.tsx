@@ -76,11 +76,34 @@ export default function Home() {
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
               What&apos;s flying over you?
             </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              SkyLedger gives everyday citizens a real way to do something
-              about it &mdash; track flights, build evidence, follow the money,
-              and join the movement passing laws across America.
+            <p className="mt-3 text-lg font-medium text-foreground/70">
+              You might be surprised.
             </p>
+            <p className="mt-4 text-lg leading-8 text-muted-foreground">
+              SkyLedger gives everyday citizens a real way to do something
+              about our sky being manipulated &mdash; track flights, build
+              evidence, follow the money, and join the movement passing laws
+              across America.
+            </p>
+          </div>
+
+          {/* Stats — credibility signals up front */}
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 max-w-4xl mx-auto">
+            {stats.map((stat) => (
+              <Link
+                key={stat.label}
+                href={stat.href}
+                className="text-center group transition-colors hover:bg-background/50 rounded-lg p-3"
+              >
+                <p className="text-2xl font-bold group-hover:text-primary transition-colors underline decoration-transparent group-hover:decoration-primary underline-offset-4">
+                  {stat.value}
+                </p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+                <p className="text-xs text-muted-foreground/70 mt-0.5 hidden sm:block">
+                  {stat.detail}
+                </p>
+              </Link>
+            ))}
           </div>
 
           {/* Three Pillars */}
@@ -125,7 +148,7 @@ export default function Home() {
               className="group rounded-xl border border-border bg-background p-6 text-center transition-all hover:shadow-lg hover:scale-[1.02] hover:border-primary/40"
             >
               <p className="text-2xl font-bold group-hover:text-primary transition-colors">
-                Learn the Facts
+                See the Evidence
               </p>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
                 Follow the money. Read the congressional testimony. See who&apos;s
@@ -133,16 +156,15 @@ export default function Home() {
                 primary sources.
               </p>
               <p className="mt-4 text-sm text-primary font-medium">
-                Look at the whole picture &rarr;
+                Follow the money &rarr;
               </p>
             </Link>
           </div>
 
           <p className="mt-8 text-center text-xs text-muted-foreground">
-            We don&apos;t make accusations. We present data from public
-            government sources.{" "}
+            Every claim on this site links to its government source.{" "}
             <Link href="/learn/facts" className="underline hover:text-primary transition-colors">
-              The facts speak for themselves.
+              See for yourself.
             </Link>
           </p>
 
@@ -203,29 +225,6 @@ export default function Home() {
               </p>
             </div>
           </Link>
-      </section>
-
-      {/* Stats bar */}
-      <section className="border-y border-border bg-muted/30 py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map((stat) => (
-              <Link
-                key={stat.label}
-                href={stat.href}
-                className="text-center group transition-colors hover:bg-muted/50 rounded-lg p-2 -m-2"
-              >
-                <p className="text-2xl font-bold group-hover:text-primary transition-colors underline decoration-transparent group-hover:decoration-primary underline-offset-4">
-                  {stat.value}
-                </p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-                <p className="text-xs text-muted-foreground/70 mt-0.5 hidden sm:block">
-                  {stat.detail}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* What the flight tracker shows you */}
@@ -485,16 +484,18 @@ export default function Home() {
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight">
-            The data exists. The people aren&apos;t connected. Let&apos;s fix that.
+            Pick one thing. Do it today.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Flight records, FAA registrations, funding disclosures, congressional
-            testimony &mdash; it&apos;s all public. SkyLedger brings it together
-            so citizens can see, prove, and act.
+            The data exists. The people just aren&apos;t connected yet.
+            SkyLedger brings it together so citizens can see, prove, and act.
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <LinkButton href="/flights" size="lg">
-              Track &amp; Tag Now
+              Track a Flight
+            </LinkButton>
+            <LinkButton href="/learn" variant="outline" size="lg">
+              See the Evidence
             </LinkButton>
             <LinkButton href="/get-involved" variant="outline" size="lg">
               Take Action
