@@ -251,7 +251,7 @@ export const STATE_LEGAL: StateLegalStatus[] = [
       "Organize local awareness events",
       "Use the FOIA generator to request weather modification records from state agencies",
     ],
-    notes: "No bill introduced yet. Rex's home state \u2014 a priority for outreach.",
+    notes: "No bill introduced yet.",
   },
 ];
 

@@ -19,7 +19,7 @@ People and organizations to contact when the project is ready for public launch.
 ## Social Media / Influencers
 
 - **Gary Brecka** — Human biologist, large social media following. Has spoken publicly about cloud seeding (video with Sage Brecka). Angle: health impacts of atmospheric spraying tie directly to his health/biohacking audience. Mention: "Saw your video on cloud seeding with Sage — we built a tool that tracks these flights in real time."
-- Geoengineering Instagram accounts (Rex to identify specific ones)
+- Geoengineering Instagram accounts
 - Weather modification awareness accounts on X/Twitter
 - Independent journalists covering the topic
 
@@ -36,7 +36,7 @@ People and organizations to contact when the project is ready for public launch.
 
 ## State-Level Contacts
 
-- **Arkansas State Legislator (Rex's district)** — No geoengineering bill proposed yet. Draft letter ready in `Outgoing/Responses/arkansas-legislator-letter.md`. Bill filing started March 9, 2026 — active window. Find your rep at arkleg.state.ar.us.
+- **Arkansas State Legislator** — No geoengineering bill proposed yet. Draft letter ready in `Outgoing/Responses/arkansas-legislator-letter.md`. Bill filing started March 9, 2026 — active window. Find your rep at arkleg.state.ar.us.
 - **Louisiana DEQ** — Running the Act No. 95 reporting portal. Could integrate with SkyLedger.
 - **Florida complaint system administrators** — SB 56 created a public complaint system.
 - **Texas Weather Modification Advisory Board** — Most transparent state program.
