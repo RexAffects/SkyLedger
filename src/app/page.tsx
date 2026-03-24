@@ -138,7 +138,7 @@ export default function Home() {
           <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3 max-w-4xl mx-auto">
             <Link
               href="/flights"
-              className="group sm:col-span-2 rounded-xl glass glow-blue p-8 text-center sm:text-left transition-all hover:scale-[1.01]"
+              className="group sm:col-span-2 rounded-xl glass glow-blue p-8 text-center sm:text-left transition-all hover:scale-[1.01] overflow-hidden"
             >
               <p className="text-3xl font-bold tracking-tight group-hover:text-primary transition-colors">
                 {t("home.pillars.track.title")}
@@ -149,6 +149,16 @@ export default function Home() {
               <p className="mt-5 text-sm text-primary font-semibold">
                 {t("home.pillars.track.cta")}
               </p>
+              <div className="mt-5 rounded-lg overflow-hidden border border-border/50 shadow-sm">
+                <Image
+                  src="/images/tracker-preview.png"
+                  alt="Live flight tracker showing aircraft positions, trails, and ownership data over a map"
+                  width={800}
+                  height={400}
+                  className="w-full h-auto"
+                  priority={false}
+                />
+              </div>
             </Link>
 
             <div className="flex flex-col gap-4">
