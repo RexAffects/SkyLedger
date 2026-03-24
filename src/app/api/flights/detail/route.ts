@@ -5,6 +5,7 @@ import { fetchAircraftByHex } from "@/lib/api/adsb";
 import { getFlag } from "@/lib/supabase/flags";
 import { getLLCLookup, createPendingLLCLookup } from "@/lib/supabase/llc-lookups";
 import { getStateRegistryUrl } from "@/lib/utils/llc-detect";
+import { matchOwnerName } from "@/lib/network";
 
 /**
  * GET /api/flights/detail?hex=A1B2C3&callsign=UAL123&tail=N12345
@@ -150,6 +151,36 @@ export async function GET(request: NextRequest) {
       last_flagged_at: string | null;
     } | null,
 
+    // Network connections (investors, executives, funds linked to WxMod network)
+    network_connections: null as {
+      is_confirmed_operator: boolean;
+      matches: {
+        entity_name: string;
+        entity_type: string;
+        confidence: string;
+        description: string;
+        connection_path: string;
+        operator_slugs: string[];
+        player_slugs: string[];
+        score: number;
+      }[];
+      summary: string | null;
+      needs_investigation: boolean;
+      pierced_match: {
+        pierced_name: string;
+        matches: {
+          entity_name: string;
+          entity_type: string;
+          confidence: string;
+          description: string;
+          connection_path: string;
+          operator_slugs: string[];
+          player_slugs: string[];
+          score: number;
+        }[];
+      } | null;
+    } | null,
+
     timestamp: Date.now(),
   };
 
@@ -205,6 +236,55 @@ export async function GET(request: NextRequest) {
       }
     } catch (err) {
       console.error("Error fetching LLC lookup:", err);
+    }
+  }
+
+  // Network matching — cross-reference owner against funding network
+  if (result.owner.name) {
+    try {
+      const networkResult = faaData?.networkMatch || matchOwnerName(result.owner.name);
+
+      // Also check pierced owner if available
+      let piercedMatch = null;
+      if (result.owner.llc_info?.pierced_owner) {
+        const piercedResult = matchOwnerName(result.owner.llc_info.pierced_owner);
+        if (piercedResult.matches.length > 0) {
+          piercedMatch = {
+            pierced_name: result.owner.llc_info.pierced_owner,
+            matches: piercedResult.matches.map((m) => ({
+              entity_name: m.entity.name,
+              entity_type: m.entity.type,
+              confidence: m.confidence,
+              description: m.entity.description,
+              connection_path: m.entity.connectionPath,
+              operator_slugs: m.entity.operatorSlugs,
+              player_slugs: m.entity.playerSlugs,
+              score: m.score,
+            })),
+          };
+        }
+      }
+
+      if (networkResult && (networkResult.matches.length > 0 || piercedMatch)) {
+        result.network_connections = {
+          is_confirmed_operator: networkResult.isConfirmedOperator,
+          matches: networkResult.matches.map((m) => ({
+            entity_name: m.entity.name,
+            entity_type: m.entity.type,
+            confidence: m.confidence,
+            description: m.entity.description,
+            connection_path: m.entity.connectionPath,
+            operator_slugs: m.entity.operatorSlugs,
+            player_slugs: m.entity.playerSlugs,
+            score: m.score,
+          })),
+          summary: networkResult.summary,
+          needs_investigation: networkResult.needsInvestigation,
+          pierced_match: piercedMatch,
+        };
+      }
+    } catch (err) {
+      console.error("Error running network match:", err);
     }
   }
 

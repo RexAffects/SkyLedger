@@ -12,6 +12,7 @@
 
 import { getCachedRegistration, cacheRegistration } from "@/lib/supabase/faa-cache";
 import { detectLLC, getStateRegistryUrl, type LLCDetection } from "@/lib/utils/llc-detect";
+import { matchOwnerName, type NetworkMatchResult } from "@/lib/network";
 
 export interface FAARegistration {
   tailNumber: string;
@@ -30,6 +31,7 @@ export interface FAARegistration {
   isKnownWeatherMod: boolean;
   operatorNotes: string;
   llcDetection?: LLCDetection & { stateRegistryUrl: string | null };
+  networkMatch?: NetworkMatchResult;
 }
 
 // Known weather modification operators — built from canonical data in operators.ts
@@ -94,9 +96,15 @@ function attachLLCDetection(reg: FAARegistration): FAARegistration {
     ? getStateRegistryUrl(detection.registrationState)
     : null;
 
+  // Run network matching against the owner name
+  const networkMatch = reg.ownerName
+    ? matchOwnerName(reg.ownerName)
+    : undefined;
+
   return {
     ...reg,
     llcDetection: { ...detection, stateRegistryUrl },
+    networkMatch: networkMatch?.matches.length ? networkMatch : undefined,
   };
 }
 
