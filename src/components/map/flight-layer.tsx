@@ -143,11 +143,9 @@ function getAltitudeBand(alt: number): AltitudeBand {
 const TRAIL_COLORS: Record<AltitudeBand, string> = {
   cloud_seeding: "#f97316",
   high_altitude: "#a855f7",
-  normal: "#3b82f6",
+  normal: "#22c55e", // green — commercial & transit
   ground: "#9ca3af",
 };
-
-const COMMERCIAL_COLOR = "#22c55e"; // green-500
 
 const ALTITUDE_TAGS: Record<
   AltitudeBand,
@@ -263,7 +261,6 @@ export function FlightLayer({
   const [showHighAltitude, setShowHighAltitude] = useState(true);
   const [showOther, setShowOther] = useState(true);
   const [showGround, setShowGround] = useState(true);
-  const [showCommercial, setShowCommercial] = useState(true);
   const [showAltitudeOnMap, setShowAltitudeOnMap] = useState(false);
   const [watchOnly, setWatchOnly] = useState(false);
   const [flaggedOnly, setFlaggedOnly] = useState(false);
@@ -455,14 +452,16 @@ export function FlightLayer({
   const filteredFlights = useMemo(
     () =>
       allFlights.filter((f) => {
-        const isComm = isAirlineCallsign(f.callsign);
-        if (isComm && !showCommercial) return false;
-        if (!isComm && !isVisible(getAltitudeBand(f.altitude_ft))) return false;
+        // Commercial airlines are grouped into the "other" filter
+        const effectiveBand = isAirlineCallsign(f.callsign)
+          ? "normal" as AltitudeBand
+          : getAltitudeBand(f.altitude_ft);
+        if (!isVisible(effectiveBand)) return false;
         if (watchOnly && f.suspicion_score < 2 && !f.is_known_wx_mod) return false;
         if (flaggedOnly && !(f.tail_number && flaggedAircraft.has(f.tail_number))) return false;
         return true;
       }),
-    [allFlights, isVisible, showCommercial, watchOnly, flaggedOnly, flaggedAircraft]
+    [allFlights, isVisible, watchOnly, flaggedOnly, flaggedAircraft]
   );
 
   // Update trails for map (only filtered flights)
@@ -481,9 +480,7 @@ export function FlightLayer({
           positions: [...trail.positions],
           color: f.is_known_wx_mod
             ? "#ef4444"
-            : isAirlineCallsign(f.callsign)
-              ? COMMERCIAL_COLOR
-              : TRAIL_COLORS[band],
+            : TRAIL_COLORS[isAirlineCallsign(f.callsign) ? "normal" : band],
           altitude_ft: f.altitude_ft,
           heading: f.heading,
           showAltitude: showAltitudeOnMap,
@@ -581,17 +578,17 @@ export function FlightLayer({
   }, [allFlights, flaggedAircraft, pinnedAircraft]);
 
   // Band counts (from all flights, not filtered)
+  // Commercial airlines are grouped into the "normal" (Commercial & Transit) bucket
   const bandCounts = allFlights.reduce(
     (acc, f) => {
-      const band = getAltitudeBand(f.altitude_ft);
+      const band = isAirlineCallsign(f.callsign)
+        ? ("normal" as AltitudeBand)
+        : getAltitudeBand(f.altitude_ft);
       acc[band] = (acc[band] || 0) + 1;
       return acc;
     },
     {} as Record<AltitudeBand, number>
   );
-  const commercialCount = allFlights.filter((f) =>
-    isAirlineCallsign(f.callsign)
-  ).length;
 
   const trailCount = filteredFlights.filter((f) => {
     const trail = trailsRef.current.get(f.icao_hex);
@@ -629,21 +626,6 @@ export function FlightLayer({
           <label className="flex items-center gap-1.5 text-xs cursor-pointer">
             <input
               type="checkbox"
-              checked={showCommercial}
-              onChange={(e) => setShowCommercial(e.target.checked)}
-              className="rounded accent-green-500"
-            />
-            <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-            Commercial
-            {commercialCount > 0 && (
-              <span className="text-muted-foreground">
-                ({commercialCount})
-              </span>
-            )}
-          </label>
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-            <input
-              type="checkbox"
               checked={showCloudSeeding}
               onChange={(e) => setShowCloudSeeding(e.target.checked)}
               className="rounded accent-orange-500"
@@ -676,10 +658,10 @@ export function FlightLayer({
               type="checkbox"
               checked={showOther}
               onChange={(e) => setShowOther(e.target.checked)}
-              className="rounded accent-blue-500"
+              className="rounded accent-green-500"
             />
-            <span className="inline-block w-2 h-2 rounded-full bg-blue-500" />
-            Other
+            <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+            Commercial &amp; Transit
             {bandCounts.normal > 0 && (
               <span className="text-muted-foreground">
                 ({bandCounts.normal})
@@ -751,13 +733,11 @@ export function FlightLayer({
               className={`w-full text-left p-3 rounded-lg border transition-all duration-300 ${
                 isHighlighted
                   ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-primary shadow-lg"
-                  : isAirlineCallsign(flight.callsign)
-                    ? "border-green-200 bg-green-50/30 hover:bg-green-50/50 dark:border-green-800 dark:bg-green-950/10 dark:hover:bg-green-950/20"
-                    : band === "cloud_seeding"
-                      ? "border-orange-200 bg-orange-50/50 hover:bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20 dark:hover:bg-orange-950/40"
-                      : band === "high_altitude"
-                        ? "border-purple-200 bg-purple-50/50 hover:bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20 dark:hover:bg-purple-950/40"
-                        : "border-border hover:bg-muted/50"
+                  : band === "cloud_seeding" && !isAirlineCallsign(flight.callsign)
+                    ? "border-orange-200 bg-orange-50/50 hover:bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20 dark:hover:bg-orange-950/40"
+                    : band === "high_altitude" && !isAirlineCallsign(flight.callsign)
+                      ? "border-purple-200 bg-purple-50/50 hover:bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20 dark:hover:bg-purple-950/40"
+                      : "border-border hover:bg-muted/50"
               }`}
             >
               <div className="flex items-start justify-between">
@@ -917,10 +897,6 @@ export function FlightLayer({
             Community-reported aircraft
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
-            Commercial airline
-          </div>
-          <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
             Low-Mid Alt (3-20K ft)
           </div>
@@ -929,8 +905,8 @@ export function FlightLayer({
             Upper Alt (25-45K ft)
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-500" />
-            Other / Transit
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
+            Commercial &amp; Transit
           </div>
         </div>
         <p className="mt-2 text-[10px] text-muted-foreground/70">
