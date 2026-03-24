@@ -147,6 +147,8 @@ const TRAIL_COLORS: Record<AltitudeBand, string> = {
   ground: "#9ca3af",
 };
 
+const COMMERCIAL_COLOR = "#22c55e"; // green-500
+
 const ALTITUDE_TAGS: Record<
   AltitudeBand,
   { label: string; className: string; sortPriority: number }
@@ -261,6 +263,7 @@ export function FlightLayer({
   const [showHighAltitude, setShowHighAltitude] = useState(true);
   const [showOther, setShowOther] = useState(true);
   const [showGround, setShowGround] = useState(true);
+  const [showCommercial, setShowCommercial] = useState(true);
   const [showAltitudeOnMap, setShowAltitudeOnMap] = useState(false);
   const [watchOnly, setWatchOnly] = useState(false);
   const [flaggedOnly, setFlaggedOnly] = useState(false);
@@ -452,12 +455,14 @@ export function FlightLayer({
   const filteredFlights = useMemo(
     () =>
       allFlights.filter((f) => {
-        if (!isVisible(getAltitudeBand(f.altitude_ft))) return false;
+        const isComm = isAirlineCallsign(f.callsign);
+        if (isComm && !showCommercial) return false;
+        if (!isComm && !isVisible(getAltitudeBand(f.altitude_ft))) return false;
         if (watchOnly && f.suspicion_score < 2 && !f.is_known_wx_mod) return false;
         if (flaggedOnly && !(f.tail_number && flaggedAircraft.has(f.tail_number))) return false;
         return true;
       }),
-    [allFlights, isVisible, watchOnly, flaggedOnly, flaggedAircraft]
+    [allFlights, isVisible, showCommercial, watchOnly, flaggedOnly, flaggedAircraft]
   );
 
   // Update trails for map (only filtered flights)
@@ -474,7 +479,11 @@ export function FlightLayer({
           icao_hex: f.icao_hex,
           tail_number: f.tail_number,
           positions: [...trail.positions],
-          color: f.is_known_wx_mod ? "#ef4444" : TRAIL_COLORS[band],
+          color: f.is_known_wx_mod
+            ? "#ef4444"
+            : isAirlineCallsign(f.callsign)
+              ? COMMERCIAL_COLOR
+              : TRAIL_COLORS[band],
           altitude_ft: f.altitude_ft,
           heading: f.heading,
           showAltitude: showAltitudeOnMap,
@@ -580,6 +589,9 @@ export function FlightLayer({
     },
     {} as Record<AltitudeBand, number>
   );
+  const commercialCount = allFlights.filter((f) =>
+    isAirlineCallsign(f.callsign)
+  ).length;
 
   const trailCount = filteredFlights.filter((f) => {
     const trail = trailsRef.current.get(f.icao_hex);
@@ -614,6 +626,21 @@ export function FlightLayer({
           Filters
         </p>
         <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+          <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showCommercial}
+              onChange={(e) => setShowCommercial(e.target.checked)}
+              className="rounded accent-green-500"
+            />
+            <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+            Commercial
+            {commercialCount > 0 && (
+              <span className="text-muted-foreground">
+                ({commercialCount})
+              </span>
+            )}
+          </label>
           <label className="flex items-center gap-1.5 text-xs cursor-pointer">
             <input
               type="checkbox"
@@ -724,11 +751,13 @@ export function FlightLayer({
               className={`w-full text-left p-3 rounded-lg border transition-all duration-300 ${
                 isHighlighted
                   ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-primary shadow-lg"
-                  : band === "cloud_seeding"
-                    ? "border-orange-200 bg-orange-50/50 hover:bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20 dark:hover:bg-orange-950/40"
-                    : band === "high_altitude"
-                      ? "border-purple-200 bg-purple-50/50 hover:bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20 dark:hover:bg-purple-950/40"
-                      : "border-border hover:bg-muted/50"
+                  : isAirlineCallsign(flight.callsign)
+                    ? "border-green-200 bg-green-50/30 hover:bg-green-50/50 dark:border-green-800 dark:bg-green-950/10 dark:hover:bg-green-950/20"
+                    : band === "cloud_seeding"
+                      ? "border-orange-200 bg-orange-50/50 hover:bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20 dark:hover:bg-orange-950/40"
+                      : band === "high_altitude"
+                        ? "border-purple-200 bg-purple-50/50 hover:bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20 dark:hover:bg-purple-950/40"
+                        : "border-border hover:bg-muted/50"
               }`}
             >
               <div className="flex items-start justify-between">
@@ -746,6 +775,11 @@ export function FlightLayer({
                       <Badge variant="destructive" className="text-xs">
                         WX MOD
                       </Badge>
+                    )}
+                    {!flight.is_known_wx_mod && isAirlineCallsign(flight.callsign) && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-green-100 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700">
+                        Commercial
+                      </span>
                     )}
                     {/* Suspicion score drives sort order behind the scenes — no visible labels */}
                     {flight.tail_number && flaggedAircraft.has(flight.tail_number) && (() => {
@@ -881,6 +915,10 @@ export function FlightLayer({
           <div className="flex items-center gap-1.5">
             <span className="inline-block px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 text-[10px] font-bold border border-yellow-300">Flagged</span>
             Community-reported aircraft
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
+            Commercial airline
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
