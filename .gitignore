@@ -42,3 +42,6 @@ next-env.d.ts
 
 # private intel — NEVER commit
 /private/
+
+# scratch folder for sharing images/docs during Claude sessions
+/Incoming/

@@ -108,7 +108,7 @@ const stateActions = [
   {
     status: "No bill yet",
     states: "Remaining states",
-    what: "Contact your state representative and ask them to introduce legislation. Point them to Tennessee, Florida, and Louisiana as models. Share the SRM360 tracker showing the national movement.",
+    what: "Use our step-by-step playbook to bring a ban to your state. It shows exactly how Tennessee, Florida, and Louisiana did it — and how you can replicate their success.",
     color: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300",
   },
 ];
@@ -139,6 +139,27 @@ export default function GetInvolvedPage() {
           Concrete tools to fight back &mdash; not just learn.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <Link href="/get-involved/state-ban" className="block group sm:col-span-2">
+            <div className="rounded-lg border-2 border-primary p-5 h-full transition-all hover:shadow-md">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  Bring a Ban to Your State
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                  Playbook
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                How Tennessee, Florida, and Louisiana passed geoengineering bans
+                &mdash; and the step-by-step playbook for doing it in your state.
+                Model legislation, sponsor strategy, pressure campaigns, and every
+                resource you need.
+              </p>
+              <p className="mt-2 text-xs text-primary font-medium">
+                Get the playbook &rarr;
+              </p>
+            </div>
+          </Link>
           <Link href="/get-involved/legal" className="block group">
             <div className="rounded-lg border border-border p-5 h-full transition-all hover:border-primary/40 hover:shadow-sm">
               <div className="flex items-center gap-2">

@@ -143,7 +143,7 @@ function getAltitudeBand(alt: number): AltitudeBand {
 const TRAIL_COLORS: Record<AltitudeBand, string> = {
   cloud_seeding: "#f97316",
   high_altitude: "#a855f7",
-  normal: "#3b82f6",
+  normal: "#22c55e", // green — commercial & transit
   ground: "#9ca3af",
 };
 
@@ -152,13 +152,13 @@ const ALTITUDE_TAGS: Record<
   { label: string; className: string; sortPriority: number }
 > = {
   cloud_seeding: {
-    label: "Cloud Seeding Alt",
+    label: "Low-Mid Alt",
     className:
       "bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-700",
     sortPriority: 0,
   },
   high_altitude: {
-    label: "High Altitude",
+    label: "Upper Alt",
     className:
       "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-700",
     sortPriority: 1,
@@ -452,7 +452,11 @@ export function FlightLayer({
   const filteredFlights = useMemo(
     () =>
       allFlights.filter((f) => {
-        if (!isVisible(getAltitudeBand(f.altitude_ft))) return false;
+        // Commercial airlines are grouped into the "other" filter
+        const effectiveBand = isAirlineCallsign(f.callsign)
+          ? "normal" as AltitudeBand
+          : getAltitudeBand(f.altitude_ft);
+        if (!isVisible(effectiveBand)) return false;
         if (watchOnly && f.suspicion_score < 2 && !f.is_known_wx_mod) return false;
         if (flaggedOnly && !(f.tail_number && flaggedAircraft.has(f.tail_number))) return false;
         return true;
@@ -474,7 +478,9 @@ export function FlightLayer({
           icao_hex: f.icao_hex,
           tail_number: f.tail_number,
           positions: [...trail.positions],
-          color: f.is_known_wx_mod ? "#ef4444" : TRAIL_COLORS[band],
+          color: f.is_known_wx_mod
+            ? "#ef4444"
+            : TRAIL_COLORS[isAirlineCallsign(f.callsign) ? "normal" : band],
           altitude_ft: f.altitude_ft,
           heading: f.heading,
           showAltitude: showAltitudeOnMap,
@@ -572,9 +578,12 @@ export function FlightLayer({
   }, [allFlights, flaggedAircraft, pinnedAircraft]);
 
   // Band counts (from all flights, not filtered)
+  // Commercial airlines are grouped into the "normal" (Commercial & Transit) bucket
   const bandCounts = allFlights.reduce(
     (acc, f) => {
-      const band = getAltitudeBand(f.altitude_ft);
+      const band = isAirlineCallsign(f.callsign)
+        ? ("normal" as AltitudeBand)
+        : getAltitudeBand(f.altitude_ft);
       acc[band] = (acc[band] || 0) + 1;
       return acc;
     },
@@ -622,7 +631,7 @@ export function FlightLayer({
               className="rounded accent-orange-500"
             />
             <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-            Cloud Seeding Alt
+            Low-Mid (3-20K ft)
             {bandCounts.cloud_seeding > 0 && (
               <span className="text-muted-foreground">
                 ({bandCounts.cloud_seeding})
@@ -637,7 +646,7 @@ export function FlightLayer({
               className="rounded accent-purple-500"
             />
             <span className="inline-block w-2 h-2 rounded-full bg-purple-400" />
-            High Altitude
+            Upper (25-45K ft)
             {bandCounts.high_altitude > 0 && (
               <span className="text-muted-foreground">
                 ({bandCounts.high_altitude})
@@ -649,10 +658,10 @@ export function FlightLayer({
               type="checkbox"
               checked={showOther}
               onChange={(e) => setShowOther(e.target.checked)}
-              className="rounded accent-blue-500"
+              className="rounded accent-green-500"
             />
-            <span className="inline-block w-2 h-2 rounded-full bg-blue-500" />
-            Other
+            <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+            Commercial &amp; Transit
             {bandCounts.normal > 0 && (
               <span className="text-muted-foreground">
                 ({bandCounts.normal})
@@ -724,9 +733,9 @@ export function FlightLayer({
               className={`w-full text-left p-3 rounded-lg border transition-all duration-300 ${
                 isHighlighted
                   ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-primary shadow-lg"
-                  : band === "cloud_seeding"
+                  : band === "cloud_seeding" && !isAirlineCallsign(flight.callsign)
                     ? "border-orange-200 bg-orange-50/50 hover:bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20 dark:hover:bg-orange-950/40"
-                    : band === "high_altitude"
+                    : band === "high_altitude" && !isAirlineCallsign(flight.callsign)
                       ? "border-purple-200 bg-purple-50/50 hover:bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20 dark:hover:bg-purple-950/40"
                       : "border-border hover:bg-muted/50"
               }`}
@@ -746,6 +755,11 @@ export function FlightLayer({
                       <Badge variant="destructive" className="text-xs">
                         WX MOD
                       </Badge>
+                    )}
+                    {!flight.is_known_wx_mod && isAirlineCallsign(flight.callsign) && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-green-100 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700">
+                        Commercial
+                      </span>
                     )}
                     {/* Suspicion score drives sort order behind the scenes — no visible labels */}
                     {flight.tail_number && flaggedAircraft.has(flight.tail_number) && (() => {
@@ -815,8 +829,57 @@ export function FlightLayer({
         )}
       </div>
 
-      {/* Legend */}
+      {/* Quick Guide */}
       <div className="border-t border-border pt-3">
+        <p className="text-xs font-medium text-muted-foreground mb-2">
+          What am I looking at?
+        </p>
+        <div className="rounded-lg border border-border bg-background p-3 text-xs text-muted-foreground space-y-2 mb-3">
+          <p>
+            <strong className="text-foreground">Most trails are normal.</strong>{" "}
+            Commercial jets at cruise altitude (25-45K ft) leave contrails
+            &mdash; water vapor that freezes in cold air. Whether they persist
+            or vanish depends on humidity at that altitude, not what&apos;s being
+            sprayed. A lingering trail on a humid day is expected physics.
+          </p>
+          <p>
+            <strong className="text-foreground">What&apos;s actually worth watching:</strong>{" "}
+            Non-commercial aircraft, aircraft owned by known weather modification
+            companies, or unusual patterns (grids, on/off trails). Click any aircraft
+            to see who owns it &mdash; that&apos;s the real answer.
+          </p>
+          <div className="border-t border-border pt-2 mt-2 space-y-1.5">
+            <p className="font-semibold text-foreground text-[11px]">
+              Cloud seeding vs. stratospheric aerosol injection (SAI)
+            </p>
+            <div className="flex items-start gap-1.5">
+              <span className="mt-0.5 inline-block w-2 h-2 shrink-0 rounded-full bg-orange-400" />
+              <p>
+                <strong className="text-foreground">Cloud seeding</strong> (3-20K ft)
+                &mdash; Aircraft fly into clouds and release silver iodide or
+                similar particles to trigger rain or snow. Done openly by companies
+                like Weather Modification International with state permits. 9 states
+                have active programs.
+              </p>
+            </div>
+            <div className="flex items-start gap-1.5">
+              <span className="mt-0.5 inline-block w-2 h-2 shrink-0 rounded-full bg-purple-400" />
+              <p>
+                <strong className="text-foreground">SAI / geoengineering</strong> (25-45K+ ft)
+                &mdash; Releasing reflective particles into the stratosphere to
+                block sunlight. This is what Stardust Solutions plans to do with
+                secret, patented particles. No confirmed large-scale deployment,
+                but research programs exist and 3 states have banned it.
+              </p>
+            </div>
+            <p className="text-[10px] text-muted-foreground/70 italic">
+              Both happen at different altitudes for different reasons. The
+              tracker color-codes by altitude so you can tell which range
+              you&apos;re looking at.
+            </p>
+          </div>
+        </div>
+
         <p className="text-xs font-medium text-muted-foreground mb-2">
           Tags &amp; Trail Colors
         </p>
@@ -835,19 +898,19 @@ export function FlightLayer({
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
-            Cloud Seeding Alt (3-20K ft)
+            Low-Mid Alt (3-20K ft)
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-purple-400" />
-            High Altitude (25-45K ft)
+            Upper Alt (25-45K ft)
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-500" />
-            Other / Transit
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
+            Commercial &amp; Transit
           </div>
         </div>
         <p className="mt-2 text-[10px] text-muted-foreground/70">
-          Scoring: non-commercial + small aircraft + seeding altitude + low speed + tail number callsign. Airlines passing through are scored low.
+          Altitude alone doesn&apos;t mean anything suspicious. Click the aircraft to see who owns it &mdash; that&apos;s what matters.
         </p>
       </div>
 
@@ -912,12 +975,12 @@ function LearnMoreSection() {
 
       {expanded && (
         <div className="mt-3 space-y-4 text-xs text-muted-foreground leading-relaxed">
-          {/* Cloud Seeding */}
+          {/* Cloud Seeding Range */}
           <div className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/20 p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange-400" />
               <p className="font-semibold text-foreground">
-                Cloud Seeding Altitude (3,000 - 20,000 ft)
+                Low-Mid Altitude (3,000 - 20,000 ft) &mdash; Cloud Seeding Range
               </p>
               <span className="ml-auto text-xs px-1.5 py-0.5 rounded border border-green-300 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/30 dark:text-green-300">
                 High Confidence
@@ -966,12 +1029,12 @@ function LearnMoreSection() {
             </p>
           </div>
 
-          {/* High Altitude */}
+          {/* Upper Altitude / SAI Range */}
           <div className="rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20 p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-purple-400" />
               <p className="font-semibold text-foreground">
-                High Altitude (25,000 - 45,000 ft)
+                Upper Altitude (25,000 - 45,000 ft) &mdash; Cruise &amp; SAI Range
               </p>
               <span className="ml-auto text-xs px-1.5 py-0.5 rounded border border-yellow-300 bg-yellow-50 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
                 Moderate Confidence

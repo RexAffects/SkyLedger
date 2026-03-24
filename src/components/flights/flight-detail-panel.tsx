@@ -85,6 +85,34 @@ interface FlightDetail {
     on_ground: boolean;
   } | null;
   community_flags: CommunityFlags | null;
+  network_connections: {
+    is_confirmed_operator: boolean;
+    matches: {
+      entity_name: string;
+      entity_type: string;
+      confidence: string;
+      description: string;
+      connection_path: string;
+      operator_slugs: string[];
+      player_slugs: string[];
+      score: number;
+    }[];
+    summary: string | null;
+    needs_investigation: boolean;
+    pierced_match: {
+      pierced_name: string;
+      matches: {
+        entity_name: string;
+        entity_type: string;
+        confidence: string;
+        description: string;
+        connection_path: string;
+        operator_slugs: string[];
+        player_slugs: string[];
+        score: number;
+      }[];
+    } | null;
+  } | null;
 }
 
 interface FlightDetailPanelProps {
@@ -251,6 +279,96 @@ export function FlightDetailPanel({
             </div>
           );
         })()}
+
+        {/* Network Connections */}
+        {data.network_connections &&
+          !data.network_connections.is_confirmed_operator &&
+          data.network_connections.matches.length > 0 && (
+            <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <svg
+                  className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+                  />
+                </svg>
+                <p className="text-xs font-semibold text-amber-800 dark:text-amber-200">
+                  {data.network_connections.matches.some(
+                    (m) => m.confidence === "connected-entity"
+                  )
+                    ? "Network Connection Detected"
+                    : "Possible Network Connection"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                {data.network_connections.matches.slice(0, 3).map((match, i) => (
+                  <div key={i} className="text-xs">
+                    <p className="text-amber-900 dark:text-amber-100">
+                      <span className="font-medium">{match.entity_name}</span>
+                      <span className="text-amber-700 dark:text-amber-300">
+                        {" "}
+                        &mdash; {match.connection_path}
+                      </span>
+                    </p>
+                    {match.operator_slugs.length > 0 && (
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {match.operator_slugs.map((slug) => (
+                          <Link
+                            key={slug}
+                            href={`/learn/operators/${slug}`}
+                            className="text-[10px] text-primary hover:underline"
+                          >
+                            View operator profile &rarr;
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    {match.player_slugs.length > 0 && (
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {match.player_slugs.map((slug) => (
+                          <Link
+                            key={slug}
+                            href={`/learn/follow-the-money#${slug}`}
+                            className="text-[10px] text-primary hover:underline"
+                          >
+                            Follow the money &rarr;
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {data.network_connections.pierced_match && (
+                <div className="mt-2 pt-2 border-t border-amber-200 dark:border-amber-700">
+                  <p className="text-[11px] text-amber-800 dark:text-amber-200">
+                    <span className="font-medium">LLC piercing revealed:</span>{" "}
+                    {data.network_connections.pierced_match.pierced_name} &mdash;{" "}
+                    {data.network_connections.pierced_match.matches[0]
+                      ?.connection_path || "connected to weather modification network"}
+                  </p>
+                </div>
+              )}
+              {data.network_connections.needs_investigation && (
+                <p className="mt-2 text-[10px] text-amber-600 dark:text-amber-400 italic">
+                  This is a name-similarity match, not a confirmed connection.
+                  Further investigation recommended.
+                </p>
+              )}
+              <p className="mt-2 text-[10px] text-amber-600/70 dark:text-amber-400/70">
+                Network connections are informational, not accusations. They show
+                relationships between entities in the weather modification funding
+                network.
+              </p>
+            </div>
+          )}
 
         {/* Community Flags */}
         {data.community_flags && data.community_flags.threat_level !== "none" && (

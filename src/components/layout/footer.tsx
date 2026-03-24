@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="border-t border-border bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -9,19 +14,18 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold">{SITE_NAME}</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Citizen-powered transparency for weather modification
-              accountability. Open source. Open data. Open skies.
+              {t("footer.description")}
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold">Platform</h3>
+            <h3 className="text-sm font-semibold">{t("footer.platform")}</h3>
             <ul className="mt-2 space-y-2">
               <li>
                 <Link
                   href="/map"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Live Map
+                  {t("footer.liveMap")}
                 </Link>
               </li>
               <li>
@@ -29,7 +33,7 @@ export function Footer() {
                   href="/reports"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Evidence Ledger
+                  {t("footer.evidenceLedger")}
                 </Link>
               </li>
               <li>
@@ -37,7 +41,7 @@ export function Footer() {
                   href="/reports/new"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Submit Observation
+                  {t("footer.submitObservation")}
                 </Link>
               </li>
               <li>
@@ -45,20 +49,20 @@ export function Footer() {
                   href="/learn/operators"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Operator Profiles
+                  {t("footer.operatorProfiles")}
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-semibold">Take Action</h3>
+            <h3 className="text-sm font-semibold">{t("footer.takeAction")}</h3>
             <ul className="mt-2 space-y-2">
               <li>
                 <Link
                   href="/get-involved/legal"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Legal Action Hub
+                  {t("footer.legalHub")}
                 </Link>
               </li>
               <li>
@@ -66,7 +70,7 @@ export function Footer() {
                   href="/get-involved/foia"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  FOIA Generator
+                  {t("footer.foiaGenerator")}
                 </Link>
               </li>
               <li>
@@ -74,7 +78,7 @@ export function Footer() {
                   href="/get-involved/donate"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Support the Fight
+                  {t("footer.supportFight")}
                 </Link>
               </li>
               <li>
@@ -82,7 +86,7 @@ export function Footer() {
                   href="/get-involved/testing"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Testing Guide
+                  {t("footer.testingGuide")}
                 </Link>
               </li>
               <li>
@@ -90,20 +94,20 @@ export function Footer() {
                   href="/learn/protect-yourself"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Protect Yourself
+                  {t("footer.protectYourself")}
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-semibold">About</h3>
+            <h3 className="text-sm font-semibold">{t("footer.about")}</h3>
             <ul className="mt-2 space-y-2">
               <li>
                 <Link
                   href="/about"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Mission & Methodology
+                  {t("footer.missionMethodology")}
                 </Link>
               </li>
               <li>
@@ -113,7 +117,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Source Code
+                  {t("footer.sourceCode")}
                 </a>
               </li>
             </ul>
@@ -121,10 +125,7 @@ export function Footer() {
         </div>
         <div className="mt-8 border-t border-border pt-8">
           <p className="text-center text-xs text-muted-foreground">
-            All data sourced from public government databases and citizen
-            observations. AGPL-3.0 Licensed. This platform does not make
-            accusations &mdash; it presents documented observations and public
-            records.
+            {t("footer.disclaimer")}
           </p>
         </div>
       </div>
