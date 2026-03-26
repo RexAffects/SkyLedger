@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getOperatorSlugFromOwnerName } from "@/lib/data/operators";
 import { FlagAircraftDialog } from "./flag-aircraft-dialog";
 import { PhotoEvidenceDialog } from "./photo-evidence-dialog";
+import { WeatherContext } from "./weather-context";
 import { THREAT_LEVELS } from "@/lib/constants";
 import {
   pinAircraft,
@@ -591,6 +592,12 @@ export function FlightDetailPanel({
                 value={data.position.longitude.toFixed(4)}
               />
             </div>
+            {/* Contrail conditions at aircraft altitude */}
+            <WeatherContext
+              latitude={data.position.latitude}
+              longitude={data.position.longitude}
+              altitude_ft={data.position.altitude_ft}
+            />
           </Section>
         )}
 
