@@ -7,6 +7,7 @@ import { FlightDetailPanel } from "@/components/flights/flight-detail-panel";
 import { MapContainer, type FlightTrail } from "@/components/map/map-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { CompassCalibrationDialog } from "@/components/flights/compass-calibration-dialog";
 
 export function FlightsView() {
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
@@ -31,6 +32,7 @@ export function FlightsView() {
   const [compassMode, setCompassMode] = useState(false);
   const [heading, setHeading] = useState(0);
   const [compassError, setCompassError] = useState<string | null>(null);
+  const [showCalibration, setShowCalibration] = useState(false);
 
   const handleFlightDotClick = useCallback((icaoHex: string) => {
     setHighlightedIcao(icaoHex);
@@ -46,6 +48,8 @@ export function FlightsView() {
   const smoothHeadingRef = useRef(0);
   const rafRef = useRef<number>(0);
   const gotOrientationData = useRef(false);
+  const compassAccuracyRef = useRef<number>(0);
+  const poorAccuracyStartRef = useRef<number>(0);
 
   useEffect(() => {
     if (!compassMode) {
@@ -61,6 +65,11 @@ export function FlightsView() {
       // iOS provides webkitCompassHeading (degrees clockwise from north)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const ios = (e as any).webkitCompassHeading as number | undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const iosAccuracy = (e as any).webkitCompassAccuracy as number | undefined;
+      if (typeof iosAccuracy === "number") {
+        compassAccuracyRef.current = iosAccuracy;
+      }
       if (typeof ios === "number" && !isNaN(ios)) {
         gotOrientationData.current = true;
         rawHeading = ios;
@@ -81,6 +90,13 @@ export function FlightsView() {
       // gotOrientationData stays false so the timeout will catch it
     };
 
+    // Show calibration on first compass use
+    const firstUse = !localStorage.getItem("skyledger:compass-first-use");
+    const dismissed = !!localStorage.getItem("skyledger:compass-cal-dismissed");
+    if (firstUse && !dismissed) {
+      setShowCalibration(true);
+    }
+
     // Smooth heading updates synced to animation frames
     const tick = () => {
       const prev = smoothHeadingRef.current;
@@ -91,6 +107,20 @@ export function FlightsView() {
       const next = (prev + diff * 0.25 + 360) % 360;
       smoothHeadingRef.current = next;
       setHeading(next);
+
+      // Check compass accuracy degradation (iOS reports webkitCompassAccuracy)
+      if (compassAccuracyRef.current > 25) {
+        if (!poorAccuracyStartRef.current) poorAccuracyStartRef.current = Date.now();
+        if (Date.now() - poorAccuracyStartRef.current > 5000) {
+          if (!localStorage.getItem("skyledger:compass-cal-dismissed")) {
+            setShowCalibration(true);
+          }
+          poorAccuracyStartRef.current = 0; // reset so it doesn't fire every frame
+        }
+      } else {
+        poorAccuracyStartRef.current = 0;
+      }
+
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
@@ -355,10 +385,10 @@ export function FlightsView() {
                     </button>
                   )}
 
-                  {/* North indicator when compass is active */}
+                  {/* North indicator + recalibrate button when compass is active */}
                   {compassMode && (
                     <div
-                      className="absolute top-2 left-2 z-[1001] flex items-center gap-1 bg-background/90 rounded-full px-2 py-1 border border-border shadow-sm"
+                      className="absolute top-2 left-2 z-[1001] flex items-center gap-1.5 bg-background/90 rounded-full px-2 py-1 border border-border shadow-sm"
                     >
                       <span
                         className="text-red-500 text-xs font-bold"
@@ -372,6 +402,13 @@ export function FlightsView() {
                       <span className="text-[10px] text-muted-foreground">
                         {Math.round(heading)}°
                       </span>
+                      <button
+                        onClick={() => setShowCalibration(true)}
+                        className="text-[10px] text-primary hover:text-primary/80 font-medium ml-0.5"
+                        title="Recalibrate compass"
+                      >
+                        Cal
+                      </button>
                     </div>
                   )}
 
@@ -521,6 +558,12 @@ export function FlightsView() {
           )}
         </CardContent>
       </Card>
+
+      {/* Compass calibration dialog */}
+      <CompassCalibrationDialog
+        open={showCalibration}
+        onClose={() => setShowCalibration(false)}
+      />
 
       {/* How it works */}
       <div className="rounded-lg border border-border bg-muted/30 p-6">
