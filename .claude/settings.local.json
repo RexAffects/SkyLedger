@@ -86,7 +86,15 @@
       "WebFetch(domain:www.designspells.com)",
       "WebFetch(domain:www.refactoringui.com)",
       "WebFetch(domain:www.nngroup.com)",
-      "WebFetch(domain:bentogrids.com)"
+      "WebFetch(domain:bentogrids.com)",
+      "Bash(curl -s https://www.flightradar24.com/about)",
+      "Bash(curl -s https://www.flightradar24.com/premium)",
+      "WebFetch(domain:www.flightradar24.com)",
+      "WebFetch(domain:support.fr24.com)",
+      "WebFetch(domain:forum.flightradar24.com)",
+      "Bash(find /c/Github/SkyLedger -name manifest.json -o -name *sw* -o -name *worker*)",
+      "Bash(wc -l /c/Github/SkyLedger/src/components/flights/*.tsx /c/Github/SkyLedger/src/components/ui/*.tsx)",
+      "Bash(find /c/Github/SkyLedger/src -name *.env* -o -name supabase*)"
     ]
   }
 }
