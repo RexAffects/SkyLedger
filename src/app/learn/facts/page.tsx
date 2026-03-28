@@ -91,8 +91,33 @@ WHAT THE GOVERNMENT HAS SAID
 • Meteorologist Christopher Marks (under oath), when asked if he'd drink water containing silver iodide: "I probably would not want to do that."
   Source: Sworn testimony, House Oversight Subcommittee, Sept 16, 2025
 
+• Vice President Lyndon B. Johnson (1962): "It lays the predicate and foundation for the development of a weather satellite that will permit man to determine the world's cloud layer and ultimately to control the weather; and he who controls the weather will control the world."
+  Source: Commencement address, Southwest Texas State University, May 27, 1962 — Texas Archive of the Moving Image
+
+• CIA Director John Brennan (2016): "One that has gained my personal attention is stratospheric aerosol injection, or SAI: a method of seeding the stratosphere with particles that can help reflect the sun's heat in much the same way that volcanic eruptions do." He noted SAI's "potential to alter weather patterns and benefit certain regions of the world at the expense of other regions."
+  Source: Council on Foreign Relations address, June 29, 2016 — official transcript at CFR.org and CIA.gov
+
 • Over 500 scientists worldwide have signed a Solar Engineering Non-Use Agreement calling for a ban on outdoor solar geoengineering experiments.
   Source: Dr. Pielke testimony; solargeoeng.org
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHAT'S HAPPENING TO THE ENVIRONMENT
+
+• Flying insect biomass has declined 76% over 27 years — even inside protected nature reserves. Mid-summer populations down 82%.
+  Source: Hallmann et al. (2017), "More than 75 percent decline in total flying insect biomass in protected areas," PLOS ONE
+
+• Terrestrial insect abundance is declining approximately 9% per decade worldwide. 41% of insect species are declining and a third are threatened with extinction.
+  Source: van Klink et al. (2020), Science; Sanchez-Bayo & Wyckhuys (2019), Biological Conservation
+
+• Global ocean phytoplankton — the base of the marine food chain and a major oxygen source — has declined approximately 40% since 1950.
+  Source: Boyce, Lewis & Worm (2010), "Global phytoplankton decline over the past century," Nature
+
+• Metal pollutants at levels currently deemed "safe" by regulators are harming terrestrial invertebrates — insects are more sensitive to metal exposure than vertebrates.
+  Source: Monchanin et al. (2021), "Current permissible levels of metal pollutants harm terrestrial invertebrates," Science of the Total Environment
+
+• Atmospheric aerosol deposition has been shown to be toxic to marine phytoplankton, with anthropogenic emissions increasing toxic metal concentrations in aerosols.
+  Source: Paytan et al. (2009), "Toxicity of atmospheric aerosols on marine phytoplankton," PNAS
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -304,6 +329,18 @@ export default function FactsPage() {
             context="When asked under oath if he'd drink water containing silver iodide"
             sourceUrl="/learn/congressional-hearing"
           />
+          <Quote
+            text="It lays the predicate and foundation for the development of a weather satellite that will permit man to determine the world's cloud layer and ultimately to control the weather; and he who controls the weather will control the world."
+            speaker="Vice President Lyndon B. Johnson"
+            context="Commencement address, Southwest Texas State University, May 27, 1962"
+            sourceUrl="https://texasarchive.org/2010_00003"
+          />
+          <Quote
+            text="One that has gained my personal attention is stratospheric aerosol injection, or SAI: a method of seeding the stratosphere with particles that can help reflect the sun's heat in much the same way that volcanic eruptions do."
+            speaker="CIA Director John Brennan"
+            context="Council on Foreign Relations address, June 29, 2016 — noting SAI's 'potential to alter weather patterns and benefit certain regions at the expense of others'"
+            sourceUrl="https://www.cfr.org/event/john-brennan-transnational-threats-global-security"
+          />
           <Fact
             claim="Over 500 scientists worldwide have signed a Solar Engineering Non-Use Agreement calling for a ban on outdoor geoengineering experiments."
             source="Solar Geoengineering Non-Use Agreement — Open Letter (585+ signatories)"
@@ -312,7 +349,41 @@ export default function FactsPage() {
         </div>
       </section>
 
-      {/* Section 4 */}
+      {/* Environmental Impact */}
+      <section className="mt-10">
+        <h2 className="text-xl font-bold border-b border-border pb-2">
+          What&apos;s happening to the environment
+        </h2>
+        <div className="mt-4 space-y-4">
+          <Fact
+            claim="Flying insect biomass has declined 76% over 27 years — even inside protected nature reserves. Mid-summer populations down 82%."
+            source="Hallmann et al. (2017), PLOS ONE — 63 nature protection areas in Germany, 1989-2016"
+            sourceUrl="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0185809"
+          />
+          <Fact
+            claim="Terrestrial insect abundance is declining approximately 9% per decade worldwide. 41% of insect species are declining and a third are threatened with extinction."
+            source="van Klink et al. (2020), Science; Sanchez-Bayo & Wyckhuys (2019), Biological Conservation"
+            sourceUrl="https://www.science.org/doi/10.1126/science.aax9931"
+          />
+          <Fact
+            claim="Global ocean phytoplankton — the base of the marine food chain and a major oxygen source — has declined approximately 40% since 1950."
+            source="Boyce, Lewis & Worm (2010), Nature — combining ocean transparency data and chlorophyll observations since 1899"
+            sourceUrl="https://www.nature.com/articles/nature09268"
+          />
+          <Fact
+            claim="Metal pollutants at levels currently deemed 'safe' by regulators are harming terrestrial invertebrates — insects are more sensitive to metal exposure than vertebrates."
+            source="Monchanin et al. (2021), Science of the Total Environment — 527 observations across arsenic, cadmium, lead, mercury"
+            sourceUrl="https://www.sciencedirect.com/science/article/pii/S0048969721014662"
+          />
+          <Fact
+            claim="Atmospheric aerosol deposition has been shown to be toxic to marine phytoplankton, with anthropogenic emissions increasing toxic metal concentrations in aerosols."
+            source="Paytan et al. (2009), PNAS"
+            sourceUrl="https://www.pnas.org/doi/10.1073/pnas.0811486106"
+          />
+        </div>
+      </section>
+
+      {/* What's being done */}
       <section className="mt-10">
         <h2 className="text-xl font-bold border-b border-border pb-2">
           What&apos;s being done about it
