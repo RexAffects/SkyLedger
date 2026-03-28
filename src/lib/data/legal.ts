@@ -72,6 +72,29 @@ export const FRONTLINE_ORGS: FrontlineOrg[] = [
     ],
   },
   {
+    slug: "geofight",
+    name: "The GeoFight",
+    shortName: "GeoFight",
+    mission:
+      "Coalition of attorneys building toward the first federal lawsuit against geoengineering. Nicole Pearson, Blake Horwitz, and Tom Renz are assembling the legal case.",
+    whatDonationsFund:
+      "Attorney fees, expert witness retainers, court filing fees, and evidence documentation for the federal lawsuit.",
+    taxDeductible: false,
+    donateUrl: "https://thegeofight.com",
+    websiteUrl: "https://thegeofight.com",
+    tag: "Federal Lawsuit",
+    tagColor: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    impactExamples: [
+      "$100 covers a court filing fee",
+      "$500 funds expert witness preparation",
+      "$5,000 funds a major legal brief",
+    ],
+    keyWins: [
+      "Assembled a coalition of attorneys with expertise in environmental and constitutional law",
+      "Currently collecting court-admissible evidence and seeking whistleblowers",
+    ],
+  },
+  {
     slug: "ican",
     name: "ICAN (Informed Consent Action Network)",
     shortName: "ICAN",
@@ -97,26 +120,21 @@ export const FRONTLINE_ORGS: FrontlineOrg[] = [
     ],
   },
   {
-    slug: "geofight",
-    name: "The GeoFight",
-    shortName: "GeoFight",
+    slug: "carnicom",
+    name: "Carnicom Institute",
+    shortName: "Carnicom",
     mission:
-      "Coalition of attorneys building toward the first federal lawsuit against geoengineering. Nicole Pearson, Blake Horwitz, and Tom Renz are assembling the legal case.",
+      "Independent research organization conducting scientific analysis of environmental samples related to aerosol operations.",
     whatDonationsFund:
-      "Attorney fees, expert witness retainers, court filing fees, and evidence documentation for the federal lawsuit.",
+      "Laboratory equipment, sample analysis, research publication, and ongoing environmental monitoring.",
     taxDeductible: false,
-    donateUrl: "https://thegeofight.com",
-    websiteUrl: "https://thegeofight.com",
-    tag: "Federal Lawsuit",
-    tagColor: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    donateUrl: "https://www.carnicominstitute.org",
+    websiteUrl: "https://www.carnicominstitute.org",
+    tag: "Independent Research",
+    tagColor:
+      "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
     impactExamples: [
-      "$100 covers a court filing fee",
-      "$500 funds expert witness preparation",
-      "$5,000 funds a major legal brief",
-    ],
-    keyWins: [
-      "Assembled a coalition of attorneys with expertise in environmental and constitutional law",
-      "Currently collecting court-admissible evidence and seeking whistleblowers",
+      "Supports long-running environmental and biological research program",
     ],
   },
   {
@@ -141,24 +159,6 @@ export const FRONTLINE_ORGS: FrontlineOrg[] = [
     keyWins: [
       "Sued the Air Force in federal court for information on weather modification programs",
       "Challenged government efforts to restrict public knowledge of weather modification",
-    ],
-  },
-  {
-    slug: "carnicom",
-    name: "Carnicom Institute",
-    shortName: "Carnicom",
-    mission:
-      "Independent research organization conducting scientific analysis of environmental samples related to aerosol operations.",
-    whatDonationsFund:
-      "Laboratory equipment, sample analysis, research publication, and ongoing environmental monitoring.",
-    taxDeductible: false,
-    donateUrl: "https://www.carnicominstitute.org",
-    websiteUrl: "https://www.carnicominstitute.org",
-    tag: "Independent Research",
-    tagColor:
-      "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
-    impactExamples: [
-      "Supports long-running environmental and biological research program",
     ],
   },
 ];
