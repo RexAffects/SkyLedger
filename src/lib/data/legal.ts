@@ -40,6 +40,38 @@ export interface LegalResource {
 
 export const FRONTLINE_ORGS: FrontlineOrg[] = [
   {
+    slug: "geoengineering-watch",
+    name: "Geoengineering Watch",
+    shortName: "GeoWatch",
+    mission:
+      "The largest public archive of geoengineering evidence in the world. Founded in 2002 by Dane Wigington \u2014 a former Bechtel Power Corp. employee, licensed contractor, and solar energy researcher whose home was featured on the cover of Home Power magazine. After observing 50-70% drops in solar uptake at his 1,600-acre wildlife preserve near Lake Shasta in Northern California, Wigington devoted the next 20+ years to full-time research, lab testing, atmospheric sampling, documentary production, and legislative testimony on climate engineering operations.",
+    whatDonationsFund:
+      "Independent lab testing (soil, water, snow, and atmospheric analysis), documentary production, weekly Global Alert News broadcast, educational outreach, website hosting, and ongoing research.",
+    taxDeductible: false,
+    donateUrl: "https://geoengineeringwatch.org",
+    websiteUrl: "https://geoengineeringwatch.org",
+    tag: "Research & Evidence Archive",
+    tagColor:
+      "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
+    impactExamples: [
+      "$50 funds one lab sample analysis (soil, water, or snow)",
+      "$200 funds a batch of environmental testing across multiple sample types",
+      "$500 supports weekly Global Alert News broadcast production",
+      "Research directly supports legislative testimony in multiple states",
+    ],
+    keyWins: [
+      "'The Dimming' documentary (2021) \u2014 25M+ views. Features Brig. Gen. Charles Jones (USAF Ret.), Maj. Gen. Richard Roellig (USAF Ret.), and Catherine Austin Fitts (former HUD Asst. Secretary). Cost $100K to produce.",
+      "Tucker Carlson interview (Nov 10, 2025) \u2014 geoengineering evidence presented to the largest independent media audience in history. Wigington presented atmospheric testing results, government documents, and an 800-page 1978 Senate report on weather modification programs.",
+      "Weekly 'Global Alert News' broadcast \u2014 550+ episodes since 2015, airing on multiple AM/FM stations nationwide without a single missed week",
+      "Shasta County Board of Supervisors presentation (July 2014) \u2014 400+ attendees (largest turnout in chamber history), 10 expert presenters, board voted unanimously to investigate heavy metal contamination",
+      "First independent high-altitude atmospheric testing \u2014 NOAA flying lab (University of Maryland Cessna, BWI to Albany) with SEM/TEM analysis confirming aluminum oxide and barium sulfate nanoparticles at altitude",
+      "Second atmospheric sampling mission on a Learjet (San Diego to Bay Area) found elevated nanoparticle concentrations confined to the induced cloud layer \u2014 clean air above and below, particles measured at 40-60 nanometers",
+      "Extensive weather modification patents database \u2014 catalogued and made publicly searchable",
+      "Independent lab testing across multiple states showing elevated aluminum, barium, and strontium in rainwater and soil samples",
+      "Expert witness testimony supporting state ban bills in Wyoming and other states",
+    ],
+  },
+  {
     slug: "ican",
     name: "ICAN (Informed Consent Action Network)",
     shortName: "ICAN",
@@ -109,32 +141,6 @@ export const FRONTLINE_ORGS: FrontlineOrg[] = [
     keyWins: [
       "Sued the Air Force in federal court for information on weather modification programs",
       "Challenged government efforts to restrict public knowledge of weather modification",
-    ],
-  },
-  {
-    slug: "geoengineering-watch",
-    name: "Geoengineering Watch",
-    shortName: "GeoWatch",
-    mission:
-      "The archive. 20+ years documenting weather modification with the largest public collection of evidence. Lead researcher Dane Wigington has testified as expert witness for state ban bills.",
-    whatDonationsFund:
-      "Lab testing (soil, water, snow analysis), documentary production, educational outreach, website hosting, and ongoing research.",
-    taxDeductible: false,
-    donateUrl: "https://geoengineeringwatch.org",
-    websiteUrl: "https://geoengineeringwatch.org",
-    tag: "Research & Evidence",
-    tagColor:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-    impactExamples: [
-      "$50 funds one lab sample analysis",
-      "$200 funds a batch of environmental testing",
-      "Research supports legislative testimony in multiple states",
-    ],
-    keyWins: [
-      "'The Dimming' documentary \u2014 25M+ views",
-      "175+ weather modification patents catalogued and made publicly searchable",
-      "Expert witness testimony supporting Wyoming and other state ban bills",
-      "Independent lab testing showing elevated aluminum, barium, and strontium in rainwater and soil",
     ],
   },
   {

@@ -99,8 +99,8 @@ const ctaCards = [
   },
 ];
 
-// Take first 3 orgs: ICAN, GeoFight, Stop Geo MN
-const featuredOrgs = FRONTLINE_ORGS.slice(0, 3);
+// Take first 4 orgs: GeoWatch, ICAN, GeoFight, Stop Geo MN
+const featuredOrgs = FRONTLINE_ORGS.slice(0, 4);
 
 // Group states by status
 const groupedStates = STATE_LEGAL.reduce(
