@@ -33,6 +33,7 @@ export function FlightsView() {
   const [heading, setHeading] = useState(0);
   const [compassError, setCompassError] = useState<string | null>(null);
   const [showCalibration, setShowCalibration] = useState(false);
+  const [showSatellite, setShowSatellite] = useState(false);
 
   const handleFlightDotClick = useCallback((icaoHex: string) => {
     setHighlightedIcao(icaoHex);
@@ -321,6 +322,7 @@ export function FlightsView() {
                       flightTrails={flightTrails}
                       onFlightDotClick={handleFlightDotClick}
                       compassHeading={compassMode ? heading : undefined}
+                      showSatellite={showSatellite}
                       userLocation={
                         mapCenter
                           ? [mapCenter.lat, mapCenter.lng]
@@ -354,11 +356,11 @@ export function FlightsView() {
                     />
                   </div>
 
-                  {/* Compass toggle button */}
+                  {/* Compass toggle button — mobile only */}
                   {showFlights && (
                     <button
                       onClick={handleCompassToggle}
-                      className={`absolute top-2 right-2 z-[1001] w-9 h-9 rounded-full border-2 flex items-center justify-center shadow-md transition-colors ${
+                      className={`flex md:hidden absolute top-2 right-2 z-[1001] w-9 h-9 rounded-full border-2 items-center justify-center shadow-md transition-colors ${
                         compassMode
                           ? "bg-primary border-primary text-primary-foreground"
                           : "bg-background/90 border-border text-muted-foreground hover:bg-muted"
@@ -381,6 +383,29 @@ export function FlightsView() {
                         <polygon points="12,2 9,12 12,10 15,12" fill="currentColor" stroke="none" opacity={compassMode ? 1 : 0.6} />
                         <polygon points="12,22 9,12 12,14 15,12" fill="currentColor" stroke="none" opacity={0.25} />
                         <circle cx="12" cy="12" r="10" strokeWidth="1.5" fill="none" />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* Satellite cloud overlay toggle — below compass on mobile, top on desktop */}
+                  {showFlights && (
+                    <button
+                      onClick={() => setShowSatellite(s => !s)}
+                      className={`absolute top-[52px] md:top-2 right-2 z-[1001] w-9 h-9 rounded-full border-2 flex items-center justify-center shadow-md transition-colors ${
+                        showSatellite
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "bg-background/90 border-border text-muted-foreground hover:bg-muted"
+                      }`}
+                      title={showSatellite ? "Hide satellite clouds" : "Show satellite clouds"}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                        fill="none"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 .75-7.425 4.5 4.5 0 0 0-8.654-2.197A4.504 4.504 0 0 0 2.25 15Z" />
                       </svg>
                     </button>
                   )}

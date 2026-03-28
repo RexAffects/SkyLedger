@@ -27,6 +27,7 @@ interface MapContainerProps {
   compassHeading?: number;
   className?: string;
   userLocation?: [number, number];
+  showSatellite?: boolean;
 }
 
 export function MapContainer({
@@ -39,6 +40,7 @@ export function MapContainer({
   compassHeading,
   className = "h-[600px] w-full",
   userLocation,
+  showSatellite,
 }: MapContainerProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -65,6 +67,7 @@ export function MapContainer({
       compassHeading={compassHeading}
       className={className}
       userLocation={userLocation}
+      showSatellite={showSatellite}
     />
   );
 }
@@ -92,6 +95,7 @@ function MapInner({
   compassHeading,
   className,
   userLocation,
+  showSatellite,
 }: MapContainerProps) {
   const [MapComponents, setMapComponents] = useState<{
     MapContainer: typeof import("react-leaflet").MapContainer;
@@ -167,6 +171,13 @@ function MapInner({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      {showSatellite && (
+        <TileLayer
+          url="https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/goes_east_conus_ch02/{z}/{x}/{y}.png"
+          attribution='GOES-East &copy; <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a>'
+          opacity={0.5}
+        />
+      )}
       {onMapClick && (
         <ClickHandler
           onClick={onMapClick}
