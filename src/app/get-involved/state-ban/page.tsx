@@ -836,8 +836,8 @@ export default function StateBanPage() {
             works.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <LinkButton href="/get-involved/contact-legislator" size="lg">
-              Contact Your Legislator
+            <LinkButton href="/get-involved/toolkit" size="lg">
+              Open the Citizen Toolkit
             </LinkButton>
             <a
               href="https://zerogeoengineering.com"

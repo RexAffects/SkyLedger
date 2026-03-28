@@ -143,20 +143,20 @@ export default function GetInvolvedPage() {
             <div className="rounded-lg border-2 border-primary p-5 h-full transition-all hover:shadow-md">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                  Bring a Ban to Your State
+                  The Winning Playbook
                 </h3>
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                  Playbook
+                  3 states won
                 </span>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
                 How Tennessee, Florida, and Louisiana passed geoengineering bans
-                &mdash; and the step-by-step playbook for doing it in your state.
-                Model legislation, sponsor strategy, pressure campaigns, and every
-                resource you need.
+                &mdash; detailed timelines, the exact strategies that worked,
+                quotes that moved legislators, and the step-by-step playbook
+                for replicating it in your state.
               </p>
               <p className="mt-2 text-xs text-primary font-medium">
-                Get the playbook &rarr;
+                See how they won &rarr;
               </p>
             </div>
           </Link>
@@ -179,23 +179,23 @@ export default function GetInvolvedPage() {
               </p>
             </div>
           </Link>
-          <Link href="/get-involved/contact-legislator" className="block group">
+          <Link href="/get-involved/toolkit" className="block group">
             <div className="rounded-lg border-2 border-primary/40 p-5 h-full transition-all hover:border-primary hover:shadow-sm">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                  Contact Your Legislator
+                  Citizen Action Toolkit
                 </h3>
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-primary text-primary-foreground">
-                  5 minutes
+                  All-in-one
                 </span>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                Ready-to-send letter template, legislator lookup, and the exact
-                strategy that passed Florida&apos;s felony ban in 7 months.
-                Fill in your name and state — the rest is written.
+                Phone scripts, email templates, formal letters, hearing testimony
+                guides, social media share kit, and follow-up playbook. Contact
+                your legislator, look them up, and take action — all in one place.
               </p>
               <p className="mt-2 text-xs text-primary font-medium">
-                Get the template &rarr;
+                Open the toolkit &rarr;
               </p>
             </div>
           </Link>
@@ -224,6 +224,14 @@ export default function GetInvolvedPage() {
                 <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
                   FOIA Request Generator
                 </h3>
+                <span className="relative inline-flex">
+                  <span className="peer flex h-4 w-4 items-center justify-center rounded-full bg-muted text-[9px] font-bold text-muted-foreground cursor-help">
+                    ?
+                  </span>
+                  <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 rounded-lg border border-border bg-popover p-2.5 text-[11px] text-popover-foreground shadow-md opacity-0 transition-opacity peer-hover:opacity-100 z-10">
+                    <span className="font-semibold">FOIA</span> (Freedom of Information Act) &mdash; a federal law that gives every citizen the right to request records from government agencies. They must respond within 20 business days.
+                  </span>
+                </span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
                   Interactive tool
                 </span>
