@@ -173,9 +173,11 @@ function MapInner({
       />
       {showSatellite && (
         <TileLayer
-          url="https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/goes_east_conus_ch02/{z}/{x}/{y}.png"
-          attribution='GOES-East &copy; <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a>'
+          url="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_GeoColor/default/default/GoogleMapsCompatible_Level7/{z}/{y}/{x}.png"
+          attribution='GOES-East GeoColor &copy; <a href="https://earthdata.nasa.gov/">NASA EOSDIS GIBS</a>'
           opacity={0.5}
+          maxNativeZoom={7}
+          maxZoom={18}
         />
       )}
       {onMapClick && (
