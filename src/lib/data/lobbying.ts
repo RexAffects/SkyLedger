@@ -296,10 +296,10 @@ export const LOBBYING_FIRMS: LobbyingFirm[] = [
       },
     ],
     details: [
-      "SilverLining spent $420,000 on lobbying in the 2024 cycle — more than the World Resources Institute, Wildlife Conservation Society, and Clean Air Task Force.",
+      "SilverLining spent $420,000 on lobbying in the 2024 cycle — nearly double the World Resources Institute ($220K) and more than the Wildlife Conservation Society in the same period.",
       "Founded in 2018 by Kelly Wanser, a former tech executive who led data networking startup Luminus Networks.",
       "Only the second organization in a decade to disclose lobbying on solar geoengineering (after Carnegie Mellon University in 2013).",
-      "Successfully lobbied Congress to direct NOAA to develop the Earth's Radiation Budget program, which has grown to ~$10M/year.",
+      "Successfully lobbied Congress to direct NOAA to develop the Earth's Radiation Budget program, which grew from $4M (FY2020) to $9.5M (FY2023).",
       "Helped persuade Congress to include SRM research directives in the FY2020 appropriations bill.",
       "Its advocacy contributed to the White House OSTP's June 2023 \"Congressionally-Mandated Report on Solar Radiation Modification.\"",
       "Funded by Lowercarbon Capital (Chris Sacca), Rachel Pritzker / Pritzker Innovation Fund, and Quadrature Climate Foundation.",
@@ -493,6 +493,10 @@ export const LOBBY_TIMELINE: LobbyTimelineEvent[] = [
     event:
       "Tennessee becomes the first state to sign a geoengineering ban (SB 2691).",
     type: "legislation",
+    source: {
+      label: "SRM360 — US State Bans Tracker",
+      url: "https://srm360.org/us-bans/",
+    },
   },
   {
     date: "Q1 2025",
@@ -520,6 +524,10 @@ export const LOBBY_TIMELINE: LobbyTimelineEvent[] = [
     event:
       "Montana passes SB 473, banning geoengineering but permitting cloud seeding for water management.",
     type: "legislation",
+    source: {
+      label: "Duane Morris — State-Level Geoengineering Bans",
+      url: "https://statecapitallobbyist.com/environment/state-level-geoengineering-bans-florida-montana-and-beyond/",
+    },
   },
   {
     date: "June 2025",
@@ -534,14 +542,22 @@ export const LOBBY_TIMELINE: LobbyTimelineEvent[] = [
   {
     date: "July 2025",
     event:
-      "Rep. Marjorie Taylor Greene introduces the Clear Skies Act (H.R. 4403) — would criminalize weather modification nationwide.",
+      "Rep. Marjorie Taylor Greene introduces the Clear Skies Act (H.R. 4403) — would criminalize weather modification nationwide. Co-sponsored by Reps. Tony Wied (R-WI) and Tom Massie (R-KY).",
     type: "legislation",
+    source: {
+      label: "Congress.gov — H.R. 4403 Clear Skies Act text",
+      url: "https://www.congress.gov/bill/119th-congress/house-bill/4403/text",
+    },
   },
   {
     date: "July 2025",
     event:
-      "Central Texas floods kill 138 people. Conspiracy theories blame Rainmaker, though experts say cloud seeding cannot cause floods at that scale.",
+      "Central Texas floods kill at least 137 people. Conspiracy theories blame Rainmaker, though experts and government officials say cloud seeding cannot cause floods at that scale.",
     type: "funding",
+    source: {
+      label: "Al Jazeera — Texas flooding death toll",
+      url: "https://www.aljazeera.com/news/2025/7/7/texas-flooding-what-happened-what-went-wrong-and-whats-the-death-toll",
+    },
   },
   {
     date: "2025",
@@ -626,7 +642,7 @@ export const LOBBY_RED_FLAGS: LobbyRedFlag[] = [
   {
     flag: "SilverLining outspends major environmental groups",
     detail:
-      "SilverLining spent $420K on lobbying in the 2024 cycle — more than the World Resources Institute, Wildlife Conservation Society, and Clean Air Task Force. A small nonprofit with a focused agenda spending more on lobbying than established environmental organizations with millions in revenue.",
+      "SilverLining spent $420K on lobbying in the 2024 cycle — nearly double the World Resources Institute ($220K) and more than the Wildlife Conservation Society. A small nonprofit with a focused geoengineering agenda spending more on lobbying than established environmental organizations.",
     category: "conflicts",
     source: {
       label:
@@ -662,6 +678,17 @@ export const LOBBY_RED_FLAGS: LobbyRedFlag[] = [
     source: {
       label: "OpenSecrets — Holland & Knight organizational profile",
       url: "https://www.opensecrets.org/orgs/holland-knight/summary?id=D000000330",
+    },
+  },
+  {
+    flag: "Holland & Knight: lobbying for a company that won't say what it's spraying",
+    detail:
+      "Holland & Knight LLP — one of the largest lobbying firms in the U.S. — is representing Stardust Solutions, an Israeli-American company whose founders come from Israel's Dimona nuclear facility. Stardust refuses to publicly disclose the composition of the particles it plans to release into the stratosphere, calling them proprietary \"magic\" particles. Holland & Knight secretly lobbied Congress for months without disclosure, and still won't say how much Stardust paid or what specific issues they lobbied on.",
+    category: "disclosure",
+    source: {
+      label:
+        "E&E News / POLITICO — Geoengineering startup secretly lobbying Congress",
+      url: "https://www.eenews.net/articles/geoengineering-startup-hires-powerhouse-lobby-shop/",
     },
   },
 ];
@@ -901,9 +928,9 @@ export const LOBBY_PIPELINE = [
     description:
       "The same investors fund startups that would profit from the research programs.",
     entities: [
-      "Lowercarbon Capital → Stardust Solutions ($60M)",
-      "Lowercarbon Capital → Rainmaker ($25M)",
-      "Awz Ventures → Stardust Solutions ($15M seed)",
+      "Lowercarbon Capital → Stardust Solutions ($60M Series A, Oct 2025)",
+      "Lowercarbon Capital → Rainmaker",
+      "Awz Ventures → Stardust Solutions ($15M seed, defense/intel-connected VC)",
     ],
     lobbyConnection:
       "Sacca funds both the lobbying (SilverLining) and the deployment companies.",
@@ -1002,6 +1029,28 @@ export const LOBBY_SOURCE_CATEGORIES = [
           "E&E News — Blocking sun rays finds support in the Senate",
         url: "https://www.eenews.net/articles/blocking-sun-rays-finds-support-in-the-senate/",
       },
+      {
+        label:
+          "BM Outdoor — Rainmaker \"We Build Rain\" Metro ad campaign",
+        url: "https://bmoutdoor.com/info/rainmaker-haymaker-we-build-rain",
+      },
+    ],
+  },
+  {
+    title: "Company Funding & Filings",
+    sources: [
+      {
+        label: "Heatmap News — Stardust Solutions raises $60M",
+        url: "https://heatmap.news/climate-tech/stardust-geoengineering",
+      },
+      {
+        label: "SRM360 — Stardust Solutions $60M funding analysis",
+        url: "https://srm360.org/news-reaction/for-profit-startup-secures-60-million/",
+      },
+      {
+        label: "Sacra — Rainmaker funding, news & analysis",
+        url: "https://sacra.com/c/rainmaker/",
+      },
     ],
   },
   {
@@ -1014,8 +1063,17 @@ export const LOBBY_SOURCE_CATEGORIES = [
       },
       {
         label:
+          "NOAA Climate Program Office — Earth's Radiation Budget program",
+        url: "https://cpo.noaa.gov/divisions-programs/earth-system-science-and-modeling-division/earths-radiation-budget/",
+      },
+      {
+        label:
           "NOAA CSL — U.S. building early warning system to detect geoengineering",
         url: "https://csl.noaa.gov/news/2024/420_1202.html",
+      },
+      {
+        label: "Congress.gov — H.R. 4403 Clear Skies Act full text",
+        url: "https://www.congress.gov/bill/119th-congress/house-bill/4403/text",
       },
       {
         label: "House Oversight — Hearing wrap-up on weather engineering transparency",
@@ -1053,7 +1111,7 @@ export const DARK_MONEY_LIMITATIONS = [
   {
     title: "\"Strategic communications\"",
     detail:
-      "PR campaigns, media placements, and grassroots organizing designed to shift public opinion are largely unregulated and unreported. Rainmaker ran gold-framed Metro ads in DC targeting lawmakers, but this spending doesn't appear in lobbying filings.",
+      "PR campaigns, media placements, and grassroots organizing designed to shift public opinion are largely unregulated and unreported. Rainmaker ran gold-framed Metro ads at the Capitol South station in January 2026 targeting lawmakers with \"We Build Rain\" messaging, but this spending doesn't appear in lobbying filings.",
   },
 ];
 
