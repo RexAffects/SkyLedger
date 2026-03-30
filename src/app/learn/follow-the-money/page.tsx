@@ -832,6 +832,29 @@ export default function FollowTheMoneyPage() {
             presenting documented facts and asking: why?
           </p>
         </div>
+
+        {/* Cross-link to Lobby Tracker */}
+        <Link href="/learn/lobby-tracker" className="block mt-6 group">
+          <div className="rounded-lg border-2 border-orange-300 dark:border-orange-700 bg-orange-50 dark:bg-orange-950/30 p-5 transition-all hover:border-orange-400 hover:shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-orange-600 text-white">
+                NEW
+              </span>
+              <span className="text-sm font-bold text-orange-800 dark:text-orange-200 group-hover:text-orange-900 dark:group-hover:text-orange-100 transition-colors">
+                Lobby Tracker: Who&apos;s Buying the Politicians?
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-orange-700 dark:text-orange-300 leading-relaxed">
+              The money doesn&apos;t stop at funding companies. Rainmaker
+              spent $450K lobbying to fight the Clear Skies Act. SilverLining
+              spent $420K lobbying NOAA. Holland &amp; Knight secretly lobbied
+              for Stardust. See who&apos;s lobbying your state.
+            </p>
+            <p className="mt-2 text-xs text-orange-600 dark:text-orange-400 font-medium">
+              See the lobbying data &rarr;
+            </p>
+          </div>
+        </Link>
       </section>
     </div>
   );

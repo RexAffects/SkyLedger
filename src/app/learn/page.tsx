@@ -259,6 +259,19 @@ export default function LearnPage() {
                 "One fund sits at every seat from research to profit. Defense/intelligence seed money. Epstein connections. Direct White House access.",
             }}
           />
+          <TopicCardComponent
+            card={{
+              href: "/learn/lobby-tracker",
+              title: "Lobby Tracker",
+              description:
+                "Who\u2019s lobbying for geoengineering and who\u2019s taking their money. Federal filings, campaign contributions, and anti-ban lobbying \u2014 searchable by state.",
+              tag: "$870K+ tracked",
+              tagColor:
+                "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+              highlight:
+                "Rainmaker spent $450K fighting the Clear Skies Act. SilverLining spent $420K lobbying NOAA. Holland & Knight hired for Stardust. Look up your state.",
+            }}
+          />
         </div>
       </section>
 
