@@ -81,6 +81,33 @@ const frontlineOrgs = [
     ],
   },
   {
+    name: "Geoengineering Monitor",
+    url: "https://www.geoengineeringmonitor.org",
+    type: "Global watchdog & mapping",
+    description:
+      "A collaboration between ETC Group, Biofuelwatch, and the Heinrich Boell Foundation. They maintain an interactive world map of 1,700+ geoengineering experiments and projects worldwide — color-coded, filterable, and sourced. Connected to the Hands Off Mother Earth (HOME) Alliance of 180+ orgs that helped cancel Harvard's SCoPEx experiment, shut down the Alameda marine cloud brightening trial, and reaffirm the UN CBD moratorium on geoengineering in 2024.",
+    action: "Explore the map and share their briefings",
+    taxDeductible: false,
+    resources: [
+      {
+        label: "Interactive map of 1,700+ geoengineering projects",
+        url: "https://map.geoengineeringmonitor.org/",
+      },
+      {
+        label: "Technology briefings & fact sheets (SAI, MCB, biochar, DAC)",
+        url: "https://www.geoengineeringmonitor.org/briefings",
+      },
+      {
+        label: "Resistance timeline — every major victory",
+        url: "https://www.geoengineeringmonitor.org/resistance",
+      },
+      {
+        label: "Hands Off Mother Earth (HOME) Alliance",
+        url: "https://handsoffmotherearth.org/",
+      },
+    ],
+  },
+  {
     name: "Carnicom Institute",
     url: "https://www.carnicominstitute.org",
     type: "Independent research",

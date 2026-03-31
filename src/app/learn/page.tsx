@@ -337,6 +337,54 @@ export default function LearnPage() {
             </div>
           </div>
 
+          <div className="rounded-lg border-2 border-purple-300 dark:border-purple-700 bg-purple-50 dark:bg-purple-950/30 p-5">
+            <div className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 text-sm font-bold">
+                1.7K
+              </span>
+              <div>
+                <h3 className="font-bold text-sm text-purple-900 dark:text-purple-100">
+                  Geoengineering Monitor — Interactive World Map
+                </h3>
+                <p className="mt-1 text-xs text-purple-800 dark:text-purple-300 leading-relaxed">
+                  An interactive map of 1,700+ geoengineering experiments and
+                  projects worldwide — maintained by ETC Group, Biofuelwatch, and
+                  the Heinrich Boell Foundation. Color-coded by type (SRM, CDR,
+                  weather modification), filterable by date, with full project
+                  details. Also: technology briefings, governance tracking, and a
+                  resistance timeline of every major victory against
+                  geoengineering.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <a
+                    href="https://map.geoengineeringmonitor.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md bg-purple-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-purple-700 transition-colors"
+                  >
+                    Explore the map &rarr;
+                  </a>
+                  <a
+                    href="https://www.geoengineeringmonitor.org/briefings"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-purple-700 dark:text-purple-300 hover:underline"
+                  >
+                    Technology briefings &rarr;
+                  </a>
+                  <a
+                    href="https://www.geoengineeringmonitor.org/resistance"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-purple-700 dark:text-purple-300 hover:underline"
+                  >
+                    Resistance timeline &rarr;
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="rounded-lg border border-border p-4">
             <h3 className="font-semibold text-sm">GAO Oversight Report (February 2026)</h3>
             <p className="mt-1 text-xs text-muted-foreground">

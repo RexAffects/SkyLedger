@@ -135,6 +135,15 @@ WHAT'S BEING DONE ABOUT IT
 • A Congressional hearing titled "Playing God with the Weather — A Disastrous Forecast" was held September 16, 2025, with sworn testimony from three expert witnesses.
   Source: House Committee on Oversight and Accountability
 
+• 193 governments agreed to a de facto international moratorium on geoengineering under the UN Convention on Biological Diversity in 2010 — reaffirmed in 2016 and again at COP16 in 2024.
+  Source: UN CBD Decision X/33 (2010); CBD COP16 (2024) — geoengineeringmonitor.org/governance
+
+• The Hands Off Mother Earth (HOME) Alliance — 180+ orgs worldwide — helped cancel Harvard's SCoPEx stratospheric aerosol experiment (2024), shut down the Alameda marine cloud brightening trial (2024), and reaffirm the UN geoengineering moratorium.
+  Source: HOME Alliance / Geoengineering Monitor resistance timeline — geoengineeringmonitor.org/resistance
+
+• An interactive world map tracks 1,700+ geoengineering experiments and projects globally — color-coded by type, with project details and backers identified.
+  Source: Geoengineering Monitor (ETC Group, Biofuelwatch, Heinrich Boell Foundation) — map.geoengineeringmonitor.org
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 WHAT YOU CAN DO
@@ -144,7 +153,8 @@ WHAT YOU CAN DO
 3. Find your state's legislation status: srm360.org/us-bans
 4. Contact your Representative: house.gov/representatives/find-your-representative
 5. Support legal action: thegeofight.com (federal lawsuit fund)
-6. Share this page with someone who needs to see it
+6. Explore 1,700+ geoengineering projects on the world map: map.geoengineeringmonitor.org
+7. Share this page with someone who needs to see it
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -409,6 +419,21 @@ export default function FactsPage() {
             source="House Committee on Oversight and Accountability"
             sourceUrl="/learn/congressional-hearing"
           />
+          <Fact
+            claim="193 governments agreed to a de facto international moratorium on geoengineering under the UN Convention on Biological Diversity in 2010 — reaffirmed in 2016 and again at COP16 in 2024 due to the proliferation of outdoor experiments."
+            source="UN CBD Decision X/33 (2010); CBD COP16 (2024) — tracked by Geoengineering Monitor"
+            sourceUrl="https://www.geoengineeringmonitor.org/governance"
+          />
+          <Fact
+            claim="The Hands Off Mother Earth (HOME) Alliance — 180+ orgs worldwide — helped cancel Harvard's SCoPEx stratospheric aerosol experiment (2024), shut down the Alameda marine cloud brightening trial (2024), and reaffirm the UN geoengineering moratorium."
+            source="HOME Alliance / Geoengineering Monitor resistance timeline"
+            sourceUrl="https://www.geoengineeringmonitor.org/resistance"
+          />
+          <Fact
+            claim="An interactive world map tracks 1,700+ geoengineering experiments and projects globally — color-coded by type, with project details and backers identified."
+            source="Geoengineering Monitor (ETC Group, Biofuelwatch, Heinrich Boell Foundation)"
+            sourceUrl="https://map.geoengineeringmonitor.org/"
+          />
         </div>
       </section>
 
@@ -453,6 +478,13 @@ export default function FactsPage() {
           />
           <ActionItem
             number={6}
+            text="Explore 1,700+ geoengineering projects on the world map"
+            href="https://map.geoengineeringmonitor.org/"
+            linkText="Geoengineering Monitor Map"
+            external
+          />
+          <ActionItem
+            number={7}
             text="Share this page with someone who needs to see it"
             href=""
             linkText=""
