@@ -1154,6 +1154,75 @@ export const PLAYERS: NetworkPlayer[] = [
       { label: "Heatmap: Stardust raises $60M", url: "https://heatmap.news/climate-tech/stardust-geoengineering" },
     ],
   },
+
+  // ──────────────────────────────────────────────────────────
+  // OPEN PHILANTHROPY / DUSTIN MOSKOVITZ
+  // ──────────────────────────────────────────────────────────
+  {
+    slug: "open-philanthropy",
+    name: "Open Philanthropy / Dustin Moskovitz",
+    shortName: "Open Phil",
+    type: "research",
+    tagline:
+      "Facebook co-founder's foundation. $8M+ to the Degrees Initiative since 2015. Funds the 'Global Southwashing' pipeline that normalizes SAI as a viable option.",
+    keyStats: [
+      "$18B+ Moskovitz net worth",
+      "$8M+ to Degrees Initiative",
+      "SRM normalization pipeline",
+    ],
+    summary:
+      "Open Philanthropy, founded by Dustin Moskovitz (Facebook co-founder, $18B+ net worth) and Cari Tuna, is the primary funder of the Degrees Initiative \u2014 the organization Geoengineering Monitor exposed as 'Global Southwashing.' By funding research that overwhelmingly focuses on SAI (26 of 28 papers) framed against worst-case climate scenarios, Open Philanthropy bankrolls the normalization pipeline that makes geoengineering deployment appear reasonable.",
+    sections: [
+      {
+        title: "Who They Are",
+        content: [
+          "Founded by Dustin Moskovitz (Facebook co-founder #3, billionaire) and Cari Tuna.",
+          "Part of the effective altruism (EA) movement \u2014 which argues for maximizing 'impact per dollar.' In practice, this philosophy makes geoengineering \u2014 with its promise of planetary-scale impact \u2014 an attractive funding target.",
+          "One of the largest private foundations in the world. Billions in total grantmaking.",
+        ],
+        sources: [
+          {
+            label: "Open Philanthropy grants database",
+            url: "https://www.openphilanthropy.org/grants/",
+          },
+        ],
+      },
+      {
+        title: "Geoengineering Funding",
+        content: [
+          "$8M+ to the Degrees Initiative since 2015 \u2014 making Open Philanthropy the primary funder of the organization Geoengineering Monitor calls a 'Global Southwashing' operation.",
+          "The Degrees Initiative funds 35 research teams across developing countries, but staff and decision-makers are dominated by Global North actors.",
+          "93% of funded papers (26 of 28) focus exclusively on SAI \u2014 normalizing a single technology as a 'viable' option.",
+          "Other funders with geoengineering deployment ties also contribute to the Degrees Initiative, creating a pipeline from 'objective research' to commercial deployment.",
+        ],
+        sources: [
+          {
+            label: "Geoengineering Monitor: Global Southwashing",
+            url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+          },
+        ],
+      },
+      {
+        title: "The Normalization Strategy",
+        content: [
+          "Unlike Sacca (who funds research, lobbying, AND deployment), Open Philanthropy operates at the 'research legitimization' layer.",
+          "By funding research that frames SAI against extreme worst-case IPCC scenarios, the results predictably show geoengineering as 'not as bad' as runaway warming.",
+          "This creates the academic justification that deployment companies like Stardust then cite to argue their experiments are necessary.",
+          "The pipeline: Open Phil funds Degrees \u2192 Degrees produces SAI research showing it's 'viable' \u2192 deployment companies use this to justify experiments \u2192 investors profit.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "Geoengineering Monitor: Global Southwashing investigation",
+        url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+      },
+      {
+        label: "Open Philanthropy grants database",
+        url: "https://www.openphilanthropy.org/grants/",
+      },
+    ],
+  },
 ];
 
 // ============================================================
@@ -1312,6 +1381,28 @@ export const CONNECTIONS: NetworkConnection[] = [
     source: {
       label: "Wikipedia: Study Group",
       url: "https://en.wikipedia.org/wiki/Study_Group_(Jewish_group)",
+    },
+  },
+  {
+    from: "Open Phil",
+    to: "Degrees Initiative",
+    relationship:
+      "Primary funder ($8M+ since 2015). Funds the 'Global Southwashing' operation that normalizes SAI through developing-country research programs dominated by Global North actors.",
+    type: "donor",
+    source: {
+      label: "Geoengineering Monitor: Global Southwashing",
+      url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+    },
+  },
+  {
+    from: "Open Phil",
+    to: "Gates",
+    relationship:
+      "Both fund geoengineering research through different channels. Gates funds FICER (direct research). Open Phil funds Degrees Initiative (normalization through Global South framing). Complementary strategies in the same pipeline.",
+    type: "partner",
+    source: {
+      label: "Open Philanthropy grants database",
+      url: "https://www.openphilanthropy.org/grants/",
     },
   },
   {
@@ -1572,6 +1663,31 @@ export const SOURCE_CATEGORIES: {
       {
         label: "Byline Times: Epstein co-owned venture fund with Thiel",
         url: "https://bylinetimes.com/2026/02/04/jeffrey-epstein-and-peter-thiel-co-owned-venture-fund-as-thiels-palantir-entered-uk-government/",
+      },
+    ],
+  },
+  {
+    title: "Carbon Markets & Ocean Geoengineering",
+    sources: [
+      {
+        label: "Geoengineering Monitor: BECCS carbon credits hit record levels",
+        url: "https://www.geoengineeringmonitor.org/geo-map-beccs-nov24",
+      },
+      {
+        label: "Geoengineering Monitor: Carbon markets driving geoengineering",
+        url: "https://www.geoengineeringmonitor.org/geoengineering-map-update-carbon-markets-are-a-major-driver-for-geoengineering",
+      },
+      {
+        label: "Geoengineering Monitor: Marine geoengineering explosion",
+        url: "https://www.geoengineeringmonitor.org/venture-capital-and-carbon-credits-fuel-an-explosion-of-marine-geoengineering-projects",
+      },
+      {
+        label: "Geoengineering Monitor: Global Southwashing (Degrees Initiative)",
+        url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+      },
+      {
+        label: "CIEL: UK ARIA funds controversial geoengineering experiments",
+        url: "https://www.ciel.org/news/uk-agency-to-fund-controversial-solar-geoengineering-experiments-despite-risks/",
       },
     ],
   },

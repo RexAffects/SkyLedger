@@ -46,6 +46,18 @@ WHO'S DOING IT
 • Bill Gates has personally funded geoengineering research with $8.5M+ since 2007 through FICER (Fund for Innovative Climate and Energy Research), managed by David Keith and Ken Caldeira.
   Source: Congressional hearing testimony; FICER public disclosures
 
+• The Degrees Initiative, funded by Facebook co-founder Dustin Moskovitz's Open Philanthropy ($8M+), was exposed as "Global Southwashing" — staff dominated by Global North, 26 of 28 funded papers focus exclusively on SAI.
+  Source: Geoengineering Monitor investigation — geoengineeringmonitor.org/the-degrees-initiative
+
+• The UK's ARIA launched a £57 million "Exploring Climate Cooling" program — 21 geoengineering projects including SAI, MCB, and space-based schemes. Largest single government commitment to geoengineering experiments.
+  Source: ARIA programme; CIEL condemnation — geoengineeringmonitor.org/geoengineering-the-stratosphere
+
+• Marine geoengineering companies are dumping materials into the ocean and selling unverified carbon credits: Planetary Technologies (magnesium hydroxide), Ebb Carbon (WA), Equatic (LA), Running Tide (kelp sinking, ME).
+  Source: Geoengineering Monitor — geoengineeringmonitor.org/venture-capital-and-carbon-credits-fuel-an-explosion-of-marine-geoengineering-projects
+
+• BECCS accounted for nearly 90% of all CDR credits sold globally in Q2 2024 (~4.3M tonnes). Microsoft's contracts represent 91% of BECCS credit value — futures contracts for capture that hasn't happened yet.
+  Source: Geoengineering Monitor — geoengineeringmonitor.org/geo-map-beccs-nov24
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 WHAT INDEPENDENT TESTING HAS FOUND
@@ -242,6 +254,26 @@ export default function FactsPage() {
             claim="Bill Gates has funded geoengineering research with $8.5M+ since 2007 through FICER, managed by David Keith and Ken Caldeira."
             source="Congressional hearing; FICER public disclosures"
             sourceUrl="/learn/congressional-hearing"
+          />
+          <Fact
+            claim="The Degrees Initiative, a UK-based NGO funded by Facebook co-founder Dustin Moskovitz's Open Philanthropy ($8M+), claims to put the Global South 'at the centre' of SRM research. But Geoengineering Monitor exposed it as 'Global Southwashing' — staff and decision-makers are dominated by the Global North, and 26 of 28 funded papers focus exclusively on SAI."
+            source="Geoengineering Monitor: Global Southwashing investigation"
+            sourceUrl="https://www.geoengineeringmonitor.org/the-degrees-initiative"
+          />
+          <Fact
+            claim="The UK's Advanced Research & Invention Agency (ARIA) launched a £57 million 'Exploring Climate Cooling' program funding 21 geoengineering research projects — including SAI, marine cloud brightening, and space-based schemes. The largest single government commitment to geoengineering experiments."
+            source="ARIA programme; CIEL condemnation; Geoengineering Monitor"
+            sourceUrl="https://www.geoengineeringmonitor.org/geoengineering-the-stratosphere"
+          />
+          <Fact
+            claim="An explosion of marine geoengineering companies are dumping materials into the ocean — magnesium hydroxide, sodium hydroxide, kelp — and selling carbon credits based on unverified permanent capture. Planetary Technologies (Canada), Ebb Carbon (WA), Equatic (LA), and Running Tide (ME) are all active."
+            source="Geoengineering Monitor: Venture capital fuels marine geoengineering explosion"
+            sourceUrl="https://www.geoengineeringmonitor.org/venture-capital-and-carbon-credits-fuel-an-explosion-of-marine-geoengineering-projects"
+          />
+          <Fact
+            claim="BECCS (Bioenergy with Carbon Capture & Storage) accounted for nearly 90% of all Carbon Dioxide Removal credits sold globally in Q2 2024 — approximately 4.3 million tonnes. Microsoft's contracts with Drax (UK) and Stockholm Exergi (Sweden) represent 91% of total BECCS credit value — but these are futures contracts for capture that hasn't happened yet."
+            source="Geoengineering Monitor: BECCS carbon credit sales hit record levels"
+            sourceUrl="https://www.geoengineeringmonitor.org/geo-map-beccs-nov24"
           />
         </div>
       </section>

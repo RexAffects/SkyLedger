@@ -261,6 +261,32 @@ export default function LearnPage() {
           />
           <TopicCardComponent
             card={{
+              href: "/learn/operators/degrees-initiative",
+              title: "The Degrees Initiative",
+              description:
+                "\"Global Southwashing\" \u2014 exposed by Geoengineering Monitor. UK NGO funded by Facebook co-founder Dustin Moskovitz ($8M+) claims to center the Global South. Staff dominated by Global North. 26 of 28 papers focus on SAI.",
+              tag: "Exposed",
+              tagColor:
+                "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+              highlight:
+                "A normalization pipeline for SAI deployment, wrapping geoengineering advocacy in equity language.",
+            }}
+          />
+          <TopicCardComponent
+            card={{
+              href: "/learn/operators/planetary-technologies",
+              title: "Ocean Geoengineering",
+              description:
+                "An explosion of marine CDR companies dumping materials into the ocean \u2014 magnesium hydroxide, sodium hydroxide, kelp \u2014 and selling carbon credits based on unverified capture. Venture capital and carbon markets are the drivers.",
+              tag: "4 profiles",
+              tagColor:
+                "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
+              highlight:
+                "BECCS = 90% of all CDR credits sold globally. Microsoft = 91% of BECCS credit value. Futures contracts for capture that hasn't happened yet.",
+            }}
+          />
+          <TopicCardComponent
+            card={{
               href: "/learn/lobby-tracker",
               title: "Lobby Tracker",
               description:

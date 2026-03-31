@@ -19,6 +19,11 @@ const OPERATOR_ORDER: Record<string, number> = {
   "reflect-orbital": 5,
   "north-american-weather-consultants": 6,
   "idaho-power": 7,
+  "planetary-technologies": 8,
+  "ebb-carbon": 9,
+  "equatic": 10,
+  "running-tide": 11,
+  "degrees-initiative": 12,
 };
 
 export default function OperatorsIndexPage() {

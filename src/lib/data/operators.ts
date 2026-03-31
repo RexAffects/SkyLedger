@@ -50,6 +50,7 @@ export type OperatorCategory =
   | "marine-cloud-brightening"
   | "space-mirrors"
   | "ice-thickening"
+  | "ocean-geoengineering"
   | "research-advocacy"
   | "funding";
 
@@ -59,6 +60,7 @@ export const CATEGORY_LABELS: Record<OperatorCategory, string> = {
   "marine-cloud-brightening": "Marine Cloud Brightening",
   "space-mirrors": "Space Mirrors",
   "ice-thickening": "Ice Thickening",
+  "ocean-geoengineering": "Ocean / CDR Geoengineering",
   "research-advocacy": "Research & Advocacy",
   funding: "Funding / Investment",
 };
@@ -1282,6 +1284,267 @@ export const OPERATORS: Operator[] = [
       },
     ],
     faaKeywords: ["IDAHO POWER"],
+  },
+
+  // =========================================================================
+  // THE DEGREES INITIATIVE — "Global Southwashing"
+  // =========================================================================
+  {
+    slug: "degrees-initiative",
+    name: "The Degrees Initiative",
+    shortName: "Degrees",
+    category: "research-advocacy",
+    description:
+      "UK-based NGO that claims to put the Global South 'at the centre' of SRM research. Geoengineering Monitor exposed it as 'Global Southwashing' — staff and decision-makers are dominated by the Global North, and 26 of 28 funded papers focus exclusively on SAI.",
+    founded: "2020",
+    headquarters: "London, United Kingdom",
+    website: "https://www.degrees.ngo",
+    status: "active",
+    keyFacts: [
+      "Claims to center the Global South in solar geoengineering research — but staff, board, and decision-makers are dominated by Global North actors",
+      "Funded 35 research teams across developing countries, with 4 new teams starting January 2026 (Cabo Verde, Jordan, Morocco, Congo)",
+      "26 of 28 published papers focus exclusively on stratospheric aerosol injection (SAI)",
+      "Studies use extreme worst-case IPCC scenarios to make geoengineering appear comparatively 'not that bad'",
+      "Described by Geoengineering Monitor as a 'normalization pipeline' — a stepping stone to legitimize outdoor SRM experiments",
+      "Funding presented as support for the South is used to strengthen institutions and authors based in the North",
+    ],
+    listHighlights: [
+      "\"Global Southwashing\" — exposed by Geoengineering Monitor",
+      "Primary funder: Open Philanthropy (Dustin Moskovitz) — $8M+ since 2015",
+      "26 of 28 funded papers focus exclusively on SAI",
+    ],
+    redFlags: [
+      {
+        flag: "Global Southwashing",
+        detail:
+          "Analysis by Geoengineering Monitor reveals staff, board, and decision-makers are majority Global North. Funding claimed as support for the South strengthens Northern institutions and authors.",
+        source: {
+          label: "Geoengineering Monitor: Global Southwashing investigation",
+          url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+        },
+      },
+      {
+        flag: "Normalization pipeline for SAI",
+        detail:
+          "93% of funded papers focus on a single technology: SAI. Studies frame SAI against extreme worst-case scenarios to minimize perceived negative impacts. Acts as a stepping stone to open-air experiments.",
+        source: {
+          label: "Geoengineering Monitor: Global Southwashing investigation",
+          url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+        },
+      },
+      {
+        flag: "Billionaire-backed foundations with geoengineering deployment ties",
+        detail:
+          "Primary funder Open Philanthropy (Dustin Moskovitz, Facebook co-founder) has granted over $8M since 2015. Other funders have track records of funding open-air experiments and commercialization of geoengineering.",
+        source: {
+          label: "Geoengineering Monitor: Global Southwashing investigation",
+          url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+        },
+      },
+    ],
+    people: [
+      {
+        name: "Andy Parker",
+        role: "Project Lead / Co-founder",
+        background:
+          "Former director at Harvard's Solar Geoengineering Research Program. UK-based. Led the framing of SRM research as a Global South issue.",
+        nationality: "British",
+        sources: [
+          {
+            label: "Degrees Initiative team page",
+            url: "https://www.degrees.ngo/team/",
+          },
+        ],
+      },
+    ],
+    funding: [
+      {
+        date: "2015\u2013present",
+        amount: "$8M+",
+        type: "Philanthropic grants",
+        investors: [
+          {
+            name: "Open Philanthropy",
+            type: "foundation",
+            background:
+              "Founded by Dustin Moskovitz (Facebook co-founder, $18B+ net worth) and Cari Tuna. Largest single funder of Degrees Initiative. Part of the effective altruism movement.",
+            amountIfKnown: "$8M+",
+            geoConnections: [
+              "Primary funder of the Degrees Initiative's SRM research program",
+            ],
+          },
+        ],
+        sources: [
+          {
+            label: "Geoengineering Monitor: Global Southwashing",
+            url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+          },
+        ],
+      },
+    ],
+    connections: [
+      {
+        entity: "Open Philanthropy (Dustin Moskovitz)",
+        relationship: "Primary funder — $8M+ since 2015",
+        confirmed: true,
+        source: {
+          label: "Geoengineering Monitor investigation",
+          url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+        },
+      },
+      {
+        entity: "Harvard Solar Geoengineering Research Program",
+        relationship: "Co-founder Andy Parker was former director at Harvard SGRP",
+        confirmed: true,
+        source: {
+          label: "Degrees Initiative team page",
+          url: "https://www.degrees.ngo/team/",
+        },
+      },
+    ],
+    sources: [
+      {
+        label: "Geoengineering Monitor: Global Southwashing investigation",
+        url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+      },
+      {
+        label: "Geoengineering Monitor: Global Southwashing is the new greenwashing",
+        url: "https://www.geoengineeringmonitor.org/global-southwashing-is-the-new-greenwashing",
+      },
+      {
+        label: "Degrees Initiative website",
+        url: "https://www.degrees.ngo/",
+      },
+    ],
+    faaKeywords: [],
+  },
+
+  // =========================================================================
+  // MARINE / OCEAN GEOENGINEERING OPERATORS
+  // =========================================================================
+  {
+    slug: "planetary-technologies",
+    name: "Planetary Technologies",
+    shortName: "Planetary",
+    category: "ocean-geoengineering",
+    description:
+      "Canadian company commercializing ocean alkalinity enhancement (OAE). Plans to dump 450 tonnes of magnesium hydroxide into St Ives Bay, Cornwall, UK. Sells carbon credits based on unproven ocean carbon capture.",
+    founded: "2019",
+    headquarters: "Dartmouth, Nova Scotia, Canada",
+    website: "https://www.planetarytech.com",
+    status: "active",
+    keyFacts: [
+      "Developing 'SeaOH2' ocean alkalinity enhancement technology — aims to mimic natural weathering at industrial scale",
+      "Plans to dump 450 tonnes of magnesium hydroxide into St Ives Bay, Cornwall, UK",
+      "Sells carbon credits based on ocean-based carbon removal that no independent study has verified as permanent",
+      "One of the most advanced commercial OAE companies",
+    ],
+    listHighlights: [
+      "Plans to dump 450 tonnes of magnesium hydroxide into UK waters",
+      "Sells carbon credits for unverified ocean carbon capture",
+    ],
+    people: [],
+    funding: [],
+    connections: [],
+    sources: [
+      {
+        label: "Geoengineering Monitor: Carbon market-driven ocean experiments",
+        url: "https://www.geoengineeringmonitor.org/2024/04/marine-geo-oae/",
+      },
+      {
+        label: "Geoengineering Monitor: Marine geoengineering explosion",
+        url: "https://www.geoengineeringmonitor.org/venture-capital-and-carbon-credits-fuel-an-explosion-of-marine-geoengineering-projects",
+      },
+    ],
+    faaKeywords: [],
+  },
+  {
+    slug: "ebb-carbon",
+    name: "Ebb Carbon",
+    shortName: "Ebb",
+    category: "ocean-geoengineering",
+    description:
+      "OAE startup testing a 100-tonne system at Pacific Northwest National Laboratory in Sequim, WA. Developing technology to remove CO2 by manipulating ocean chemistry. Plans larger commercial facility.",
+    founded: "2021",
+    headquarters: "San Francisco, California",
+    status: "active",
+    keyFacts: [
+      "Testing 100-tonne OAE system at Pacific Northwest National Laboratory (PNNL) in Sequim, WA",
+      "Plans for larger commercial facility",
+      "Uses electrochemistry to split seawater and increase ocean alkalinity",
+    ],
+    listHighlights: [
+      "Testing at federal lab (PNNL) in Washington state",
+    ],
+    people: [],
+    funding: [],
+    connections: [],
+    sources: [
+      {
+        label: "Geoengineering Monitor: Marine geoengineering explosion",
+        url: "https://www.geoengineeringmonitor.org/venture-capital-and-carbon-credits-fuel-an-explosion-of-marine-geoengineering-projects",
+      },
+    ],
+    faaKeywords: [],
+  },
+  {
+    slug: "equatic",
+    name: "Equatic",
+    shortName: "Equatic",
+    category: "ocean-geoengineering",
+    description:
+      "Spun out of UCLA research. Testing OAE technology in Los Angeles and Singapore. Uses electrolysis of seawater to remove and store CO2 while producing green hydrogen.",
+    founded: "2023",
+    headquarters: "Los Angeles, California",
+    status: "active",
+    keyFacts: [
+      "Spun out of UCLA research by Gaurav Sant",
+      "Testing OAE in Los Angeles and Singapore simultaneously",
+      "Uses seawater electrolysis to remove CO2 and produce green hydrogen",
+      "Backed by U.S. Department of Energy funding",
+    ],
+    people: [],
+    funding: [],
+    connections: [],
+    sources: [
+      {
+        label: "Geoengineering Monitor: Marine geoengineering carbon markets",
+        url: "https://www.geoengineeringmonitor.org/marine-geoengineering-carbon-markets",
+      },
+    ],
+    faaKeywords: [],
+  },
+  {
+    slug: "running-tide",
+    name: "Running Tide",
+    shortName: "Running Tide",
+    category: "ocean-geoengineering",
+    description:
+      "Portland, Maine company growing kelp on biodegradable floats in the open ocean and sinking it to 1,000 meters depth for carbon storage. Conducting pilot trials in the Gulf of Maine since 2018.",
+    founded: "2017",
+    headquarters: "Portland, Maine",
+    website: "https://www.runningtide.com",
+    status: "active",
+    keyFacts: [
+      "Grows kelp on biodegradable floats, then sinks it to 1,000m ocean depth for carbon 'storage'",
+      "Pilot trials underway in the Gulf of Maine since 2018",
+      "Carbon credits sold based on sunken kelp — but no independent verification of long-term storage",
+      "Received early funding from Shopify's Sustainability Fund",
+    ],
+    listHighlights: [
+      "Sinking kelp to ocean floor as 'carbon storage' — no long-term verification",
+      "Active in Gulf of Maine since 2018",
+    ],
+    people: [],
+    funding: [],
+    connections: [],
+    sources: [
+      {
+        label: "Geoengineering Monitor: Marine geoengineering quarterly review",
+        url: "https://www.geoengineeringmonitor.org/quarterly-review-i-part-3-marine-geoengineering-ongoing-and-planned-open-ocean-trials-and-recent-developments-in-research",
+      },
+    ],
+    faaKeywords: [],
   },
 ];
 
