@@ -75,6 +75,7 @@ interface FlightDetail {
       country: string | null;
     } | null;
     airline: string | null;
+    verified: boolean;
   };
   position: {
     latitude: number;
@@ -522,13 +523,23 @@ export function FlightDetailPanel({
         <Section title="Route">
           {data.route.origin || data.route.destination ? (
             <>
-              <div className="flex items-center gap-3">
+              <div className={`flex items-center gap-3${!data.route.verified ? " opacity-60" : ""}`}>
                 <AirportDisplay airport={data.route.origin} label="From" />
                 <svg className="h-4 w-4 text-muted-foreground shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
                 <AirportDisplay airport={data.route.destination} label="To" />
               </div>
+              {!data.route.verified && (
+                <div className="rounded-md bg-yellow-500/10 border border-yellow-500/30 p-2 mt-2">
+                  <p className="text-xs text-yellow-400">
+                    <span className="font-semibold">Route unverified</span> &mdash;
+                    This aircraft&apos;s position doesn&apos;t match the published route.
+                    Route data comes from historical flight schedules and may be
+                    outdated or reassigned.
+                  </p>
+                </div>
+              )}
               {data.route.airline && (
                 <p className="text-xs text-muted-foreground mt-2">
                   Airline: {data.route.airline}

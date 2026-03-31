@@ -6,6 +6,7 @@ import { getFlag } from "@/lib/supabase/flags";
 import { getLLCLookup, createPendingLLCLookup } from "@/lib/supabase/llc-lookups";
 import { getStateRegistryUrl } from "@/lib/utils/llc-detect";
 import { matchOwnerName } from "@/lib/network";
+import { isPositionOnRoute } from "@/lib/utils/geo";
 
 /**
  * GET /api/flights/detail?hex=A1B2C3&callsign=UAL123&tail=N12345
@@ -120,6 +121,7 @@ export async function GET(request: NextRequest) {
           ? { icao: hexDbRoute.destination, iata: null, name: null, city: null, country: null }
           : null,
       airline: routeData?.airline_name || null,
+      verified: false as boolean, // computed below after position is known
     },
 
     // Live position
@@ -183,6 +185,24 @@ export async function GET(request: NextRequest) {
 
     timestamp: Date.now(),
   };
+
+  // Verify route against aircraft position — flag stale/wrong ADSBDB data
+  if (
+    result.route.origin &&
+    result.route.destination &&
+    result.position &&
+    routeData?.origin &&
+    routeData?.destination
+  ) {
+    result.route.verified = isPositionOnRoute(
+      routeData.origin.latitude,
+      routeData.origin.longitude,
+      routeData.destination.latitude,
+      routeData.destination.longitude,
+      result.position.latitude,
+      result.position.longitude
+    );
+  }
 
   // Look up community flags (don't block if it fails)
   const effectiveTail =
