@@ -1305,8 +1305,12 @@ export const OPERATORS: Operator[] = [
       "Funded 35 research teams across developing countries, with 4 new teams starting January 2026 (Cabo Verde, Jordan, Morocco, Congo)",
       "26 of 28 published papers focus exclusively on stratospheric aerosol injection (SAI)",
       "Studies use extreme worst-case IPCC scenarios to make geoengineering appear comparatively 'not that bad'",
+      "Originally founded in 2010 as SRMGI (Solar Radiation Management Governance Initiative) by the Royal Society (UK), Environmental Defense Fund (USA), and TWAS. Rebranded 2021",
       "Described by Geoengineering Monitor as a 'normalization pipeline' — a stepping stone to legitimize outdoor SRM experiments",
       "Funding presented as support for the South is used to strengthen institutions and authors based in the North",
+      "5 ARIA-funded project leads came to SRM through Degrees' initial support — a talent pipeline from philanthropic grants into government geoengineering programs",
+      "Board chair Oliver Morton is senior editor at The Economist and author of 'The Planet Remade' — a book broadly favorable toward geoengineering",
+      "African ministers at AMCEN (July 2025) issued an unequivocal rejection of solar radiation modification technologies",
     ],
     listHighlights: [
       "\"Global Southwashing\" — exposed by Geoengineering Monitor",
@@ -1520,28 +1524,110 @@ export const OPERATORS: Operator[] = [
     shortName: "Running Tide",
     category: "ocean-geoengineering",
     description:
-      "Portland, Maine company growing kelp on biodegradable floats in the open ocean and sinking it to 1,000 meters depth for carbon storage. Conducting pilot trials in the Gulf of Maine since 2018.",
+      "SHUT DOWN June 2024. Portland, Maine company that raised $54M+ (led by Sacca's Lowercarbon Capital) to dump thousands of tons of Canadian wood chips coated in limestone into the North Atlantic off Iceland. Microsoft removed their credits for failing verification. Scientists departed over ecological concerns.",
     founded: "2017",
-    headquarters: "Portland, Maine",
+    headquarters: "Portland, Maine (disbanded)",
     website: "https://www.runningtide.com",
-    status: "active",
+    status: "disbanded",
     keyFacts: [
-      "Grows kelp on biodegradable floats, then sinks it to 1,000m ocean depth for carbon 'storage'",
-      "Pilot trials underway in the Gulf of Maine since 2018",
-      "Carbon credits sold based on sunken kelp — but no independent verification of long-term storage",
-      "Received early funding from Shopify's Sustainability Fund",
+      "SHUT DOWN June 14, 2024 — all operations ceased, 32 remaining staff laid off (down from 120 at peak)",
+      "Raised $54M+ led by Chris Sacca's Lowercarbon Capital (Series B, 2022)",
+      "Shifted from kelp sinking to dumping thousands of tons of Canadian wood chips coated in limestone into the ocean off Iceland",
+      "Microsoft removed Running Tide credits from its portfolio because they failed verification standards",
+      "MIT Technology Review reported scientist departures over concerns about ecological effects and undisclosed ocean fertilization discussions",
+      "Icelandic newspaper investigation revealed the wood chip dumping — Prof. Jon Olafsson (Univ. of Iceland): 'Throwing wood chips into the ocean does nothing for the atmosphere'",
+      "Sold carbon credits to Shopify, Microsoft, and Stripe — all based on unverifiable claims of permanent ocean carbon storage",
     ],
     listHighlights: [
-      "Sinking kelp to ocean floor as 'carbon storage' — no long-term verification",
-      "Active in Gulf of Maine since 2018",
+      "SHUT DOWN June 2024 — verification failures, scientist departures",
+      "Funded by Sacca's Lowercarbon Capital ($54M+)",
+      "Dumped Canadian wood chips into ocean off Iceland, sold as 'carbon credits'",
     ],
-    people: [],
-    funding: [],
-    connections: [],
+    redFlags: [
+      {
+        flag: "Verification failure",
+        detail:
+          "Running Tide admitted it was 'impossible to monitor the wood chips for more than three hours after release.' Microsoft removed their credits from its portfolio.",
+        source: {
+          label: "MIT Technology Review: Running Tide scientist departures",
+          url: "https://www.technologyreview.com/2022/06/16/1053758/running-tide-seaweed-kelp-scientist-departures-ecological-concerns-climate-carbon-removal/",
+        },
+      },
+      {
+        flag: "Sacca connection",
+        detail:
+          "Lowercarbon Capital (Chris Sacca) led the $54M Series B. The same fund that leads Stardust ($60M) and Rainmaker ($25M) also bankrolled this failed ocean dumping operation.",
+        source: {
+          label: "Canary Media: Running Tide's ill-fated adventure",
+          url: "https://www.canarymedia.com/articles/carbon-removal/under-the-sea-running-tides-ill-fated-adventure-in-ocean-carbon-removal",
+        },
+      },
+    ],
+    people: [
+      {
+        name: "Marty Odlin",
+        role: "CEO & Founder",
+        background:
+          "Dartmouth-educated, from a multi-generational Maine fishing family. Pivoted to carbon removal after seeing climate change devastate Gulf of Maine fisheries.",
+        nationality: "American",
+        sources: [
+          {
+            label: "Maine Public: Running Tide shutters",
+            url: "https://www.mainepublic.org/climate/2024-06-20/once-promising-maine-carbon-capture-company-shutters",
+          },
+        ],
+      },
+    ],
+    funding: [
+      {
+        date: "2022",
+        amount: "$54M",
+        type: "Series B",
+        investors: [
+          {
+            name: "Lowercarbon Capital (Chris Sacca)",
+            type: "vc",
+            background:
+              "Sacca's climate fund. Also leads Stardust ($60M) and Rainmaker ($25M). The same fund at every seat of the geoengineering pipeline.",
+            geoConnections: [
+              "Led Stardust $60M Series A",
+              "Led Rainmaker $25M Series A",
+              "Funded Harvard SGRP and SilverLining lobbying",
+            ],
+          },
+        ],
+        sources: [
+          {
+            label: "Canary Media: Running Tide",
+            url: "https://www.canarymedia.com/articles/carbon-removal/under-the-sea-running-tides-ill-fated-adventure-in-ocean-carbon-removal",
+          },
+        ],
+      },
+    ],
+    connections: [
+      {
+        entity: "Lowercarbon Capital (Chris Sacca)",
+        entitySlug: "lowercarbon-capital",
+        relationship: "Lead investor in $54M Series B. Sacca's fund also leads Stardust and Rainmaker.",
+        confirmed: true,
+        source: {
+          label: "Canary Media",
+          url: "https://www.canarymedia.com/articles/carbon-removal/under-the-sea-running-tides-ill-fated-adventure-in-ocean-carbon-removal",
+        },
+      },
+    ],
     sources: [
       {
-        label: "Geoengineering Monitor: Marine geoengineering quarterly review",
-        url: "https://www.geoengineeringmonitor.org/quarterly-review-i-part-3-marine-geoengineering-ongoing-and-planned-open-ocean-trials-and-recent-developments-in-research",
+        label: "MIT Technology Review: Running Tide scientist departures",
+        url: "https://www.technologyreview.com/2022/06/16/1053758/running-tide-seaweed-kelp-scientist-departures-ecological-concerns-climate-carbon-removal/",
+      },
+      {
+        label: "Maine Public: Running Tide shutters",
+        url: "https://www.mainepublic.org/climate/2024-06-20/once-promising-maine-carbon-capture-company-shutters",
+      },
+      {
+        label: "Pulitzer Center: How the next big thing sank without a trace",
+        url: "https://pulitzercenter.org/stories/how-next-big-thing-carbon-removal-sank-without-trace",
       },
     ],
     faaKeywords: [],

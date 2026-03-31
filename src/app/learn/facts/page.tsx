@@ -49,14 +49,14 @@ WHO'S DOING IT
 • The Degrees Initiative, funded by Facebook co-founder Dustin Moskovitz's Open Philanthropy ($8M+), was exposed as "Global Southwashing" — staff dominated by Global North, 26 of 28 funded papers focus exclusively on SAI.
   Source: Geoengineering Monitor investigation — geoengineeringmonitor.org/the-degrees-initiative
 
-• The UK's ARIA launched a £57 million "Exploring Climate Cooling" program — 21 geoengineering projects including SAI, MCB, and space-based schemes. Largest single government commitment to geoengineering experiments.
-  Source: ARIA programme; CIEL condemnation — geoengineeringmonitor.org/geoengineering-the-stratosphere
+• The UK's ARIA launched a £57 million "Exploring Climate Cooling" program — 21 geoengineering projects including SAI balloon experiments (potentially on US soil via Cornell), a £9.9M Arctic ice project, MCB, and space mirrors. CIEL: "The UK Government risks triggering a costly, dangerous race."
+  Source: ARIA funded projects (May 2025); CIEL condemnation — geoengineeringmonitor.org/geoengineering-the-stratosphere
 
 • Marine geoengineering companies are dumping materials into the ocean and selling unverified carbon credits: Planetary Technologies (magnesium hydroxide), Ebb Carbon (WA), Equatic (LA), Running Tide (kelp sinking, ME).
   Source: Geoengineering Monitor — geoengineeringmonitor.org/venture-capital-and-carbon-credits-fuel-an-explosion-of-marine-geoengineering-projects
 
-• BECCS accounted for nearly 90% of all CDR credits sold globally in Q2 2024 (~4.3M tonnes). Microsoft's contracts represent 91% of BECCS credit value — futures contracts for capture that hasn't happened yet.
-  Source: Geoengineering Monitor — geoengineeringmonitor.org/geo-map-beccs-nov24
+• BECCS accounted for ~90% of all CDR credits in Q2 2024 (~4.3M tonnes). Microsoft IS the carbon removal market — 91% of BECCS credit value, futures contracts for capture that hasn't happened yet. Drax Group (UK's #1 CO2 emitter, 13.3M tonnes/year) sources wood pellets from American forests in MS, LA, AL, GA, and AR — disproportionately sited next to majority-Black communities — while receiving £869M/year in UK subsidies.
+  Source: CDR.fyi Q2 2024; Geoengineering Monitor; Ember Climate — geoengineeringmonitor.org/geo-map-beccs-nov24
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -261,8 +261,8 @@ export default function FactsPage() {
             sourceUrl="https://www.geoengineeringmonitor.org/the-degrees-initiative"
           />
           <Fact
-            claim="The UK's Advanced Research & Invention Agency (ARIA) launched a £57 million 'Exploring Climate Cooling' program funding 21 geoengineering research projects — including SAI, marine cloud brightening, and space-based schemes. The largest single government commitment to geoengineering experiments."
-            source="ARIA programme; CIEL condemnation; Geoengineering Monitor"
+            claim="The UK's ARIA launched a £57 million 'Exploring Climate Cooling' program — 21 geoengineering projects including SAI balloon experiments (potentially on US soil via Cornell), a £9.9M Arctic ice project, marine cloud brightening, and space mirrors. CIEL: 'The UK Government risks triggering a costly, dangerous race.' The Degrees Initiative received £2M from ARIA — 5 project leads came through Degrees' pipeline."
+            source="ARIA funded projects (May 2025); CIEL condemnation; Geoengineering Monitor"
             sourceUrl="https://www.geoengineeringmonitor.org/geoengineering-the-stratosphere"
           />
           <Fact
@@ -271,8 +271,8 @@ export default function FactsPage() {
             sourceUrl="https://www.geoengineeringmonitor.org/venture-capital-and-carbon-credits-fuel-an-explosion-of-marine-geoengineering-projects"
           />
           <Fact
-            claim="BECCS (Bioenergy with Carbon Capture & Storage) accounted for nearly 90% of all Carbon Dioxide Removal credits sold globally in Q2 2024 — approximately 4.3 million tonnes. Microsoft's contracts with Drax (UK) and Stockholm Exergi (Sweden) represent 91% of total BECCS credit value — but these are futures contracts for capture that hasn't happened yet."
-            source="Geoengineering Monitor: BECCS carbon credit sales hit record levels"
+            claim="BECCS accounted for ~90% of all CDR credits in Q2 2024 (~4.3M tonnes). Microsoft IS the carbon removal market — 91% of BECCS credit value, 67% of volume. These are futures contracts for capture that hasn't happened yet. Drax Group (UK), the main BECCS operator, is the UK's single largest CO2 emitter (13.3M tonnes/year) while receiving £869M in annual subsidies — and sources its wood pellets from American forests in Mississippi, Louisiana, Alabama, Georgia, and Arkansas, disproportionately sited next to majority-Black communities."
+            source="CDR.fyi Q2 2024; Geoengineering Monitor; Ember Climate"
             sourceUrl="https://www.geoengineeringmonitor.org/geo-map-beccs-nov24"
           />
         </div>

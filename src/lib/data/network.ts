@@ -1164,38 +1164,48 @@ export const PLAYERS: NetworkPlayer[] = [
     shortName: "Open Phil",
     type: "research",
     tagline:
-      "Facebook co-founder's foundation. $8M+ to the Degrees Initiative since 2015. Funds the 'Global Southwashing' pipeline that normalizes SAI as a viable option.",
+      "Facebook co-founder's foundation. $14.7M in SRM funding \u2014 outspends most countries. Part of a Facebook alumni geoengineering network (Moskovitz, Cohler, Schroepfer). Rebranded as 'Coefficient Giving' in Nov 2025.",
     keyStats: [
-      "$18B+ Moskovitz net worth",
-      "$8M+ to Degrees Initiative",
-      "SRM normalization pipeline",
+      "$10.6B Moskovitz net worth",
+      "$14.7M total SRM funding",
+      "7th largest SRM funder globally",
     ],
     summary:
-      "Open Philanthropy, founded by Dustin Moskovitz (Facebook co-founder, $18B+ net worth) and Cari Tuna, is the primary funder of the Degrees Initiative \u2014 the organization Geoengineering Monitor exposed as 'Global Southwashing.' By funding research that overwhelmingly focuses on SAI (26 of 28 papers) framed against worst-case climate scenarios, Open Philanthropy bankrolls the normalization pipeline that makes geoengineering deployment appear reasonable.",
+      "Open Philanthropy (rebranded Coefficient Giving, Nov 2025), founded by Dustin Moskovitz (Facebook co-founder #3) and Cari Tuna, has spent $14.7M on solar geoengineering \u2014 more than the European Union. They are the 7th largest SRM funder globally. Their biggest grants: $7M to the Degrees Initiative (the 'Global Southwashing' pipeline) and $2.5M to Harvard's SGRP (which ran the now-cancelled SCoPEx experiment). Part of a Facebook/Meta alumni geoengineering funding network alongside Matt Cohler (Facebook #7) and Mike Schroepfer (former Meta CTO).",
     sections: [
       {
         title: "Who They Are",
         content: [
-          "Founded by Dustin Moskovitz (Facebook co-founder #3, billionaire) and Cari Tuna.",
-          "Part of the effective altruism (EA) movement \u2014 which argues for maximizing 'impact per dollar.' In practice, this philosophy makes geoengineering \u2014 with its promise of planetary-scale impact \u2014 an attractive funding target.",
-          "One of the largest private foundations in the world. Billions in total grantmaking.",
+          "Founded by Dustin Moskovitz (Facebook co-founder #3, $10.6B net worth) and Cari Tuna. Rebranded as 'Coefficient Giving' in November 2025.",
+          "Nearly all funding comes from Moskovitz and Tuna \u2014 over $4 billion donated total, including $600M in 2025 alone.",
+          "Part of the effective altruism (EA) movement \u2014 which argues for maximizing 'impact per dollar.' Geoengineering, with its promise of planetary-scale impact, is a natural EA target.",
+          "Their cause report explicitly states interventions could include 'lobbying a government to fund research' \u2014 not just funding research directly.",
         ],
         sources: [
           {
             label: "Open Philanthropy grants database",
             url: "https://www.openphilanthropy.org/grants/",
           },
+          {
+            label: "Fortune: Moskovitz and Tuna giving away $20 billion",
+            url: "https://fortune.com/2025/11/10/meet-the-millennial-meta-cofounder-and-his-wife-who-are-giving-away-20-billion/",
+          },
         ],
       },
       {
-        title: "Geoengineering Funding",
+        title: "SRM Funding: $14.7M Total",
         content: [
-          "$8M+ to the Degrees Initiative since 2015 \u2014 making Open Philanthropy the primary funder of the organization Geoengineering Monitor calls a 'Global Southwashing' operation.",
-          "The Degrees Initiative funds 35 research teams across developing countries, but staff and decision-makers are dominated by Global North actors.",
-          "93% of funded papers (26 of 28) focus exclusively on SAI \u2014 normalizing a single technology as a 'viable' option.",
-          "Other funders with geoengineering deployment ties also contribute to the Degrees Initiative, creating a pipeline from 'objective research' to commercial deployment.",
+          "$7M to the Degrees Initiative (2021) \u2014 the 'Global Southwashing' operation exposed by Geoengineering Monitor.",
+          "$2.5M to Harvard's Solar Geoengineering Research Program \u2014 which housed the now-cancelled SCoPEx outdoor SAI experiment.",
+          "$2M to SRMGI/Degrees Initiative (2017) + $500K (2015) + $900K Modelling Fund (2023).",
+          "$76K to American University's Forum for Climate Engineering Assessment.",
+          "Total: $14.7M \u2014 the 7th largest SRM funder globally, outspending most countries including the entire EU.",
         ],
         sources: [
+          {
+            label: "SRM360: SRM funding overview",
+            url: "https://srm360.org/article/srm-funding-overview/",
+          },
           {
             label: "Geoengineering Monitor: Global Southwashing",
             url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
@@ -1203,12 +1213,33 @@ export const PLAYERS: NetworkPlayer[] = [
         ],
       },
       {
+        title: "The Facebook/Meta Geoengineering Network",
+        content: [
+          "Dustin Moskovitz (Facebook co-founder #3) \u2014 $14.7M via Open Philanthropy / Coefficient Giving.",
+          "Matt Cohler (Facebook employee #7) \u2014 Cohler Charitable Fund funds SilverLining and the Climate Overshoot Commission. Both invested in Stardust's $60M round.",
+          "Mike Schroepfer (former Meta CTO) \u2014 Outlier Projects funds Degrees Initiative, David Keith's UChicago program, and exclusively funds climate engineering organizations.",
+          "Three Facebook/Meta insiders independently funding different nodes of the same geoengineering pipeline: research (Degrees), lobbying (SilverLining), and deployment (Stardust).",
+        ],
+        sources: [
+          {
+            label: "Scientific American: Solar geoengineering looks to Silicon Valley",
+            url: "https://www.scientificamerican.com/article/solar-geoengineering-looks-to-silicon-valley-for-new-wave-of-funding/",
+          },
+        ],
+      },
+      {
         title: "The Normalization Strategy",
         content: [
-          "Unlike Sacca (who funds research, lobbying, AND deployment), Open Philanthropy operates at the 'research legitimization' layer.",
-          "By funding research that frames SAI against extreme worst-case IPCC scenarios, the results predictably show geoengineering as 'not as bad' as runaway warming.",
-          "This creates the academic justification that deployment companies like Stardust then cite to argue their experiments are necessary.",
-          "The pipeline: Open Phil funds Degrees \u2192 Degrees produces SAI research showing it's 'viable' \u2192 deployment companies use this to justify experiments \u2192 investors profit.",
+          "Despite 'governance-neutral' framing, every dollar has gone toward expanding and institutionalizing SRM research \u2014 not opposing it.",
+          "Funds Degrees \u2192 Degrees produces SAI research framed against worst-case scenarios \u2192 deployment companies cite this to justify experiments \u2192 investors profit.",
+          "5 ARIA-funded project leads came to SRM through Degrees' initial support \u2014 meaning Open Phil money created the talent pipeline into UK government geoengineering programs.",
+          "Philanthropic SRM funding now exceeds government funding globally (48% vs 42% since 2020), with $164.7M committed for 2025-2029.",
+        ],
+        sources: [
+          {
+            label: "MIT Technology Review: Foundations lining up to fund geoengineering",
+            url: "https://www.technologyreview.com/2024/06/14/1093778/foundations-are-lining-up-to-fund-geoengineering-research/",
+          },
         ],
       },
     ],
@@ -1216,6 +1247,10 @@ export const PLAYERS: NetworkPlayer[] = [
       {
         label: "Geoengineering Monitor: Global Southwashing investigation",
         url: "https://www.geoengineeringmonitor.org/the-degrees-initiative",
+      },
+      {
+        label: "SRM360: SRM funding overview",
+        url: "https://srm360.org/article/srm-funding-overview/",
       },
       {
         label: "Open Philanthropy grants database",
