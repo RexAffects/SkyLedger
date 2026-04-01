@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { lookupRoute, lookupAircraftByHex, lookupRouteHexDB } from "@/lib/api/adsbdb";
+import { lookupRouteADSBLol, lookupRoute, lookupAircraftByHex, lookupRouteHexDB } from "@/lib/api/adsbdb";
 import { lookupTailNumber } from "@/lib/api/faa";
 import { fetchAircraftByHex } from "@/lib/api/adsb";
 import { getFlag } from "@/lib/supabase/flags";
@@ -13,7 +13,7 @@ import { isPositionOnRoute } from "@/lib/utils/geo";
  *
  * One-stop endpoint that gathers ALL available info for an aircraft:
  * - Live position from ADSB.lol
- * - Route (origin/destination airports) from ADSBDB + HexDB fallback
+ * - Route (origin/destination airports) from adsb.lol routeset → ADSBDB → HexDB
  * - Aircraft details (owner, type, photo) from ADSBDB
  * - FAA registration from registry.faa.gov
  *
@@ -24,6 +24,9 @@ export async function GET(request: NextRequest) {
   const hex = searchParams.get("hex") || "";
   const callsign = searchParams.get("callsign") || "";
   const tail = searchParams.get("tail") || "";
+  const lat = parseFloat(searchParams.get("lat") ?? "");
+  const lon = parseFloat(searchParams.get("lon") ?? "");
+  const hasPosition = !isNaN(lat) && !isNaN(lon);
 
   if (!hex && !callsign && !tail) {
     return Response.json(
@@ -32,15 +35,22 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Run all lookups in parallel
-  const [liveData, routeData, aircraftData, faaData, hexDbRoute] =
+  // Run all lookups in parallel — adsb.lol routeset is primary, ADSBDB + HexDB are fallbacks
+  const [liveData, routesetResult, adsbdbRoute, aircraftData, faaData, hexDbRoute] =
     await Promise.all([
       hex ? fetchAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
+      callsign && hasPosition
+        ? lookupRouteADSBLol(callsign, lat, lon).catch(() => null)
+        : Promise.resolve(null),
       callsign ? lookupRoute(callsign).catch(() => null) : Promise.resolve(null),
       hex ? lookupAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
       tail ? lookupTailNumber(tail).catch(() => null) : Promise.resolve(null),
       callsign ? lookupRouteHexDB(callsign).catch(() => null) : Promise.resolve(null),
     ]);
+
+  // Select best route: adsb.lol routeset → ADSBDB → HexDB
+  const routeData = routesetResult?.route ?? adsbdbRoute;
+  const serverPlausible = routesetResult?.plausible ?? null;
 
   // Build the complete response
   const result = {
@@ -186,7 +196,9 @@ export async function GET(request: NextRequest) {
     timestamp: Date.now(),
   };
 
-  // Verify route against aircraft position — flag stale/wrong ADSBDB data
+  // Verify route against aircraft position using dual checks:
+  // 1. adsb.lol server-side plausible flag (when available)
+  // 2. Our own cross-track distance + detour ratio check
   if (
     result.route.origin &&
     result.route.destination &&
@@ -194,7 +206,7 @@ export async function GET(request: NextRequest) {
     routeData?.origin &&
     routeData?.destination
   ) {
-    result.route.verified = isPositionOnRoute(
+    const geoCheck = isPositionOnRoute(
       routeData.origin.latitude,
       routeData.origin.longitude,
       routeData.destination.latitude,
@@ -202,6 +214,11 @@ export async function GET(request: NextRequest) {
       result.position.latitude,
       result.position.longitude
     );
+
+    // If server plausible check is available, both must agree.
+    // If not available (ADSBDB fallback), rely on our own geo check.
+    result.route.verified =
+      serverPlausible !== null ? serverPlausible && geoCheck : geoCheck;
   }
 
   // Look up community flags (don't block if it fails)

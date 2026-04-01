@@ -121,6 +121,8 @@ interface FlightDetailPanelProps {
   hex: string;
   callsign?: string;
   tail?: string;
+  lat?: number;
+  lon?: number;
   onClose: () => void;
 }
 
@@ -128,6 +130,8 @@ export function FlightDetailPanel({
   hex,
   callsign,
   tail,
+  lat,
+  lon,
   onClose,
 }: FlightDetailPanelProps) {
   const [data, setData] = useState<FlightDetail | null>(null);
@@ -161,6 +165,8 @@ export function FlightDetailPanel({
       if (hex) params.set("hex", hex);
       if (callsign) params.set("callsign", callsign);
       if (tail) params.set("tail", tail);
+      if (lat !== undefined) params.set("lat", lat.toString());
+      if (lon !== undefined) params.set("lon", lon.toString());
 
       try {
         const res = await fetch(`/api/flights/detail?${params}`);
@@ -175,6 +181,7 @@ export function FlightDetailPanel({
     }
 
     fetchDetail();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- lat/lon are initial position, don't re-fetch on drift
   }, [hex, callsign, tail]);
 
   // Fetch flight history

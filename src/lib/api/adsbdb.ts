@@ -41,7 +41,82 @@ export interface AircraftInfo {
 }
 
 /**
- * Look up route info by callsign.
+ * Look up route via adsb.lol routeset API.
+ * Accepts aircraft position for server-side plausibility check.
+ * Uses the same VRS standing data as ADSBDB but returns a `plausible` boolean.
+ */
+export async function lookupRouteADSBLol(
+  callsign: string,
+  lat: number,
+  lon: number
+): Promise<{ route: RouteInfo; plausible: boolean | null } | null> {
+  const cleaned = callsign.trim().toUpperCase();
+  if (!cleaned) return null;
+
+  try {
+    const res = await fetch("https://api.adsb.lol/api/0/routeset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        planes: [{ callsign: cleaned, lat, lng: lon }],
+      }),
+      next: { revalidate: 300 },
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+
+    // Response is an array — one entry per plane in the request
+    const entry = Array.isArray(data) ? data[0] : data;
+    if (!entry || entry.airport_codes === "unknown" || !entry._airports?.length) {
+      return null;
+    }
+
+    const airports = entry._airports;
+    const origin = airports[0];
+    const destination = airports[airports.length - 1];
+
+    if (!origin || !destination || airports.length < 2) return null;
+
+    return {
+      route: {
+        callsign: entry.callsign || cleaned,
+        callsign_icao: entry.airline_code || null,
+        callsign_iata: null,
+        airline_name: null,
+        airline_icao: entry.airline_code || null,
+        airline_iata: null,
+        origin: {
+          icao: origin.icao || "",
+          iata: origin.iata || "",
+          name: origin.name || "",
+          country: origin.countryiso2 || "",
+          municipality: origin.location || "",
+          latitude: origin.lat ?? 0,
+          longitude: origin.lon ?? 0,
+          elevation: 0,
+        },
+        destination: {
+          icao: destination.icao || "",
+          iata: destination.iata || "",
+          name: destination.name || "",
+          country: destination.countryiso2 || "",
+          municipality: destination.location || "",
+          latitude: destination.lat ?? 0,
+          longitude: destination.lon ?? 0,
+          elevation: 0,
+        },
+      },
+      plausible: entry.plausible ?? null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Look up route info by callsign via ADSBDB (fallback).
  * Returns origin and destination airports.
  */
 export async function lookupRoute(

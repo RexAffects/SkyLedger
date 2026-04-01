@@ -575,6 +575,8 @@ export function FlightsView() {
                   hex={selectedFlight.icao_hex}
                   callsign={selectedFlight.callsign || undefined}
                   tail={selectedFlight.tail_number || undefined}
+                  lat={selectedFlight.latitude}
+                  lon={selectedFlight.longitude}
                   onClose={() => setSelectedFlight(null)}
                 />
                 </div>
