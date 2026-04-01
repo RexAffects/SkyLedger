@@ -627,12 +627,33 @@ export function FlightDetailPanel({
               value={data.owner.name || "Unknown"}
             />
             {data.owner.is_llc && (
-              <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200 border-amber-300 dark:border-amber-700 text-[10px]">
-                <svg className="w-3 h-3 mr-0.5 inline" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
-                </svg>
-                Corporate Entity
-              </Badge>
+              <span className="relative group cursor-help">
+                <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200 border-amber-300 dark:border-amber-700 text-[10px]">
+                  <svg className="w-3 h-3 mr-0.5 inline" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                  </svg>
+                  Corporate Entity
+                </Badge>
+                <span className="pointer-events-none absolute left-0 top-full mt-1.5 z-50 w-56 rounded-md bg-zinc-900 dark:bg-zinc-800 border border-zinc-700 px-3 py-2 text-xs text-zinc-100 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                  {data.owner.llc_info?.pierced_owner ? (
+                    <>
+                      <span className="font-semibold text-amber-300">LLC owned by:</span>{" "}
+                      {data.owner.llc_info.pierced_owner}
+                      {data.owner.llc_info.confidence && (
+                        <span className="block text-[10px] text-zinc-400 mt-0.5">
+                          {data.owner.llc_info.confidence} confidence
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      Real owner hidden behind{" "}
+                      <span className="font-semibold">{data.owner.llc_info?.entity_type?.toUpperCase() || "LLC"}</span>{" "}
+                      registration
+                    </>
+                  )}
+                </span>
+              </span>
             )}
           </div>
           {(data.owner.city || data.owner.state) && (
