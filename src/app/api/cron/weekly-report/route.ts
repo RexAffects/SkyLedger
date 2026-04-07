@@ -4,11 +4,17 @@ import { sendWeeklyReport } from "@/lib/email/weekly-report";
 export const maxDuration = 30;
 
 export async function GET(request: Request) {
-  // Verify cron secret to prevent unauthorized access
+  const url = new URL(request.url);
   const authHeader = request.headers.get("authorization");
+  const adminKey = url.searchParams.get("key");
   const cronSecret = process.env.CRON_SECRET;
+  const adminPassword = process.env.ADMIN_PASSWORD;
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  // Allow access via: Vercel cron bearer token OR admin password query param
+  const cronOk = cronSecret && authHeader === `Bearer ${cronSecret}`;
+  const adminOk = adminPassword && adminKey === adminPassword;
+
+  if (!cronOk && !adminOk) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

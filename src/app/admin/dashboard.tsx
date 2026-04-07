@@ -60,7 +60,7 @@ export function AdminDashboard({ stats, adminKey }: { stats: WeeklyStats; adminK
 
   async function triggerReport() {
     try {
-      const res = await fetch("/api/cron/weekly-report");
+      const res = await fetch(`/api/cron/weekly-report?key=${encodeURIComponent(adminKey)}`);
       if (res.ok) {
         alert("Weekly report sent! Check your email.");
       } else {
