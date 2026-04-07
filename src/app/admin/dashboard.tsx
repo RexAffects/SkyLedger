@@ -4,11 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface WeeklyStats {
   citizenReports: { total: number; thisWeek: number };
+  evidencePhotos: { total: number; thisWeek: number };
   flightFlags: { total: number; thisWeek: number; highThreat: number };
   flagSubmissions: { total: number; thisWeek: number };
   flightSummaries: { totalAircraft: number; totalSightings: number };
   topFlaggedAircraft: Array<{ tail_number: string; flag_count: number; threat_level: string }>;
   recentReportTypes: Record<string, number>;
+  archiveEmail: string;
 }
 
 function StatCard({
@@ -72,11 +74,16 @@ export function AdminDashboard({ stats, adminKey }: { stats: WeeklyStats; adminK
   return (
     <>
       {/* Stats grid */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           title="Citizen Reports"
           total={stats.citizenReports.total}
           thisWeek={stats.citizenReports.thisWeek}
+        />
+        <StatCard
+          title="Evidence Photos"
+          total={stats.evidencePhotos.total}
+          thisWeek={stats.evidencePhotos.thisWeek}
         />
         <StatCard
           title="Aircraft Flagged"
@@ -95,6 +102,29 @@ export function AdminDashboard({ stats, adminKey }: { stats: WeeklyStats; adminK
           thisWeek={0}
           extra={{ label: "Total sightings", value: stats.flightSummaries.totalSightings.toLocaleString() }}
         />
+      </div>
+
+      {/* Photo archive link */}
+      <div className="mt-4 rounded-lg border border-border bg-muted/30 px-4 py-3 flex items-center justify-between">
+        <div>
+          <span className="text-sm text-muted-foreground">Evidence photos are archived to </span>
+          <a
+            href={`https://mail.google.com/mail/u/?authuser=${stats.archiveEmail}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            {stats.archiveEmail}
+          </a>
+        </div>
+        <a
+          href={`https://mail.google.com/mail/u/?authuser=${stats.archiveEmail}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          Open Inbox
+        </a>
       </div>
 
       {/* Top flagged aircraft */}

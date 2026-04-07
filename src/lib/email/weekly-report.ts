@@ -3,11 +3,13 @@ import { createServiceClient } from "@/lib/supabase/server";
 
 interface WeeklyStats {
   citizenReports: { total: number; thisWeek: number };
+  evidencePhotos: { total: number; thisWeek: number };
   flightFlags: { total: number; thisWeek: number; highThreat: number };
   flagSubmissions: { total: number; thisWeek: number };
   flightSummaries: { totalAircraft: number; totalSightings: number };
   topFlaggedAircraft: Array<{ tail_number: string; flag_count: number; threat_level: string }>;
   recentReportTypes: Record<string, number>;
+  archiveEmail: string;
 }
 
 export async function gatherWeeklyStats(): Promise<WeeklyStats> {
@@ -18,6 +20,8 @@ export async function gatherWeeklyStats(): Promise<WeeklyStats> {
   const [
     reportsTotal,
     reportsWeek,
+    photosAll,
+    photosWeekData,
     flagsTotal,
     flagsWeek,
     flagsHigh,
@@ -29,6 +33,8 @@ export async function gatherWeeklyStats(): Promise<WeeklyStats> {
   ] = await Promise.all([
     supabase.from("citizen_reports").select("id", { count: "exact", head: true }),
     supabase.from("citizen_reports").select("id", { count: "exact", head: true }).gte("created_at", oneWeekAgo),
+    supabase.from("citizen_reports").select("photo_urls"),
+    supabase.from("citizen_reports").select("photo_urls").gte("created_at", oneWeekAgo),
     supabase.from("flight_flags").select("id", { count: "exact", head: true }),
     supabase.from("flight_flags").select("id", { count: "exact", head: true }).gte("created_at", oneWeekAgo),
     supabase.from("flight_flags").select("id", { count: "exact", head: true }).eq("threat_level", "high"),
@@ -38,6 +44,12 @@ export async function gatherWeeklyStats(): Promise<WeeklyStats> {
     supabase.from("flight_flags").select("tail_number, flag_count, threat_level").order("flag_count", { ascending: false }).limit(10),
     supabase.from("citizen_reports").select("observation_type").gte("created_at", oneWeekAgo),
   ]);
+
+  // Count photos (each report can have multiple photos in the array)
+  const countPhotos = (rows: { photo_urls: string[] | null }[]) =>
+    rows.reduce((sum, row) => sum + (row.photo_urls?.length || 0), 0);
+  const totalPhotos = countPhotos((photosAll.data || []) as { photo_urls: string[] | null }[]);
+  const weekPhotos = countPhotos((photosWeekData.data || []) as { photo_urls: string[] | null }[]);
 
   // Aggregate sightings
   const totalSightings = (summaries.data || []).reduce(
@@ -54,11 +66,13 @@ export async function gatherWeeklyStats(): Promise<WeeklyStats> {
 
   return {
     citizenReports: { total: reportsTotal.count || 0, thisWeek: reportsWeek.count || 0 },
+    evidencePhotos: { total: totalPhotos, thisWeek: weekPhotos },
     flightFlags: { total: flagsTotal.count || 0, thisWeek: flagsWeek.count || 0, highThreat: flagsHigh.count || 0 },
     flagSubmissions: { total: submissionsTotal.count || 0, thisWeek: submissionsWeek.count || 0 },
     flightSummaries: { totalAircraft: (summaries.data || []).length, totalSightings },
     topFlaggedAircraft: (topFlagged.data || []) as WeeklyStats["topFlaggedAircraft"],
     recentReportTypes: reportTypes,
+    archiveEmail: process.env.GMAIL_ADDRESS || "skyledgerproof@gmail.com",
   };
 }
 
@@ -101,6 +115,11 @@ export async function sendWeeklyReport(): Promise<void> {
 CITIZEN REPORTS
   Total all-time:    ${stats.citizenReports.total}
   New this week:     ${stats.citizenReports.thisWeek}
+
+EVIDENCE PHOTOS SUBMITTED
+  Total all-time:    ${stats.evidencePhotos.total}
+  New this week:     ${stats.evidencePhotos.thisWeek}
+  View photos:       ${stats.archiveEmail}
 
 FLIGHT FLAGS (unique aircraft flagged)
   Total all-time:    ${stats.flightFlags.total}
