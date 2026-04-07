@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AdminDashboard } from "./dashboard";
 import { gatherWeeklyStats } from "@/lib/email/weekly-report";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -10,16 +11,10 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const key = typeof params.key === "string" ? params.key : "";
-  const adminPassword = process.env.ADMIN_PASSWORD;
+export default async function AdminPage() {
+  const authenticated = await isAdminAuthenticated();
 
-  if (!adminPassword || key !== adminPassword) {
+  if (!authenticated) {
     redirect("/admin/login");
   }
 
@@ -34,7 +29,7 @@ export default async function AdminPage({
         </span>
       </div>
 
-      <AdminDashboard stats={stats} adminKey={key} />
+      <AdminDashboard stats={stats} />
     </div>
   );
 }

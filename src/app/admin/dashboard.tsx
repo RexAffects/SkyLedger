@@ -56,12 +56,14 @@ const threatColors: Record<string, string> = {
   none: "bg-gray-50 text-gray-500 dark:bg-gray-900 dark:text-gray-500",
 };
 
-export function AdminDashboard({ stats, adminKey }: { stats: WeeklyStats; adminKey: string }) {
+export function AdminDashboard({ stats }: { stats: WeeklyStats }) {
   const reportTypeEntries = Object.entries(stats.recentReportTypes).sort(([, a], [, b]) => b - a);
 
   async function triggerReport() {
     try {
-      const res = await fetch(`/api/cron/weekly-report?key=${encodeURIComponent(adminKey)}`);
+      const res = await fetch("/api/cron/weekly-report", {
+        method: "POST",
+      });
       if (res.ok) {
         alert("Weekly report sent! Check your email.");
       } else {
@@ -215,7 +217,7 @@ export function AdminDashboard({ stats, adminKey }: { stats: WeeklyStats; adminK
           Send Weekly Report Now
         </button>
         <a
-          href={`/admin?key=${encodeURIComponent(adminKey)}`}
+          href="/admin"
           className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
         >
           Refresh Data

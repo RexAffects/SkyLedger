@@ -5,16 +5,37 @@ import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!password.trim()) {
-      setError(true);
+      setError("Please enter a password.");
       return;
     }
-    router.push(`/admin?key=${encodeURIComponent(password.trim())}`);
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: password.trim() }),
+      });
+
+      if (res.ok) {
+        router.push("/admin");
+      } else {
+        setError("Invalid password.");
+      }
+    } catch {
+      setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -30,20 +51,21 @@ export default function AdminLoginPage() {
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
-            setError(false);
+            setError("");
           }}
           placeholder="Password"
           className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           autoFocus
         />
         {error && (
-          <p className="text-sm text-red-500">Please enter a password.</p>
+          <p className="text-sm text-red-500">{error}</p>
         )}
         <button
           type="submit"
-          className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+          disabled={loading}
+          className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
         >
-          Access Dashboard
+          {loading ? "Verifying..." : "Access Dashboard"}
         </button>
       </form>
     </div>
