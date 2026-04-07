@@ -358,7 +358,7 @@ export const OPERATORS: Operator[] = [
       "Particle composition is secret (patent pending) — no independent analysis possible",
       "Hired Holland & Knight (K Street lobby firm) Q1 2025; disclosure initially hidden due to 'clerical error'",
       "Hired independent governance consultant who recommended transparency — then ignored every recommendation",
-      "Planning in-aircraft stratospheric experiments April 2026 with no public consultation",
+      "Began in-aircraft stratospheric experiments April 2026 with no public consultation",
       "Business model: defense contractor for climate — governments pay 'more than a billion dollars a year'",
     ],
     listHighlights: [
@@ -443,7 +443,7 @@ export const OPERATORS: Operator[] = [
       {
         flag: "April 2026 experiments — no public consultation",
         detail:
-          "Planning in-aircraft stratospheric experiments starting April 2026 in Israel. Zero public consultation. Zero published environmental or health impact assessments. Zero regulatory approval process. CIEL called the plans 'reckless.'",
+          "Began in-aircraft stratospheric experiments in April 2026 in Israel. Zero public consultation. Zero published environmental or health impact assessments. Zero regulatory approval process. CIEL called the plans 'reckless.'",
         source: {
           label: "CIEL statement",
           url: "https://www.ciel.org/news/us-israeli-start-up-announces-reckless-solar-geoengineering-experiments-from-april-2026/",

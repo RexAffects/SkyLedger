@@ -624,7 +624,7 @@ export default function LegislationTrackerPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           These bills didn&apos;t pass &mdash; but they show the breadth of the
           movement. Montana came within 6 votes. Many of these states are
-          expected to reintroduce bills in upcoming sessions.
+          expected to reintroduce bills in their 2026&ndash;2027 sessions.
         </p>
         <div className="mt-4 space-y-3">
           {failedBills.map((bill) => (

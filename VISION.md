@@ -40,7 +40,7 @@ This is not tin foil anymore.
 
 - **Tennessee** — First state to sign a geoengineering ban into law (April 2024)
 - **Florida** — Passed their ban with felony penalties (2025)
-- **Montana** — Passed their ban (2025)
+- **Montana** — SB 473 passed Senate but killed on House floor (April 2025, 45-55 vote — closest any failed bill has come)
 - **22+ states** introduced bills in 2025
 - **H.R. 4403 (Clear Skies Act)** — Federal ban introduced, would repeal all existing weather modification authority
 - **EPA Administrator** publicly acknowledged citizens have "urgent questions about geoengineering"

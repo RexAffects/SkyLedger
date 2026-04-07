@@ -42,7 +42,7 @@ const en = {
       badge: "APRIL 2026",
       title: "Experiments Starting Now",
       description:
-        "An Israeli company is preparing to release secret, patented particles into the stratosphere \u2014 and they won\u2019t tell anyone what\u2019s in them.",
+        "An Israeli company is releasing secret, patented particles into the stratosphere \u2014 and they won\u2019t tell anyone what\u2019s in them.",
       bullet1Label: "Zero published data.",
       bullet1:
         "No peer-reviewed research. No public safety assessment. No public consultation.",
@@ -125,7 +125,7 @@ const en = {
         "$150M+ from a small network of connected investors. Defense ties. Epstein connections. Political access. The funding pipeline mapped.",
       operatorsTitle: "Who\u2019s Doing It",
       operatorsDescription:
-        "9 operator profiles with founders, funding rounds, investors, and red flags. Including Stardust Solutions \u2014 secret particles, nuclear scientists, $75M.",
+        "14 operator profiles with founders, funding rounds, investors, and red flags. Including Stardust Solutions \u2014 secret particles, nuclear scientists, $75M.",
       legislationTitle: "Legislation Tracker",
       legislationDescription:
         "3 states have enacted bans. 30+ have bills pending. A federal ban is on the table. Track every bill, every vote, every penalty.",
@@ -238,7 +238,7 @@ const es: typeof en = {
       badge: "ABRIL 2026",
       title: "Experimentos Comenzando Ahora",
       description:
-        "Una empresa israel\u00ED se prepara para liberar part\u00EDculas secretas y patentadas en la estratosfera \u2014 y no le dicen a nadie qu\u00E9 contienen.",
+        "Una empresa israel\u00ED est\u00E1 liberando part\u00EDculas secretas y patentadas en la estratosfera \u2014 y no le dicen a nadie qu\u00E9 contienen.",
       bullet1Label: "Cero datos publicados.",
       bullet1:
         "Sin investigaci\u00F3n revisada por pares. Sin evaluaci\u00F3n de seguridad p\u00FAblica. Sin consulta p\u00FAblica.",
@@ -324,7 +324,7 @@ const es: typeof en = {
         "$150M+ de una peque\u00F1a red de inversionistas conectados. V\u00EDnculos con defensa. Conexiones con Epstein. Acceso pol\u00EDtico. El flujo de financiamiento mapeado.",
       operatorsTitle: "Qui\u00E9n lo Hace",
       operatorsDescription:
-        "9 perfiles de operadores con fundadores, rondas de financiamiento, inversionistas y se\u00F1ales de alerta. Incluyendo Stardust Solutions \u2014 part\u00EDculas secretas, cient\u00EDficos nucleares, $75M.",
+        "14 perfiles de operadores con fundadores, rondas de financiamiento, inversionistas y se\u00F1ales de alerta. Incluyendo Stardust Solutions \u2014 part\u00EDculas secretas, cient\u00EDficos nucleares, $75M.",
       legislationTitle: "Seguimiento de Legislaci\u00F3n",
       legislationDescription:
         "3 estados han promulgado prohibiciones. 30+ tienen proyectos de ley pendientes. Una prohibici\u00F3n federal est\u00E1 sobre la mesa. Sigue cada proyecto, cada voto, cada sanci\u00F3n.",

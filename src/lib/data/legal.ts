@@ -214,15 +214,15 @@ export const STATE_LEGAL: StateLegalStatus[] = [
   {
     state: "Montana",
     abbreviation: "MT",
-    status: "enacted",
+    status: "failed",
     bill: "SB 473",
-    penalty: "Bans SAI and SRM; permits cloud seeding for water resources",
-    enforcementAgency: "Montana Department of Environmental Quality",
+    penalty: "N/A — bill did not pass",
+    enforcementAgency: "N/A",
     citizenActions: [
-      "Report suspected SAI or SRM activities",
-      "Note: cloud seeding for water management is still permitted under this law",
+      "Contact your state representative to reintroduce SB 473",
+      "Montana came within 6 votes — the closest any failed bill has come to enactment",
     ],
-    notes: "Passed March 6, 2025. Distinguishes between cloud seeding and SAI/SRM.",
+    notes: "Passed Senate March 2025, killed on House floor April 10, 2025 by a vote of 45-55.",
   },
   {
     state: "Pennsylvania",

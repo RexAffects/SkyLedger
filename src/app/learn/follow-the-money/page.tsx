@@ -838,7 +838,7 @@ export default function FollowTheMoneyPage() {
           <div className="rounded-lg border-2 border-orange-300 dark:border-orange-700 bg-orange-50 dark:bg-orange-950/30 p-5 transition-all hover:border-orange-400 hover:shadow-sm">
             <div className="flex items-center gap-2">
               <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-orange-600 text-white">
-                NEW
+                LOBBY TRACKER
               </span>
               <span className="text-sm font-bold text-orange-800 dark:text-orange-200 group-hover:text-orange-900 dark:group-hover:text-orange-100 transition-colors">
                 Lobby Tracker: Who&apos;s Buying the Politicians?

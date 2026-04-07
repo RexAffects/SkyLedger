@@ -522,7 +522,7 @@ export const LOBBY_TIMELINE: LobbyTimelineEvent[] = [
   {
     date: "March 2025",
     event:
-      "Montana passes SB 473, banning geoengineering but permitting cloud seeding for water management.",
+      "Montana SB 473 passes Senate but is killed on House floor (45-55 vote). Closest any failed ban bill has come to enactment.",
     type: "legislation",
     source: {
       label: "Duane Morris — State-Level Geoengineering Bans",

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title:
     "Stardust Solutions — Deep Dive | SkyLedger",
   description:
-    "Investigation into Stardust Solutions: secret particles, nuclear weapons scientists, $75M in defense-connected funding, ignored governance recommendations, and experiments planned for April 2026. Every claim sourced.",
+    "Investigation into Stardust Solutions: secret particles, nuclear weapons scientists, $75M in defense-connected funding, ignored governance recommendations, and stratospheric experiments underway as of April 2026. Every claim sourced.",
 };
 
 // ============================================================
@@ -113,7 +113,7 @@ const sections: InvestigationSection[] = [
     title: "April 2026 Experiments",
     urgent: true,
     paragraphs: [
-      "Stardust plans to begin \"outdoor contained experiments\" starting April 2026 — weeks from now. The tests would release their proprietary reflective particles inside a modified plane flying at approximately 11 miles (18 km) above sea level, in the stratosphere. They describe this as \"contained\" and \"non-dispersive.\"",
+      "Stardust began \"outdoor contained experiments\" in April 2026. The tests release their proprietary reflective particles inside a modified plane flying at approximately 11 miles (18 km) above sea level, in the stratosphere. They describe this as \"contained\" and \"non-dispersive.\"",
       "The tests are planned in Israel (headquarters near Tel Aviv, in Ness Ziona). The exact location has not been publicly disclosed.",
     ],
     bullets: [
@@ -353,7 +353,7 @@ const timeline = [
   { date: "Oct 2025", event: "$60M Series A announced — largest geoengineering investment in history. Lowercarbon Capital (Sacca) leads." },
   { date: "Nov 2025", event: "E&E News/Politico exposes secret lobbying. Holland & Knight blames \"clerical error.\"" },
   { date: "Dec 2025", event: "First major interviews (MIT Technology Review, Washington Post)." },
-  { date: "April 2026", event: "Planned outdoor experiments — release of secret particles at 18km altitude. No public consultation." },
+  { date: "April 2026", event: "Outdoor experiments begin — release of secret particles at 18km altitude. No public consultation." },
 ];
 
 // ============================================================
@@ -388,8 +388,8 @@ export default function StardustDeepDivePage() {
           nuclear weapons establishment, funded by defense-intelligence-connected
           investors, developing secret patented particles to spray into the
           stratosphere. They have published zero peer-reviewed research, ignored
-          their own governance consultant, secretly lobbied Congress, and plan to
-          begin outdoor experiments in April 2026 with no public consultation.
+          their own governance consultant, secretly lobbied Congress, and began
+          outdoor experiments in April 2026 with no public consultation.
         </p>
       </div>
 
@@ -404,7 +404,7 @@ export default function StardustDeepDivePage() {
           </h2>
         </div>
         <p className="mt-3 text-sm text-red-800 dark:text-red-200 font-medium">
-          An Israeli company is preparing to release secret, patented particles
+          An Israeli company is releasing secret, patented particles
           into the stratosphere — and they won&apos;t tell anyone what&apos;s in
           them.
         </p>
@@ -669,7 +669,7 @@ export default function StardustDeepDivePage() {
             patented substance into the stratosphere — affecting every person on
             the planet — and won&apos;t tell anyone what it is. They&apos;ve
             published zero research, ignored their own governance consultant,
-            secretly lobbied Congress, and plan to begin experiments in weeks
+            secretly lobbied Congress, and began experiments in April 2026
             with no public consultation. Over 600 scientists have called for a
             halt to commercial solar geoengineering. International law prohibits
             it. They&apos;re doing it anyway.

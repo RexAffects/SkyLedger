@@ -87,8 +87,8 @@ const operators: TopicCard[] = [
     href: "/learn/operators",
     title: "Operator & Startup Profiles",
     description:
-      "9 detailed profiles of companies and funders involved in weather modification and geoengineering. Founders, funding rounds, investors, connections, and sources.",
-    tag: "9 profiles",
+      "14 detailed profiles of companies and funders involved in weather modification and geoengineering. Founders, funding rounds, investors, connections, and sources.",
+    tag: "14 profiles",
     tagColor:
       "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
     highlight:
@@ -104,7 +104,7 @@ const keyNumbers = [
   { value: "78%", label: "of NOAA reports contain errors (GAO, Feb 2026)" },
   { value: "600+", label: "scientists signed a Non-Use Agreement calling for a ban" },
   { value: "3", label: "states have enacted bans" },
-  { value: "30+", label: "states have introduced bills" },
+  { value: "34+", label: "states have introduced bills" },
 ];
 
 function TopicCardComponent({ card }: { card: TopicCard }) {
