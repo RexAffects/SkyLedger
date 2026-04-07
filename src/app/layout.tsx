@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { FeedbackWidget } from "@/components/feedback-widget";
 import { LanguageProvider } from "@/lib/i18n/provider";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/lib/constants";
 import "./globals.css";
@@ -45,6 +47,8 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </LanguageProvider>
+        <Analytics />
+        <FeedbackWidget />
       </body>
     </html>
   );
