@@ -10,6 +10,7 @@ interface WeeklyStats {
   flightSummaries: { totalAircraft: number; totalSightings: number };
   topFlaggedAircraft: Array<{ tail_number: string; flag_count: number; threat_level: string }>;
   recentReportTypes: Record<string, number>;
+  activityByState: Array<{ state: string; count: number }>;
   archiveEmail: string;
 }
 
@@ -126,6 +127,36 @@ export function AdminDashboard({ stats, adminKey }: { stats: WeeklyStats; adminK
           Open Inbox
         </a>
       </div>
+
+      {/* Activity by State */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Activity by State</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {stats.activityByState.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No location data yet.</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {stats.activityByState.map((s) => (
+                <div
+                  key={s.state}
+                  className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5"
+                >
+                  <span className="text-sm font-bold">{s.state}</span>
+                  <span className="text-sm text-muted-foreground">{s.count}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {stats.activityByState.length > 0 && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              {stats.activityByState.length} {stats.activityByState.length === 1 ? "state" : "states"} with activity
+              {" "}({stats.activityByState.reduce((s, r) => s + r.count, 0)} total submissions)
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Top flagged aircraft */}
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
