@@ -223,7 +223,7 @@ export function PhotoEvidenceDialog({
           </div>
         ) : (
           <>
-            <div className="space-y-4 py-2">
+            <div className="space-y-4 py-2 overflow-y-auto min-h-0">
               {/* Photo Upload */}
               <div>
                 <label className="text-xs font-medium text-foreground">
@@ -339,7 +339,6 @@ export function PhotoEvidenceDialog({
               <p className="text-[11px] text-muted-foreground">
                 Photo evidence is public. No personal information is collected.
               </p>
-            </div>
 
             {submitting && submitStep && (
               <div className="flex items-center gap-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 px-3 py-2">
@@ -352,6 +351,7 @@ export function PhotoEvidenceDialog({
                 </p>
               </div>
             )}
+            </div>
 
             <DialogFooter>
               <Button variant="outline" size="sm" onClick={handleClose} disabled={submitting}>
