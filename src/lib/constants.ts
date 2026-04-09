@@ -46,5 +46,47 @@ export const THREAT_LEVELS = {
   high: { label: "High Concern", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
 } as const;
 
+// ============================================================
+// STREAK DETECTION
+// ============================================================
+
+export const STREAK_ESTIMATED_AGES = [
+  { value: "within_30min", label: "Within the last 30 minutes", minutes: 30 },
+  { value: "within_1hr", label: "Within the last hour", minutes: 60 },
+  { value: "within_2hr", label: "Within the last 2 hours", minutes: 120 },
+  { value: "within_3hr", label: "Within the last 3 hours", minutes: 180 },
+] as const;
+
+export const STREAK_PATTERN_TYPES = [
+  { value: "parallel", label: "Parallel Lines" },
+  { value: "grid", label: "Grid / Crosshatch" },
+  { value: "cluster", label: "Cluster of Trails" },
+  { value: "single_heavy", label: "Single Heavy Trail" },
+  { value: "dispersing_haze", label: "Dispersing Haze (trails fading into sheet)" },
+] as const;
+
+export const STREAK_SEVERITIES = [
+  { value: "light", label: "Light (a few trails)" },
+  { value: "moderate", label: "Moderate (clearly visible pattern)" },
+  { value: "heavy", label: "Heavy (sky covered / grid visible)" },
+] as const;
+
+export const STREAK_TRAIL_STATES = [
+  { value: "sharp", label: "Sharp edges, narrow (very fresh)" },
+  { value: "softening", label: "Softening edges, starting to spread" },
+  { value: "spreading", label: "Spreading but still linear" },
+  { value: "haze", label: "Turning to haze but pattern visible" },
+] as const;
+
+/** Altitude tier thresholds for streak correlation */
+export const ALTITUDE_TIERS = {
+  CONTRAIL_ZONE: 25000,   // Above: standard contrail formation possible
+  SUB_CONTRAIL: 10000,    // 10k-25k: cloud seeding / anomalous trails
+  LOW_CUTOFF: 10000,      // Below: excluded from correlation
+} as const;
+
+/** Search radius in nautical miles for streak correlation */
+export const STREAK_SEARCH_RADIUS_NM = 30;
+
 export const DEFAULT_MAP_CENTER: [number, number] = [39.8283, -98.5795]; // Center of US
 export const DEFAULT_MAP_ZOOM = 5;

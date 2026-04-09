@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AdminDashboard } from "./dashboard";
+import { StreakPatterns } from "@/components/admin/streak-patterns";
 import { gatherWeeklyStats } from "@/lib/email/weekly-report";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
@@ -30,6 +31,9 @@ export default async function AdminPage() {
       </div>
 
       <AdminDashboard stats={stats} />
+
+      {/* Streak Detection Intelligence — internal pattern analysis */}
+      <StreakPatterns />
     </div>
   );
 }
