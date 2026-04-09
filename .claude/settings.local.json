@@ -179,7 +179,8 @@
       "Bash(find /c/Github/SkyLedger -maxdepth 1 -name .env* -o -name *.env)",
       "Bash(grep -n \"^  {$\" /c/Github/SkyLedger/src/lib/data/operators.ts)",
       "Bash(npx supabase:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(grep -E \"\\\\.ts$\")"
     ]
   }
 }
