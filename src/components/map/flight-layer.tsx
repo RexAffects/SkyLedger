@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
-import { THREAT_LEVELS } from "@/lib/constants";
+import { THREAT_LEVELS, STREAK_ESTIMATED_AGES, STREAK_PATTERN_TYPES } from "@/lib/constants";
 import type { FlightTrail } from "./map-container";
 
 export interface FlightData {
@@ -914,6 +914,9 @@ export function FlightLayer({
         </p>
       </div>
 
+      {/* Inline Streak Report */}
+      {mapCenter && <InlineStreakReport lat={mapCenter.lat} lng={mapCenter.lng} />}
+
       {/* Learn More */}
       <LearnMoreSection />
     </div>
@@ -945,6 +948,126 @@ function FlightCard({
     <button ref={ref} onClick={onClick} className={className}>
       {children}
     </button>
+  );
+}
+
+/** Compact inline streak report — no page navigation needed */
+function InlineStreakReport({ lat, lng }: { lat: number; lng: number }) {
+  const [open, setOpen] = useState(false);
+  const [age, setAge] = useState("");
+  const [pattern, setPattern] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!age || !pattern) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/streak/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude: lat,
+          longitude: lng,
+          estimated_age: age,
+          pattern_type: pattern,
+        }),
+      });
+      if (res.ok) {
+        setDone(true);
+        setTimeout(() => {
+          setDone(false);
+          setOpen(false);
+          setAge("");
+          setPattern("");
+        }, 3000);
+      }
+    } catch {
+      // silent fail — non-critical
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (done) {
+    return (
+      <div className="border-t border-border pt-3">
+        <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 dark:border-green-900 dark:bg-green-950/30">
+          <svg className="h-4 w-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+          <span className="text-xs text-green-800 dark:text-green-300">
+            Logged. Correlating flight data in your area now.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-t border-border pt-3">
+      {!open ? (
+        <button
+          onClick={() => setOpen(true)}
+          className="flex w-full items-center gap-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2.5 text-left transition-colors hover:bg-primary/10 hover:border-primary/60"
+        >
+          <svg className="h-4 w-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          </svg>
+          <div>
+            <p className="text-xs font-medium text-primary">See streaks you can&apos;t match?</p>
+            <p className="text-[10px] text-muted-foreground">
+              Report recent trails &mdash; we&apos;ll identify who was overhead
+            </p>
+          </div>
+        </button>
+      ) : (
+        <div className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-medium text-primary">Report Streaking Activity</p>
+            <button
+              onClick={() => setOpen(false)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <select
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-xs"
+          >
+            <option value="">How recent?</option>
+            {STREAK_ESTIMATED_AGES.map((a) => (
+              <option key={a.value} value={a.value}>{a.label}</option>
+            ))}
+          </select>
+          <select
+            value={pattern}
+            onChange={(e) => setPattern(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-xs"
+          >
+            <option value="">What do you see?</option>
+            {STREAK_PATTERN_TYPES.map((p) => (
+              <option key={p.value} value={p.value}>{p.label}</option>
+            ))}
+          </select>
+          <button
+            onClick={handleSubmit}
+            disabled={!age || !pattern || submitting}
+            className="w-full rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          >
+            {submitting ? "Logging..." : "Log Report"}
+          </button>
+          <p className="text-[10px] text-muted-foreground/70 text-center">
+            Uses your current location. Not publicly displayed.
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
