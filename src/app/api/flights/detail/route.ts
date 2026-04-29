@@ -80,12 +80,20 @@ export async function GET(request: NextRequest) {
       for (const f of flights) {
         await cacheOpenSkyFlight(f);
       }
-      // Pick the most recently landed flight.
+      // Pick the most recently landed flight — only if it has BOTH airports
+      // estimated. An in-progress flight (estArrivalAirport=null) means
+      // OpenSky hasn't recorded the landing yet; we'd rather fall back to
+      // the gate-checked chain than guess from an older completed leg,
+      // since older legs are stale relative to the plane's current state.
       const mostRecent = flights.reduce<typeof flights[number] | null>(
         (best, f) => (!best || f.lastSeen > best.lastSeen ? f : best),
         null
       );
-      if (mostRecent) {
+      if (
+        mostRecent &&
+        mostRecent.estDepartureAirport &&
+        mostRecent.estArrivalAirport
+      ) {
         openSkyFlight = {
           icao_hex: mostRecent.icao24.toUpperCase(),
           callsign: mostRecent.callsign,

@@ -13,8 +13,14 @@ export interface CachedOpenSkyFlight {
 }
 
 /**
- * Most recent cached OpenSky flight for a hex. Returns null if no record
- * or if the most recent record's landing is older than `maxAgeHours`.
+ * Most recent cached OpenSky flight for a hex with BOTH airports estimated.
+ * Returns null if no record, if the most recent record's landing is older
+ * than `maxAgeHours`, or if the most recent record only has a departure
+ * airport (in-progress flight that hasn't landed yet).
+ *
+ * We deliberately do NOT fall back to an older completed leg: if OpenSky
+ * hasn't recorded the most recent landing, the plane has moved on to a
+ * new flight and an older leg's airports are stale.
  */
 export async function getRecentOpenSkyFlight(
   hex: string,
@@ -38,6 +44,7 @@ export async function getRecentOpenSkyFlight(
     .maybeSingle();
 
   if (error || !data) return null;
+  if (!data.est_departure_icao || !data.est_arrival_icao) return null;
   return data as CachedOpenSkyFlight;
 }
 
