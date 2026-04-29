@@ -1,19 +1,22 @@
 /**
  * OpenSky Network API — free historical flight data.
  *
- * Provides state vectors (position/velocity) for aircraft within a
- * bounding box at a specific point in time. Used for retroactive
- * streak correlation when we need flights we weren't already tracking.
+ * Two endpoints in use:
+ *   /states/all       — state vectors (position/velocity) at a point in time.
+ *                       Used for retroactive streak correlation.
+ *   /flights/aircraft — completed-flight records with estimated departure
+ *                       and arrival airports, derived by OpenSky's trajectory
+ *                       analyzer. Records appear 6–24h after landing.
  *
  * API docs: https://openskynetwork.github.io/opensky-api/
  *
- * Limitations (anonymous / free tier):
- * - Rate limit: ~1 request per 10 seconds
- * - Historical data: up to 1 hour ago (anonymous), 30 days (authenticated)
- * - Returns ALL aircraft in bounding box — we filter by altitude
- *
- * Authentication: set OPENSKY_USERNAME and OPENSKY_PASSWORD env vars
- * for extended historical access. Works without auth but limited to ~1hr history.
+ * Authentication:
+ *   - Modern: OAuth2 client-credentials. Set OPENSKY_CLIENT_ID +
+ *     OPENSKY_CLIENT_SECRET. Token endpoint:
+ *     https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token
+ *   - Legacy: OPENSKY_USERNAME / OPENSKY_PASSWORD basic auth (still
+ *     accepted for /states; /flights/aircraft requires OAuth2).
+ *   - Anonymous: limited to ~1hr historical states, no flight records.
  */
 
 export interface OpenSkyStateVector {
@@ -49,16 +52,93 @@ export interface OpenSkyFlight {
   observed_at: number;  // Unix timestamp
 }
 
+/**
+ * Shape returned by /flights/aircraft. Airports are ICAO codes (or null)
+ * that OpenSky's trajectory analyzer estimated from the flight track.
+ * Horizontal/vertical distances quantify how confident the estimate is —
+ * smaller is better (e.g. <5km horiz means the trajectory clearly ended
+ * at that airport).
+ */
+export interface OpenSkyAircraftFlight {
+  icao24: string;
+  callsign: string | null;
+  firstSeen: number;
+  lastSeen: number;
+  estDepartureAirport: string | null;
+  estArrivalAirport: string | null;
+  estDepartureAirportHorizDistance: number | null;
+  estArrivalAirportHorizDistance: number | null;
+  estDepartureAirportVertDistance: number | null;
+  estArrivalAirportVertDistance: number | null;
+  departureAirportCandidatesCount: number;
+  arrivalAirportCandidatesCount: number;
+}
+
 const METERS_TO_FEET = 3.28084;
 const MPS_TO_KNOTS = 1.94384;
 
+const OPENSKY_TOKEN_URL =
+  "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token";
+
+// Module-scoped token cache. Tokens last 1800s; we refresh when within 60s
+// of expiry to avoid edge-of-window failures.
+let tokenCache: { token: string; expiresAtMs: number } | null = null;
+
 /**
- * Build auth headers if credentials are configured.
+ * Fetch (or reuse) an OAuth2 access token via client-credentials.
+ * Returns null if credentials aren't configured.
  */
-function getAuthHeaders(): Record<string, string> {
+async function getOpenSkyToken(): Promise<string | null> {
+  const clientId = process.env.OPENSKY_CLIENT_ID;
+  const clientSecret = process.env.OPENSKY_CLIENT_SECRET;
+  if (!clientId || !clientSecret) return null;
+
+  const now = Date.now();
+  if (tokenCache && tokenCache.expiresAtMs - 60_000 > now) {
+    return tokenCache.token;
+  }
+
+  try {
+    const body = new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: clientId,
+      client_secret: clientSecret,
+    });
+    const res = await fetch(OPENSKY_TOKEN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+    if (!res.ok) {
+      console.error(`OpenSky token error: ${res.status} ${res.statusText}`);
+      return null;
+    }
+    const data = (await res.json()) as {
+      access_token: string;
+      expires_in: number;
+    };
+    tokenCache = {
+      token: data.access_token,
+      expiresAtMs: now + data.expires_in * 1000,
+    };
+    return tokenCache.token;
+  } catch (err) {
+    console.error("OpenSky token fetch failed:", err);
+    return null;
+  }
+}
+
+/**
+ * Build auth headers for /states/all. Prefers OAuth2 bearer when a token
+ * is available; falls back to legacy basic auth; returns empty headers
+ * (anonymous tier) if neither is configured.
+ */
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const bearer = await getOpenSkyToken();
+  if (bearer) return { Authorization: `Bearer ${bearer}` };
+
   const username = process.env.OPENSKY_USERNAME;
   const password = process.env.OPENSKY_PASSWORD;
-
   if (username && password) {
     const encoded = Buffer.from(`${username}:${password}`).toString("base64");
     return { Authorization: `Basic ${encoded}` };
@@ -145,7 +225,7 @@ export async function fetchHistoricalStates(
   const res = await fetch(url, {
     headers: {
       Accept: "application/json",
-      ...getAuthHeaders(),
+      ...(await getAuthHeaders()),
     },
   });
 
@@ -258,4 +338,103 @@ export async function fetchHistoricalWindow(
   }
 
   return Array.from(seenHex.values());
+}
+
+/**
+ * Fetch completed-flight records for a single aircraft over a time window.
+ * Each record carries OpenSky's estimated departure/arrival airports —
+ * derived from the actual track, not crowdsourced schedules.
+ *
+ * Note: records appear ~6–24h after landing. For flights still in the air
+ * or recently landed, this endpoint returns nothing — callers must fall
+ * back to the geo-gated route chain.
+ *
+ * The `begin`/`end` window must bracket the flight's landing time.
+ * The endpoint enforces a max 30-day window.
+ *
+ * @param hex ICAO 24-bit hex (case-insensitive)
+ * @param beginUnix Window start (Unix seconds)
+ * @param endUnix   Window end (Unix seconds)
+ */
+export async function fetchAircraftFlights(
+  hex: string,
+  beginUnix: number,
+  endUnix: number
+): Promise<OpenSkyAircraftFlight[]> {
+  const cleaned = hex.trim().toLowerCase();
+  if (!cleaned) return [];
+
+  const token = await getOpenSkyToken();
+  if (!token) {
+    // /flights/aircraft requires OAuth2; legacy basic auth doesn't get
+    // free credit allocations on this endpoint. Skip silently.
+    return [];
+  }
+
+  const params = new URLSearchParams({
+    icao24: cleaned,
+    begin: Math.floor(beginUnix).toString(),
+    end: Math.floor(endUnix).toString(),
+  });
+  const url = `https://opensky-network.org/api/flights/aircraft?${params}`;
+
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.status === 404) {
+      // OpenSky returns 404 when no flights match the window
+      return [];
+    }
+    if (!res.ok) {
+      if (res.status === 429) {
+        console.warn("OpenSky /flights/aircraft rate limit hit");
+      } else {
+        console.error(
+          `OpenSky /flights/aircraft error: ${res.status} ${res.statusText}`
+        );
+      }
+      return [];
+    }
+    const data = (await res.json()) as Array<{
+      icao24: string;
+      callsign?: string | null;
+      firstSeen: number;
+      lastSeen: number;
+      estDepartureAirport?: string | null;
+      estArrivalAirport?: string | null;
+      estDepartureAirportHorizDistance?: number | null;
+      estArrivalAirportHorizDistance?: number | null;
+      estDepartureAirportVertDistance?: number | null;
+      estArrivalAirportVertDistance?: number | null;
+      departureAirportCandidatesCount?: number;
+      arrivalAirportCandidatesCount?: number;
+    }>;
+    if (!Array.isArray(data)) return [];
+
+    return data.map((d) => ({
+      icao24: d.icao24,
+      callsign: (d.callsign ?? null)?.trim() || null,
+      firstSeen: d.firstSeen,
+      lastSeen: d.lastSeen,
+      estDepartureAirport: d.estDepartureAirport ?? null,
+      estArrivalAirport: d.estArrivalAirport ?? null,
+      estDepartureAirportHorizDistance:
+        d.estDepartureAirportHorizDistance ?? null,
+      estArrivalAirportHorizDistance:
+        d.estArrivalAirportHorizDistance ?? null,
+      estDepartureAirportVertDistance:
+        d.estDepartureAirportVertDistance ?? null,
+      estArrivalAirportVertDistance:
+        d.estArrivalAirportVertDistance ?? null,
+      departureAirportCandidatesCount: d.departureAirportCandidatesCount ?? 0,
+      arrivalAirportCandidatesCount: d.arrivalAirportCandidatesCount ?? 0,
+    }));
+  } catch (err) {
+    console.error("OpenSky /flights/aircraft fetch failed:", err);
+    return [];
+  }
 }

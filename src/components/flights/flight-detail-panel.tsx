@@ -77,6 +77,7 @@ interface FlightDetail {
     airline: string | null;
     verified: boolean;
     unconfirmed: boolean;
+    source?: "opensky" | "adsbdb_routeset" | "adsbdb_callsign" | "none";
   };
   position: {
     latitude: number;

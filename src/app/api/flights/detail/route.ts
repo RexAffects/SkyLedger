@@ -2,11 +2,21 @@ import { NextRequest } from "next/server";
 import { lookupRouteADSBLol, lookupRoute, lookupAircraftByHex } from "@/lib/api/adsbdb";
 import { lookupTailNumber } from "@/lib/api/faa";
 import { fetchAircraftByHex } from "@/lib/api/adsb";
+import { fetchAircraftFlights } from "@/lib/api/opensky";
 import { getFlag } from "@/lib/supabase/flags";
 import { getLLCLookup, createPendingLLCLookup } from "@/lib/supabase/llc-lookups";
+import {
+  getRecentOpenSkyFlight,
+  cacheOpenSkyFlight,
+} from "@/lib/supabase/opensky-cache";
 import { getStateRegistryUrl } from "@/lib/utils/llc-detect";
 import { matchOwnerName } from "@/lib/network";
 import { isPositionOnRoute } from "@/lib/utils/geo";
+
+// OpenSky horizontal-distance threshold (meters) below which we treat the
+// estimated airport as authoritative. Values >5km usually mean the trajectory
+// ended over open ground without a clear airport candidate.
+const OPENSKY_HORIZ_DISTANCE_MAX_M = 5_000;
 
 /**
  * GET /api/flights/detail?hex=A1B2C3&callsign=UAL123&tail=N12345
@@ -36,21 +46,101 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Run all lookups in parallel — adsb.lol routeset is primary, ADSBDB is fallback
-  const [liveData, routesetResult, adsbdbRoute, aircraftData, faaData] =
-    await Promise.all([
-      hex ? fetchAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
-      callsign && hasPosition
-        ? lookupRouteADSBLol(callsign, lat, lon).catch(() => null)
-        : Promise.resolve(null),
-      callsign ? lookupRoute(callsign).catch(() => null) : Promise.resolve(null),
-      hex ? lookupAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
-      tail ? lookupTailNumber(tail).catch(() => null) : Promise.resolve(null),
-    ]);
+  // Run all lookups in parallel — adsb.lol routeset is primary, ADSBDB is fallback,
+  // OpenSky cache is checked alongside (post-landing authoritative source).
+  const [
+    liveData,
+    routesetResult,
+    adsbdbRoute,
+    aircraftData,
+    faaData,
+    cachedOpenSky,
+  ] = await Promise.all([
+    hex ? fetchAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
+    callsign && hasPosition
+      ? lookupRouteADSBLol(callsign, lat, lon).catch(() => null)
+      : Promise.resolve(null),
+    callsign ? lookupRoute(callsign).catch(() => null) : Promise.resolve(null),
+    hex ? lookupAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
+    tail ? lookupTailNumber(tail).catch(() => null) : Promise.resolve(null),
+    hex
+      ? getRecentOpenSkyFlight(hex, 24).catch(() => null)
+      : Promise.resolve(null),
+  ]);
 
-  // Select best route: adsb.lol routeset → ADSBDB
+  // On cache miss, query OpenSky /flights/aircraft for the last 24h and
+  // persist whatever it returns. OpenSky records appear 6–24h after landing,
+  // so this only resolves recently-completed flights.
+  let openSkyFlight = cachedOpenSky;
+  if (!openSkyFlight && hex) {
+    try {
+      const nowSec = Math.floor(Date.now() / 1000);
+      const flights = await fetchAircraftFlights(hex, nowSec - 86400, nowSec);
+      // Persist all returned flights so cache is hot for subsequent legs too.
+      for (const f of flights) {
+        await cacheOpenSkyFlight(f);
+      }
+      // Pick the most recently landed flight.
+      const mostRecent = flights.reduce<typeof flights[number] | null>(
+        (best, f) => (!best || f.lastSeen > best.lastSeen ? f : best),
+        null
+      );
+      if (mostRecent) {
+        openSkyFlight = {
+          icao_hex: mostRecent.icao24.toUpperCase(),
+          callsign: mostRecent.callsign,
+          first_seen_unix: mostRecent.firstSeen,
+          last_seen_unix: mostRecent.lastSeen,
+          est_departure_icao: mostRecent.estDepartureAirport,
+          est_arrival_icao: mostRecent.estArrivalAirport,
+          est_departure_horiz_distance_m:
+            mostRecent.estDepartureAirportHorizDistance,
+          est_arrival_horiz_distance_m:
+            mostRecent.estArrivalAirportHorizDistance,
+        };
+      }
+    } catch (err) {
+      console.error("OpenSky route fetch failed:", err);
+    }
+  }
+
+  // OpenSky takes priority when both airports are present and confidence is
+  // high (horizontal distance within 5km of a real airport). When borrowing
+  // OpenSky's airports, we try to enrich name/city from the routeset/ADSBDB
+  // payloads if their ICAOs happen to match.
+  const openSkyHighConfidence =
+    openSkyFlight !== null &&
+    openSkyFlight.est_departure_icao !== null &&
+    openSkyFlight.est_arrival_icao !== null &&
+    (openSkyFlight.est_departure_horiz_distance_m ?? Infinity) <
+      OPENSKY_HORIZ_DISTANCE_MAX_M &&
+    (openSkyFlight.est_arrival_horiz_distance_m ?? Infinity) <
+      OPENSKY_HORIZ_DISTANCE_MAX_M;
+
+  // Select best route: OpenSky (post-landing) → adsb.lol routeset → ADSBDB
   const routeData = routesetResult?.route ?? adsbdbRoute;
   const serverPlausible = routesetResult?.plausible ?? null;
+
+  // Helper: pull airport metadata from routeData if its ICAO matches.
+  const enrichAirport = (icao: string | null) => {
+    if (!icao) return null;
+    const match =
+      routeData?.origin?.icao === icao
+        ? routeData.origin
+        : routeData?.destination?.icao === icao
+          ? routeData.destination
+          : null;
+    if (match) {
+      return {
+        icao: match.icao,
+        iata: match.iata || null,
+        name: match.name || null,
+        city: match.municipality || null,
+        country: match.country || null,
+      };
+    }
+    return { icao, iata: null, name: null, city: null, country: null };
+  };
 
   // Build the complete response
   const result = {
@@ -106,32 +196,45 @@ export async function GET(request: NextRequest) {
         }
       : null,
 
-    // Route info — origin/destination are nulled out below if the verification
-    // gate fails. We never show partial/uncertain airports.
+    // Route info — when the verification gate fails (and OpenSky has no
+    // authoritative answer) we null out the airports. We never show
+    // partial/uncertain airports.
     route: {
-      origin: routeData?.origin
-        ? {
-            icao: routeData.origin.icao,
-            iata: routeData.origin.iata,
-            name: routeData.origin.name,
-            city: routeData.origin.municipality,
-            country: routeData.origin.country,
-          }
-        : null,
-      destination: routeData?.destination
-        ? {
-            icao: routeData.destination.icao,
-            iata: routeData.destination.iata,
-            name: routeData.destination.name,
-            city: routeData.destination.municipality,
-            country: routeData.destination.country,
-          }
-        : null,
+      origin: openSkyHighConfidence
+        ? enrichAirport(openSkyFlight!.est_departure_icao)
+        : routeData?.origin
+          ? {
+              icao: routeData.origin.icao,
+              iata: routeData.origin.iata,
+              name: routeData.origin.name,
+              city: routeData.origin.municipality,
+              country: routeData.origin.country,
+            }
+          : null,
+      destination: openSkyHighConfidence
+        ? enrichAirport(openSkyFlight!.est_arrival_icao)
+        : routeData?.destination
+          ? {
+              icao: routeData.destination.icao,
+              iata: routeData.destination.iata,
+              name: routeData.destination.name,
+              city: routeData.destination.municipality,
+              country: routeData.destination.country,
+            }
+          : null,
       airline: routeData?.airline_name || null,
-      verified: false as boolean, // computed below after position is known
+      verified: openSkyHighConfidence as boolean, // OpenSky-confirmed wins; geo gate may flip below
       // True when we received route data but rejected it on the verification gate.
       // Distinguishes "we don't know" (no data) from "we had data but it didn't match".
       unconfirmed: false as boolean,
+      // Provenance: tells the UI / debugging how we got the route.
+      source: openSkyHighConfidence
+        ? ("opensky" as const)
+        : routesetResult?.route
+          ? ("adsbdb_routeset" as const)
+          : adsbdbRoute
+            ? ("adsbdb_callsign" as const)
+            : ("none" as const),
     },
 
     // Live position
@@ -196,11 +299,12 @@ export async function GET(request: NextRequest) {
     timestamp: Date.now(),
   };
 
-  // Verify route against aircraft position using dual checks:
-  // 1. adsb.lol server-side plausible flag (when available)
-  // 2. Our own strict cross-track + detour + heading check
-  // If the gate fails, we DROP the airports — wrong is worse than missing.
-  if (
+  // OpenSky-confirmed routes skip the geo gate entirely — OpenSky's own
+  // trajectory analyzer already verified the airports against the actual
+  // flight track. Only run the gate for the ADSBDB / routeset chain.
+  if (openSkyHighConfidence) {
+    // Already marked verified=true above. Nothing more to do.
+  } else if (
     result.route.origin &&
     result.route.destination &&
     result.position &&
