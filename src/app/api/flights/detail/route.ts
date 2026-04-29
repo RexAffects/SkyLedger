@@ -299,32 +299,78 @@ export async function GET(request: NextRequest) {
     timestamp: Date.now(),
   };
 
-  // OpenSky-confirmed routes skip the geo gate entirely — OpenSky's own
-  // trajectory analyzer already verified the airports against the actual
-  // flight track. Only run the gate for the ADSBDB / routeset chain.
-  if (openSkyHighConfidence) {
-    // Already marked verified=true above. Nothing more to do.
+  // Verification:
+  //   - On the ground: OpenSky's most-recent-completed-flight applies to
+  //     where the plane is now. Trust it absolutely (skip gate).
+  //   - Airborne: OpenSky's record is for the PRIOR flight. The current
+  //     flight may or may not be the same — run the geo gate to find out.
+  //     If gate passes (current position/heading consistent with the
+  //     candidate airports), the current flight matches OpenSky's record.
+  //     If gate fails, the plane has moved on to a new flight; hide.
+  // For ADSBDB-only candidates, the gate has always been the truth check.
+  const onGround =
+    result.position?.on_ground === true ||
+    (result.position?.altitude_ft != null &&
+      result.position.altitude_ft < 100);
+
+  if (openSkyHighConfidence && onGround) {
+    // OpenSky data + plane sitting at the airport → fully trust.
+    // verified=true was already set when the route was assembled.
   } else if (
     result.route.origin &&
     result.route.destination &&
-    result.position &&
-    routeData?.origin &&
-    routeData?.destination
+    result.position
   ) {
-    const geoCheck = isPositionOnRoute(
-      routeData.origin.latitude,
-      routeData.origin.longitude,
-      routeData.destination.latitude,
-      routeData.destination.longitude,
-      result.position.latitude,
-      result.position.longitude,
-      result.position.heading
-    );
+    // We have candidate airports (from OpenSky or ADSBDB) — gate them
+    // against the live position/heading. We need real lat/lon for the
+    // gate; when OpenSky-only (no ADSBDB metadata match) we won't have
+    // them and the gate cannot run, so we conservatively reject.
+    const originLatLon = openSkyHighConfidence
+      ? routeData?.origin?.icao === openSkyFlight!.est_departure_icao
+        ? {
+            lat: routeData!.origin!.latitude,
+            lon: routeData!.origin!.longitude,
+          }
+        : null
+      : routeData?.origin
+        ? {
+            lat: routeData.origin.latitude,
+            lon: routeData.origin.longitude,
+          }
+        : null;
+    const destLatLon = openSkyHighConfidence
+      ? routeData?.destination?.icao === openSkyFlight!.est_arrival_icao
+        ? {
+            lat: routeData!.destination!.latitude,
+            lon: routeData!.destination!.longitude,
+          }
+        : null
+      : routeData?.destination
+        ? {
+            lat: routeData.destination.latitude,
+            lon: routeData.destination.longitude,
+          }
+        : null;
 
-    // If server plausible check is available, both must agree.
-    // If not available (ADSBDB fallback), rely on our own geo check.
-    const verified =
-      serverPlausible !== null ? serverPlausible && geoCheck : geoCheck;
+    let verified = false;
+    if (originLatLon && destLatLon) {
+      const geoCheck = isPositionOnRoute(
+        originLatLon.lat,
+        originLatLon.lon,
+        destLatLon.lat,
+        destLatLon.lon,
+        result.position.latitude,
+        result.position.longitude,
+        result.position.heading
+      );
+      // For the ADSBDB chain the server plausible flag must also agree.
+      // OpenSky candidates rely on the geo gate alone.
+      verified = openSkyHighConfidence
+        ? geoCheck
+        : serverPlausible !== null
+          ? serverPlausible && geoCheck
+          : geoCheck;
+    }
 
     result.route.verified = verified;
     if (!verified) {
