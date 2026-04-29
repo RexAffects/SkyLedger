@@ -207,32 +207,3 @@ export async function lookupAircraftByHex(
   }
 }
 
-/**
- * Fallback: look up route via HexDB.io
- * Returns a simple "ORIGIN-DESTINATION" string like "KJFK-KLAX"
- */
-export async function lookupRouteHexDB(
-  callsign: string
-): Promise<{ origin: string; destination: string } | null> {
-  const cleaned = callsign.trim().toUpperCase();
-  if (!cleaned) return null;
-
-  try {
-    const res = await fetch(
-      `https://hexdb.io/api/v1/route/iata/${cleaned}`
-    );
-
-    if (!res.ok) return null;
-
-    const text = await res.text();
-    const parts = text.trim().split("-");
-
-    if (parts.length === 2 && parts[0] && parts[1]) {
-      return { origin: parts[0], destination: parts[1] };
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}

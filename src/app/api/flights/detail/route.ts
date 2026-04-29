@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { lookupRouteADSBLol, lookupRoute, lookupAircraftByHex, lookupRouteHexDB } from "@/lib/api/adsbdb";
+import { lookupRouteADSBLol, lookupRoute, lookupAircraftByHex } from "@/lib/api/adsbdb";
 import { lookupTailNumber } from "@/lib/api/faa";
 import { fetchAircraftByHex } from "@/lib/api/adsb";
 import { getFlag } from "@/lib/supabase/flags";
@@ -13,11 +13,12 @@ import { isPositionOnRoute } from "@/lib/utils/geo";
  *
  * One-stop endpoint that gathers ALL available info for an aircraft:
  * - Live position from ADSB.lol
- * - Route (origin/destination airports) from adsb.lol routeset → ADSBDB → HexDB
+ * - Route (origin/destination airports) from adsb.lol routeset → ADSBDB
  * - Aircraft details (owner, type, photo) from ADSBDB
  * - FAA registration from registry.faa.gov
  *
- * All lookups run in parallel for speed.
+ * Routes are gated on a strict position/heading check; when the gate fails
+ * we return route.origin/destination as null rather than show a wrong route.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -35,8 +36,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Run all lookups in parallel — adsb.lol routeset is primary, ADSBDB + HexDB are fallbacks
-  const [liveData, routesetResult, adsbdbRoute, aircraftData, faaData, hexDbRoute] =
+  // Run all lookups in parallel — adsb.lol routeset is primary, ADSBDB is fallback
+  const [liveData, routesetResult, adsbdbRoute, aircraftData, faaData] =
     await Promise.all([
       hex ? fetchAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
       callsign && hasPosition
@@ -45,10 +46,9 @@ export async function GET(request: NextRequest) {
       callsign ? lookupRoute(callsign).catch(() => null) : Promise.resolve(null),
       hex ? lookupAircraftByHex(hex).catch(() => null) : Promise.resolve(null),
       tail ? lookupTailNumber(tail).catch(() => null) : Promise.resolve(null),
-      callsign ? lookupRouteHexDB(callsign).catch(() => null) : Promise.resolve(null),
     ]);
 
-  // Select best route: adsb.lol routeset → ADSBDB → HexDB
+  // Select best route: adsb.lol routeset → ADSBDB
   const routeData = routesetResult?.route ?? adsbdbRoute;
   const serverPlausible = routesetResult?.plausible ?? null;
 
@@ -106,7 +106,8 @@ export async function GET(request: NextRequest) {
         }
       : null,
 
-    // Route info (prefer ADSBDB, fall back to HexDB)
+    // Route info — origin/destination are nulled out below if the verification
+    // gate fails. We never show partial/uncertain airports.
     route: {
       origin: routeData?.origin
         ? {
@@ -116,9 +117,7 @@ export async function GET(request: NextRequest) {
             city: routeData.origin.municipality,
             country: routeData.origin.country,
           }
-        : hexDbRoute
-          ? { icao: hexDbRoute.origin, iata: null, name: null, city: null, country: null }
-          : null,
+        : null,
       destination: routeData?.destination
         ? {
             icao: routeData.destination.icao,
@@ -127,11 +126,12 @@ export async function GET(request: NextRequest) {
             city: routeData.destination.municipality,
             country: routeData.destination.country,
           }
-        : hexDbRoute
-          ? { icao: hexDbRoute.destination, iata: null, name: null, city: null, country: null }
-          : null,
+        : null,
       airline: routeData?.airline_name || null,
       verified: false as boolean, // computed below after position is known
+      // True when we received route data but rejected it on the verification gate.
+      // Distinguishes "we don't know" (no data) from "we had data but it didn't match".
+      unconfirmed: false as boolean,
     },
 
     // Live position
@@ -198,7 +198,8 @@ export async function GET(request: NextRequest) {
 
   // Verify route against aircraft position using dual checks:
   // 1. adsb.lol server-side plausible flag (when available)
-  // 2. Our own cross-track distance + detour ratio check
+  // 2. Our own strict cross-track + detour + heading check
+  // If the gate fails, we DROP the airports — wrong is worse than missing.
   if (
     result.route.origin &&
     result.route.destination &&
@@ -212,13 +213,29 @@ export async function GET(request: NextRequest) {
       routeData.destination.latitude,
       routeData.destination.longitude,
       result.position.latitude,
-      result.position.longitude
+      result.position.longitude,
+      result.position.heading
     );
 
     // If server plausible check is available, both must agree.
     // If not available (ADSBDB fallback), rely on our own geo check.
-    result.route.verified =
+    const verified =
       serverPlausible !== null ? serverPlausible && geoCheck : geoCheck;
+
+    result.route.verified = verified;
+    if (!verified) {
+      result.route.origin = null;
+      result.route.destination = null;
+      result.route.unconfirmed = true;
+    }
+  } else if (
+    (result.route.origin || result.route.destination) &&
+    !result.position
+  ) {
+    // No position to verify against — refuse to show the route.
+    result.route.origin = null;
+    result.route.destination = null;
+    result.route.unconfirmed = true;
   }
 
   // Look up community flags (don't block if it fails)

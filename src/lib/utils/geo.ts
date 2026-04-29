@@ -45,6 +45,28 @@ function bearingRad(
 }
 
 /**
+ * Initial bearing from point 1 to point 2 in degrees, normalized to [0, 360).
+ */
+export function bearingDeg(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const rad = bearingRad(lat1, lon1, lat2, lon2);
+  const deg = (rad * 180) / Math.PI;
+  return (deg + 360) % 360;
+}
+
+/**
+ * Smallest absolute difference between two compass headings, in degrees [0, 180].
+ */
+export function headingDelta(a: number, b: number): number {
+  const diff = Math.abs(a - b) % 360;
+  return diff > 180 ? 360 - diff : diff;
+}
+
+/**
  * Calculate the cross-track distance in nautical miles —
  * how far a point is from the great circle arc between two other points.
  */
@@ -67,6 +89,14 @@ function crossTrackDistanceNm(
  * Validate whether an aircraft's position is plausibly on the route
  * between two airports. Returns true if the position is consistent
  * with the route, false if the route data is likely stale/wrong.
+ *
+ * Tight thresholds: a wrong route that happens to pass overhead must NOT
+ * pass this gate. We'd rather hide a route than show a wrong one.
+ *
+ * If `aircraftTrack` (current heading in degrees) is provided, we also
+ * require the heading to point roughly toward the destination (within 60°).
+ * Aircraft within 50nm of either endpoint skip the heading check —
+ * climbout/descent vectors don't always align with the destination bearing.
  */
 export function isPositionOnRoute(
   originLat: number,
@@ -74,7 +104,8 @@ export function isPositionOnRoute(
   destLat: number,
   destLon: number,
   aircraftLat: number,
-  aircraftLon: number
+  aircraftLon: number,
+  aircraftTrack?: number | null
 ): boolean {
   const routeDist = distanceNm(originLat, originLon, destLat, destLon);
 
@@ -87,19 +118,37 @@ export function isPositionOnRoute(
     aircraftLat, aircraftLon
   );
 
-  // Threshold: max(250 nm, 20% of route distance)
-  // This accounts for ATC routing, weather avoidance, and airway deviations
-  const maxCrossTrack = Math.max(250, routeDist * 0.2);
+  // Threshold: max(50 nm, 12% of route distance) — tight enough to reject
+  // routes that merely happen to pass overhead by coincidence.
+  const maxCrossTrack = Math.max(50, routeDist * 0.12);
   if (crossTrack > maxCrossTrack) return false;
 
   // Detour ratio: (d_origin_aircraft + d_aircraft_dest) / d_origin_dest
-  // If the aircraft is way off-route, this ratio will be high
   const dToOrigin = distanceNm(originLat, originLon, aircraftLat, aircraftLon);
   const dToDest = distanceNm(destLat, destLon, aircraftLat, aircraftLon);
   const detourRatio = (dToOrigin + dToDest) / routeDist;
 
-  // A ratio > 1.5 means 50% longer path — very unlikely for a real route
-  if (detourRatio > 1.5) return false;
+  // A ratio > 1.25 means 25% longer path — unlikely for a real route in cruise
+  if (detourRatio > 1.25) return false;
+
+  // Heading vs bearing-to-destination check (when track is available).
+  // Skip near endpoints: climb/descent maneuvers can deviate significantly.
+  if (
+    aircraftTrack != null &&
+    Number.isFinite(aircraftTrack) &&
+    dToDest > 50 &&
+    dToOrigin > 50
+  ) {
+    const bearingToDest = bearingDeg(
+      aircraftLat,
+      aircraftLon,
+      destLat,
+      destLon
+    );
+    // 60° tolerance — winds aloft can push true track 30°+ off course,
+    // and en-route ATC vectors add more. Tighter would generate false rejects.
+    if (headingDelta(aircraftTrack, bearingToDest) > 60) return false;
+  }
 
   return true;
 }
