@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Ping keep-alive endpoint
         run: |
-          response=$(curl -s -w "\n%{http_code}" \
+          response=$(curl -sL -w "\n%{http_code}" \
             -H "Authorization: Bearer ${{ secrets.KEEP_ALIVE_SECRET }}" \
             "${{ secrets.SITE_URL }}/api/keep-alive")
 
