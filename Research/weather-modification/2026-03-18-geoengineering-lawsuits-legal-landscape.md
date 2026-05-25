@@ -52,6 +52,21 @@ As of March 2026, there have been **no landmark court rulings** specifically on 
 
 ## 2. International Legal Framework
 
+### Mexico — The ONLY National Outright Ban
+
+Mexico is the **only national government on Earth to have outright prohibited solar geoengineering.** In January 2023, after the U.S. startup **Make Sunsets** released sulfur dioxide balloons from Baja California without authorization, Mexico's environment ministry (SEMARNAT) announced it would **prohibit and halt all solar geoengineering experimentation** on its territory, citing the precautionary principle and the absence of any international oversight framework.
+
+- **Scope:** Solar radiation modification / stratospheric aerosol injection (SRM/SAI) — NOT cloud seeding
+- **Trigger:** Make Sunsets' unsanctioned SO2 balloon launches (2022–2023)
+- **Significance:** Every other jurisdiction is at the *moratorium* or *recommendation* stage — Mexico is the lone national prohibition
+- **Source:** [Mexico Bans Solar Geoengineering Experiments](https://www.solargeoeng.org/mexico-bans-solar-geoengineering-experiments/), [Climate Home News](https://www.climatechangenews.com/2023/01/18/mexico-plans-to-ban-solar-geoengineering-after-rogue-experiment/)
+
+### EU — Scientific Recommendation to Ban (Not Yet Law)
+
+The European Commission's Scientific Advice Mechanism (Dec 2024) formally **recommended a ban/moratorium on solar radiation modification**, leaving room for research. This is an advisory opinion, not enacted legislation. No EU member state has a binding national SRM ban.
+
+- **Source:** [E&T — EU should ban geoengineering techniques](https://eandt.theiet.org/2024/12/11/eu-should-ban-geoengineering-techniques-designed-tackle-climate-change-scientists-say)
+
 ### Convention on Biological Diversity (CBD) — De Facto Moratorium
 
 - **2008:** CBD adopted a moratorium on ocean fertilization
