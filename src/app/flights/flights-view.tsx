@@ -8,6 +8,7 @@ import { MapContainer, type FlightTrail } from "@/components/map/map-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CompassCalibrationDialog } from "@/components/flights/compass-calibration-dialog";
+import { alphaToHeading } from "@/lib/utils/geo";
 
 export function FlightsView() {
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
@@ -62,6 +63,17 @@ export function FlightsView() {
 
     let rawHeading = 0;
 
+    // Current screen rotation, used to compensate alpha-based headings for
+    // landscape. iOS webkitCompassHeading already accounts for this.
+    const getScreenAngle = () => {
+      if (screen.orientation && typeof screen.orientation.angle === "number") {
+        return screen.orientation.angle;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const legacy = (window as any).orientation;
+      return typeof legacy === "number" ? legacy : 0;
+    };
+
     const handler = (e: DeviceOrientationEvent) => {
       // iOS provides webkitCompassHeading (degrees clockwise from north)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,19 +88,15 @@ export function FlightsView() {
         rawHeading = ios;
         return;
       }
-      // Android: alpha is counterclockwise from north when absolute
+      // Android/W3C: only trust alpha when it is absolute (north-referenced).
+      // Relative orientation drifts from an arbitrary start point, so we ignore
+      // it and let the timeout surface the "enable absolute compass" help.
       if (e.alpha !== null && e.absolute) {
         gotOrientationData.current = true;
-        rawHeading = 360 - e.alpha;
-        return;
+        rawHeading = alphaToHeading(e.alpha, getScreenAngle());
       }
-      // Fallback: non-absolute alpha (less reliable but still useful)
-      if (e.alpha !== null) {
-        gotOrientationData.current = true;
-        rawHeading = 360 - e.alpha;
-      }
-      // If event fired but alpha is null — sensor not providing data,
-      // gotOrientationData stays false so the timeout will catch it
+      // If event fired but alpha is null or non-absolute, gotOrientationData
+      // stays false so the 3s timeout catches it.
     };
 
     // Show calibration on first compass use
@@ -105,7 +113,9 @@ export function FlightsView() {
       let diff = rawHeading - prev;
       if (diff > 180) diff -= 360;
       if (diff < -180) diff += 360;
-      const next = (prev + diff * 0.25 + 360) % 360;
+      // Lerp toward the target each frame. 0.4 keeps small jitter damped while
+      // large turns catch up quickly (0.25 felt sluggish).
+      const next = (prev + diff * 0.4 + 360) % 360;
       smoothHeadingRef.current = next;
       setHeading(next);
 
@@ -126,17 +136,19 @@ export function FlightsView() {
     };
     rafRef.current = requestAnimationFrame(tick);
 
-    // Try absolute orientation first (Android), fall back to standard
-    let eventName = "deviceorientationabsolute";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(window as any).DeviceOrientationAbsoluteEvent) {
-      eventName = "deviceorientation";
-    }
+    // Prefer the absolute (north-referenced) event when the browser supports it.
+    // Feature-detect via the real signal — `"ondeviceorientationabsolute" in
+    // window` — NOT a `DeviceOrientationAbsoluteEvent` global (which does not
+    // exist in any browser). On Android Chrome this is what delivers a true
+    // compass heading; the plain `deviceorientation` event is relative.
+    const hasAbsolute = "ondeviceorientationabsolute" in window;
 
-    window.addEventListener(eventName, handler as EventListener);
-    if (eventName !== "deviceorientation") {
-      window.addEventListener("deviceorientation", handler as EventListener);
+    if (hasAbsolute) {
+      window.addEventListener("deviceorientationabsolute", handler as EventListener);
     }
+    // Always also listen to the standard event: it serves iOS
+    // (webkitCompassHeading) and any platform that reports `absolute: true` here.
+    window.addEventListener("deviceorientation", handler as EventListener);
 
     // If no data arrives after 3 seconds, show help
     const timeout = setTimeout(() => {
@@ -166,7 +178,9 @@ export function FlightsView() {
     return () => {
       clearTimeout(timeout);
       cancelAnimationFrame(rafRef.current);
-      window.removeEventListener(eventName, handler as EventListener);
+      if (hasAbsolute) {
+        window.removeEventListener("deviceorientationabsolute", handler as EventListener);
+      }
       window.removeEventListener("deviceorientation", handler as EventListener);
     };
   }, [compassMode]);

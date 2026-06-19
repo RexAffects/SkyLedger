@@ -59,6 +59,21 @@ export function bearingDeg(
 }
 
 /**
+ * Convert an absolute device-orientation alpha into a compass heading.
+ *
+ * W3C `alpha` is measured counter-clockwise from north, so true heading is
+ * `360 - alpha`. When the screen itself is rotated (landscape), the device's
+ * frame no longer matches the viewport, so we add `screen.orientation.angle`
+ * to compensate. Result is degrees clockwise from north, normalized to [0, 360).
+ *
+ * (iOS `webkitCompassHeading` is already a corrected clockwise heading and must
+ * NOT be passed through this function.)
+ */
+export function alphaToHeading(alpha: number, screenAngle: number): number {
+  return (((360 - alpha + screenAngle) % 360) + 360) % 360;
+}
+
+/**
  * Smallest absolute difference between two compass headings, in degrees [0, 180].
  */
 export function headingDelta(a: number, b: number): number {
