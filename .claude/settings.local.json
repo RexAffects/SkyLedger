@@ -181,7 +181,11 @@
       "Bash(npx supabase:*)",
       "Bash(git restore:*)",
       "Bash(grep -E \"\\\\.ts$\")",
-      "Bash(gh repo *)"
+      "Bash(gh repo *)",
+      "Bash(npm run *)",
+      "Bash(npx eslint *)",
+      "Bash(rm -f .git/COMMIT_EDIT_TMP.txt)",
+      "Bash(git fetch *)"
     ]
   }
 }
