@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { submitReport } from "@/lib/supabase/reports";
 import { Input } from "@/components/ui/input";
@@ -12,13 +13,19 @@ import { hashFile } from "@/lib/utils/hash";
 import { extractExif } from "@/lib/utils/exif";
 import { formatCoords } from "@/lib/utils/geo";
 import { OBSERVATION_TYPES, TRAIL_BEHAVIORS } from "@/lib/constants";
+import {
+  dateTimeLocalToISO,
+  exifTimestampToDateTimeLocal,
+  localTimezoneName,
+  toDateTimeLocalValue,
+} from "@/lib/utils/datetime";
 import type { ReportFormData } from "@/lib/types";
 
-export function ReportForm() {
-  const [formData, setFormData] = useState<ReportFormData>({
+function emptyForm(observedAt = ""): ReportFormData {
+  return {
     latitude: 0,
     longitude: 0,
-    observed_at: new Date().toISOString().slice(0, 16),
+    observed_at: observedAt,
     observation_type: "",
     aircraft_count: null,
     duration_minutes: null,
@@ -27,11 +34,39 @@ export function ReportForm() {
     photo: null,
     evidence_hash: "",
     exif_data: null,
+  };
+}
+
+function readAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
   });
+}
+
+export function ReportForm() {
+  const [formData, setFormData] = useState<ReportFormData>(() => emptyForm());
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [useCurrentLocation, setUseCurrentLocation] = useState(false);
+  const [tzLabel, setTzLabel] = useState("");
+  const submittingRef = useRef(false);
+
+  // Both of these are client-only on purpose. The server renders in UTC, so
+  // resolving either during SSR would hydrate a value 5 hours off in Central.
+  useEffect(() => {
+    setFormData((prev) =>
+      prev.observed_at
+        ? prev
+        : { ...prev, observed_at: toDateTimeLocalValue() }
+    );
+    setTzLabel(localTimezoneName());
+  }, []);
 
   const handlePhotoChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,37 +74,45 @@ export function ReportForm() {
       if (!file) return;
 
       setProcessing(true);
+      setError(null);
 
-      // Generate preview
-      const reader = new FileReader();
-      reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
-      reader.readAsDataURL(file);
+      try {
+        // Await the preview too — submitting before the reader fired would
+        // attach a report with no photo at all.
+        const [dataUrl, exifData, hash] = await Promise.all([
+          readAsDataUrl(file),
+          extractExif(file),
+          hashFile(file),
+        ]);
 
-      // Extract EXIF and hash in parallel
-      const [exifData, hash] = await Promise.all([
-        extractExif(file),
-        hashFile(file),
-      ]);
+        setPhotoPreview(dataUrl);
 
-      setFormData((prev) => ({
-        ...prev,
-        photo: file,
-        evidence_hash: hash,
-        exif_data: exifData as unknown as Record<string, unknown>,
-        // Use EXIF GPS if available
-        ...(exifData.latitude && exifData.longitude
-          ? {
-              latitude: exifData.latitude,
-              longitude: exifData.longitude,
-            }
-          : {}),
-        // Use EXIF timestamp if available
-        ...(exifData.timestamp
-          ? { observed_at: exifData.timestamp }
-          : {}),
-      }));
+        // EXIF dates need normalizing before they can go in the input.
+        const exifObservedAt = exifTimestampToDateTimeLocal(exifData.timestamp);
 
-      setProcessing(false);
+        setFormData((prev) => ({
+          ...prev,
+          photo: file,
+          evidence_hash: hash,
+          exif_data: exifData as unknown as Record<string, unknown>,
+          // Use EXIF GPS if available
+          ...(exifData.latitude && exifData.longitude
+            ? {
+                latitude: exifData.latitude,
+                longitude: exifData.longitude,
+              }
+            : {}),
+          // Use EXIF timestamp if available
+          ...(exifObservedAt ? { observed_at: exifObservedAt } : {}),
+        }));
+      } catch {
+        setPhotoPreview(null);
+        setError(
+          "That photo could not be read. Try a different file, or submit without a photo."
+        );
+      } finally {
+        setProcessing(false);
+      }
     },
     []
   );
@@ -98,27 +141,53 @@ export function ReportForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Guard against the double-tap that produced duplicate rows when the form
+    // gave no feedback.
+    if (submittingRef.current) return;
+
     if (!formData.observation_type || !formData.latitude || !formData.longitude) {
+      setError(
+        "Choose what you observed and set a location before submitting."
+      );
       return;
     }
 
-    const result = await submitReport({
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      observed_at: formData.observed_at,
-      observation_type: formData.observation_type,
-      aircraft_count: formData.aircraft_count,
-      duration_minutes: formData.duration_minutes,
-      trail_behavior: formData.trail_behavior,
-      notes: formData.notes || null,
-      photo_urls: photoPreview ? [photoPreview] : [],
-      evidence_hash: formData.evidence_hash || "no-photo",
-      exif_data: formData.exif_data,
-      weather_conditions: null,
-      tail_number: null,
-    });
+    // The input gives local wall time; the column is TIMESTAMPTZ. Convert
+    // explicitly so the stored instant matches when the reporter actually saw it.
+    const observedAtIso = dateTimeLocalToISO(formData.observed_at);
+    if (!observedAtIso) {
+      setError("Enter a valid date and time for the observation.");
+      return;
+    }
 
-    if (result) {
+    submittingRef.current = true;
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const result = await submitReport({
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        observed_at: observedAtIso,
+        observation_type: formData.observation_type,
+        aircraft_count: formData.aircraft_count,
+        duration_minutes: formData.duration_minutes,
+        trail_behavior: formData.trail_behavior,
+        notes: formData.notes || null,
+        photo_urls: photoPreview ? [photoPreview] : [],
+        evidence_hash: formData.evidence_hash || "no-photo",
+        exif_data: formData.exif_data,
+        weather_conditions: null,
+        tail_number: null,
+      });
+
+      if (!result) {
+        setError(
+          "We could not record your observation. Check your connection and try again — your photo and details are still here."
+        );
+        return;
+      }
+
       // Archive photo to email (non-blocking)
       if (photoPreview) {
         fetch("/api/reports/archive", {
@@ -130,7 +199,7 @@ export function ReportForm() {
             observation_type: formData.observation_type,
             latitude: formData.latitude,
             longitude: formData.longitude,
-            observed_at: formData.observed_at,
+            observed_at: observedAtIso,
             trail_behavior: formData.trail_behavior,
             notes: formData.notes || null,
             evidence_hash: formData.evidence_hash,
@@ -141,6 +210,13 @@ export function ReportForm() {
       }
 
       setSubmitted(true);
+    } catch {
+      setError(
+        "Something went wrong submitting your observation. Your details are still here — please try again."
+      );
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
     }
   };
 
@@ -161,12 +237,15 @@ export function ReportForm() {
             {formData.evidence_hash || "No photo attached"}
           </p>
           <div className="mt-6 flex justify-center gap-4">
-            <Button onClick={() => { setSubmitted(false); setFormData({ latitude: 0, longitude: 0, observed_at: new Date().toISOString().slice(0, 16), observation_type: "", aircraft_count: null, duration_minutes: null, trail_behavior: null, notes: "", photo: null, evidence_hash: "", exif_data: null }); setPhotoPreview(null); }}>
+            <Button onClick={() => { setSubmitted(false); setFormData(emptyForm(toDateTimeLocalValue())); setPhotoPreview(null); setError(null); }}>
               Submit Another
             </Button>
-            <a href="/reports" className={buttonVariants({ variant: "outline" })}>
+            <Link
+              href="/reports"
+              className={buttonVariants({ variant: "outline" })}
+            >
               View Evidence Ledger
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>
@@ -291,6 +370,11 @@ export function ReportForm() {
               }
               required
             />
+            {tzLabel && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Your local time ({tzLabel}).
+              </p>
+            )}
           </div>
 
           <div>
@@ -410,6 +494,17 @@ export function ReportForm() {
         </CardContent>
       </Card>
 
+      {error && (
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950/30"
+        >
+          <p className="text-sm font-medium text-red-800 dark:text-red-200">
+            {error}
+          </p>
+        </div>
+      )}
+
       <Button
         type="submit"
         size="lg"
@@ -417,10 +512,16 @@ export function ReportForm() {
         disabled={
           !formData.observation_type ||
           !formData.latitude ||
-          !formData.longitude
+          !formData.longitude ||
+          processing ||
+          submitting
         }
       >
-        Submit Observation
+        {submitting
+          ? "Submitting observation..."
+          : processing
+            ? "Processing photo..."
+            : "Submit Observation"}
       </Button>
       <p className="text-center text-xs text-muted-foreground">
         Your observation will be publicly visible. We do not collect personal
