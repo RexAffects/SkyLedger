@@ -3,13 +3,29 @@ import { hashReporter, getClientIp } from "@/lib/utils/ip-hash";
 import { insertStreakReport } from "@/lib/supabase/streak";
 import { correlateStreakReport } from "@/lib/streak/correlate";
 import { fetchWeatherAtPoint } from "@/lib/api/weather";
+import { checkSubmissionLimits } from "@/lib/security/submission-limits";
 import {
   STREAK_ESTIMATED_AGES,
   STREAK_PATTERN_TYPES,
+  STREAK_SEVERITIES,
+  STREAK_TRAIL_STATES,
 } from "@/lib/constants";
 
 const validAges = STREAK_ESTIMATED_AGES.map((a) => a.value);
 const validPatterns = STREAK_PATTERN_TYPES.map((p) => p.value);
+const validSeverities = STREAK_SEVERITIES.map((s) => s.value);
+const validTrailStates = STREAK_TRAIL_STATES.map((t) => t.value);
+
+function isValidCoordinate(lat: unknown, lon: unknown): boolean {
+  return (
+    typeof lat === "number" &&
+    typeof lon === "number" &&
+    Number.isFinite(lat) &&
+    Number.isFinite(lon) &&
+    Math.abs(lat) <= 90 &&
+    Math.abs(lon) <= 180
+  );
+}
 
 /**
  * POST /api/streak/report
@@ -22,7 +38,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    if (!body.latitude || !body.longitude) {
+    if (!body.latitude || !body.longitude || !isValidCoordinate(body.latitude, body.longitude)) {
       return NextResponse.json(
         { error: "latitude and longitude are required" },
         { status: 400 }
@@ -43,16 +59,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (body.notes && body.notes.length > 500) {
+    if (body.notes && (typeof body.notes !== "string" || body.notes.length > 500)) {
       return NextResponse.json(
         { error: "Notes must be 500 characters or fewer" },
         { status: 400 }
       );
     }
 
+    if (body.severity && !validSeverities.includes(body.severity)) {
+      return NextResponse.json({ error: "Invalid severity" }, { status: 400 });
+    }
+
+    if (body.trail_state && !validTrailStates.includes(body.trail_state)) {
+      return NextResponse.json({ error: "Invalid trail_state" }, { status: 400 });
+    }
+
+    if (
+      body.dark_aircraft_estimate != null &&
+      (!Number.isInteger(body.dark_aircraft_estimate) ||
+        body.dark_aircraft_estimate < 0 ||
+        body.dark_aircraft_estimate > 1000)
+    ) {
+      return NextResponse.json({ error: "Invalid dark_aircraft_estimate" }, { status: 400 });
+    }
+
     // Hash reporter IP
     const ip = getClientIp(request);
     const reporterHash = hashReporter(ip);
+
+    // Per-reporter hourly/daily limits (same as flags and citizen reports).
+    // Added 2026-10-25; see docs/security/2026-10-25-abuse-hardening.md.
+    const limit = await checkSubmissionLimits("streak_reports", reporterHash);
+    if (!limit.allowed) {
+      return NextResponse.json({ error: limit.reason }, { status: 429 });
+    }
 
     // Fetch weather data for the location (non-blocking enrichment)
     let weatherData: Record<string, unknown> | null = null;
