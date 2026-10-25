@@ -6,7 +6,17 @@ export async function POST(request: Request) {
   const { password } = await request.json();
   const adminPassword = process.env.ADMIN_PASSWORD;
 
-  if (!adminPassword || password !== adminPassword) {
+  // Constant-time compare so response timing can't leak how much of the
+  // password matched. Attempts are also limited to 5 per 15 min per IP in
+  // src/proxy.ts.
+  const supplied = Buffer.from(typeof password === "string" ? password : "");
+  const expected = Buffer.from(adminPassword ?? "");
+  const matches =
+    !!adminPassword &&
+    supplied.length === expected.length &&
+    crypto.timingSafeEqual(supplied, expected);
+
+  if (!matches) {
     return NextResponse.json({ error: "Invalid password" }, { status: 401 });
   }
 
