@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CompassCalibrationDialog } from "@/components/flights/compass-calibration-dialog";
 import { alphaToHeading } from "@/lib/utils/geo";
-import { DEFAULT_MAP_CENTER } from "@/lib/constants";
+import { RADAR_FALLBACK_LOCATION } from "@/lib/constants";
 
 interface FlightsViewProps {
   /** Start scanning on load from the visitor's approximate IP location (no permission prompt). */
@@ -20,7 +20,8 @@ interface FlightsViewProps {
 
 export function FlightsView({ autoStart = false, embedded = false }: FlightsViewProps = {}) {
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
-  const [showFlights, setShowFlights] = useState(false);
+  // Auto-start opens straight into the scanning animation — no "Start Scanning" flash
+  const [showFlights, setShowFlights] = useState(autoStart);
   const [selectedFlight, setSelectedFlight] = useState<{
     tail_number: string | null;
     callsign: string | null;
@@ -32,7 +33,7 @@ export function FlightsView({ autoStart = false, embedded = false }: FlightsView
   const [radius, setRadius] = useState(50);
   const [scanPhase, setScanPhase] = useState<
     "idle" | "locating" | "scanning" | "found" | "tracking"
-  >("idle");
+  >(autoStart ? "scanning" : "idle");
   const [foundCount, setFoundCount] = useState(0);
   const scanPhaseRef = useRef(scanPhase);
   scanPhaseRef.current = scanPhase;
@@ -43,8 +44,12 @@ export function FlightsView({ autoStart = false, embedded = false }: FlightsView
   const [compassError, setCompassError] = useState<string | null>(null);
   const [showCalibration, setShowCalibration] = useState(false);
   const [showSatellite, setShowSatellite] = useState(false);
-  // Set when the center came from IP geolocation rather than the device's GPS
-  const [approxCity, setApproxCity] = useState<string | null>(null);
+  // How the current center was chosen when it didn't come from the device's GPS:
+  // an IP-based city guess, or the fixed fallback when we couldn't locate them at all
+  const [autoLocation, setAutoLocation] = useState<
+    { kind: "ip"; city: string } | { kind: "fallback" } | null
+  >(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const userLocatedRef = useRef(false);
 
   // Auto-start: scan the visitor's approximate area right away
@@ -53,23 +58,23 @@ export function FlightsView({ autoStart = false, embedded = false }: FlightsView
     let cancelled = false;
 
     (async () => {
-      let center = { lat: DEFAULT_MAP_CENTER[0], lng: DEFAULT_MAP_CENTER[1] };
-      let city: string | null = null;
+      let center = { lat: RADAR_FALLBACK_LOCATION.lat, lng: RADAR_FALLBACK_LOCATION.lng };
+      let located: { kind: "ip"; city: string } | { kind: "fallback" } = { kind: "fallback" };
       try {
         const res = await fetch("/api/geo");
         const geo: { lat: number | null; lon: number | null; city: string | null } =
           await res.json();
         if (geo.lat !== null && geo.lon !== null) {
           center = { lat: geo.lat, lng: geo.lon };
-          city = geo.city;
+          located = { kind: "ip", city: geo.city ?? "your area" };
         }
       } catch {
-        // Fall back to the default center
+        // Fall back to the default location
       }
       // Don't override a precise location the user already chose
       if (cancelled || userLocatedRef.current) return;
       setMapCenter(center);
-      setApproxCity(city ?? "your area");
+      setAutoLocation(located);
       setScanPhase("scanning");
       setShowFlights(true);
     })();
@@ -266,18 +271,34 @@ export function FlightsView({ autoStart = false, embedded = false }: FlightsView
   }, []);
 
   const handleUseMyLocation = () => {
-    if (!navigator.geolocation) return;
+    setLocationError(null);
+    if (!navigator.geolocation) {
+      setLocationError("Your browser doesn't support location access.");
+      return;
+    }
     userLocatedRef.current = true;
+    const hadRadar = showFlights;
     setScanPhase("locating");
-    navigator.geolocation.getCurrentPosition((pos) => {
-      setApproxCity(null);
-      setMapCenter({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-      });
-      setScanPhase("scanning");
-      setShowFlights(true);
-    });
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setAutoLocation(null);
+        setMapCenter({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+        setScanPhase("scanning");
+        setShowFlights(true);
+      },
+      (err) => {
+        // Without this the overlay stayed on "Getting your location..." forever
+        setScanPhase(hadRadar ? "tracking" : "idle");
+        setLocationError(
+          err.code === err.PERMISSION_DENIED
+            ? "Location access is blocked. Allow it in your browser's site settings, then try again."
+            : "We couldn't get your location. Please try again."
+        );
+      }
+    );
   };
 
   return (
@@ -317,11 +338,29 @@ export function FlightsView({ autoStart = false, embedded = false }: FlightsView
               (~{Math.round(radius * 1.15)} miles)
             </span>
           </div>
-          {approxCity && (
+          {autoLocation?.kind === "fallback" && (
+            <div className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+              <span className="font-medium">
+                We couldn&apos;t detect your location, so we&apos;re showing{" "}
+                {RADAR_FALLBACK_LOCATION.label}.
+              </span>{" "}
+              <button
+                type="button"
+                onClick={handleUseMyLocation}
+                className="font-semibold text-primary underline-offset-2 hover:underline"
+              >
+                Tap here to see what&apos;s above you &rarr;
+              </button>
+            </div>
+          )}
+          {autoLocation?.kind === "ip" && (
             <p className="text-xs text-muted-foreground mt-2">
-              Scanning near <span className="font-medium text-foreground">{approxCity}</span>{" "}
+              Scanning near <span className="font-medium text-foreground">{autoLocation.city}</span>{" "}
               (approximate) &mdash; tap &quot;Update Location&quot; for your exact spot.
             </p>
+          )}
+          {locationError && (
+            <p className="text-xs text-red-600 dark:text-red-400 mt-2">{locationError}</p>
           )}
           <p className="text-xs text-muted-foreground mt-2">
             Click any aircraft to see full details including owner, route, and
@@ -376,7 +415,11 @@ export function FlightsView({ autoStart = false, embedded = false }: FlightsView
                       height: "100%",
                     }}
                   >
+                    {mapCenter && (
                     <MapContainer
+                      // Leaflet only reads `center` on mount, so remount when the
+                      // location changes (e.g. IP guess -> precise GPS)
+                      key={`${mapCenter.lat},${mapCenter.lng}`}
                       center={
                         mapCenter
                           ? [mapCenter.lat, mapCenter.lng]
@@ -419,6 +462,7 @@ export function FlightsView({ autoStart = false, embedded = false }: FlightsView
                           : []
                       }
                     />
+                    )}
                   </div>
 
                   {/* Compass toggle button — mobile only */}

@@ -90,3 +90,10 @@ export const STREAK_SEARCH_RADIUS_NM = 30;
 
 export const DEFAULT_MAP_CENTER: [number, number] = [39.8283, -98.5795]; // Center of US
 export const DEFAULT_MAP_ZOOM = 5;
+
+/** Where the auto-starting radar scans when we can't detect the visitor's location */
+export const RADAR_FALLBACK_LOCATION = {
+  lat: 30.2672,
+  lng: -97.7431,
+  label: "Austin, TX",
+};
