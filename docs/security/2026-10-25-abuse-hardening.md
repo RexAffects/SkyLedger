@@ -36,17 +36,28 @@ limits reset at midnight UTC and the anomaly log can't connect the same abuser a
 
 ### Code (Claude)
 
-- [ ] **1. Close the direct-database hole for citizen reports.** New server route `POST /api/reports`
+- [x] **1. Close the direct-database hole for citizen reports.** New server route `POST /api/reports`
       with validation + rate limits; browser no longer inserts into Supabase directly.
       Migration 007 removes the anon INSERT/UPDATE policies and enables RLS on the four unprotected tables.
-- [ ] **2. Rate-limit streak reports and citizen reports** the same way flags already are
-      (per-IP hourly/daily, DB-backed, hashed IP).
-- [ ] **3. Flight history: server verifies positions against the live ADS-B feed** before recording them.
-      Fabricated positions are impossible, not just rate-limited.
-- [ ] **4. One shared per-IP throttle on every `/api/*` route** (`src/proxy.ts`), with tighter
-      buckets for feedback, admin login, and all submission endpoints.
-- [ ] **5. Schema check in `/api/health`** so the daily email nags until migration 007 is applied.
-- [ ] **6. Docs:** this file, `CLAUDE.md` security rules, OPS.md addendum, `PROJECT-STATUS.md`.
+      *Live 2026-10-25 (commit `11511b9`). Code side done; the policy removal waits on Rex running 007.*
+- [x] **2. Rate-limit streak reports and citizen reports** the same way flags already are
+      (per-IP hourly/daily, DB-backed, hashed IP). *Live 2026-10-25 (`fed98b3`).*
+- [x] **3. Flight history: server verifies positions against the live ADS-B feed** before recording them.
+      Fabricated positions are impossible, not just rate-limited. *Live 2026-10-25 (`c44de87`).*
+- [x] **4. One shared per-IP throttle on every `/api/*` route** (`src/proxy.ts`), with tighter
+      buckets for feedback, admin login, and all submission endpoints. *Live 2026-10-25 (`1bc9122`).*
+- [x] **5. Schema check in `/api/health`** so the daily email nags until migration 007 is applied.
+      *Live 2026-10-25 (`2fa2f73`); currently reporting `schema.ok: false` as expected.*
+- [x] **6. Docs:** this file, `CLAUDE.md` security rules, OPS.md addendum, `PROJECT-STATUS.md`. *(`cc78125`)*
+
+**Live verification, 2026-10-25 21:33 UTC (after deploy):**
+`POST /api/reports {}` → 400 "A valid location is required" · fabricated hex to `/api/flight-history`
+→ `{"inserted":0,"rejected":1}` · bad streak severity → 400 · 7 empty feedback POSTs → 400 ×5 then
+429 ×2 (no email sent) · radar `nearby` → 26 aircraft via adsb.lol · `/`, `/flights`, `/reports/new`
+→ 200 · `/api/health` → `degraded`, `schema.missing` names migration 007.
+Note: the very first `/api/health` call after the deploy reported the DB check failed; it was a cold
+start (that check takes ~4.5 s and has done so since it was written). Three calls later: `db: true`.
+If it ever stays false across several minutes, that's real; see the incident runbook.
 
 ### Rex
 
