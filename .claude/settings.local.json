@@ -185,7 +185,22 @@
       "Bash(npm run *)",
       "Bash(npx eslint *)",
       "Bash(rm -f .git/COMMIT_EDIT_TMP.txt)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(gh run *)",
+      "Read(//tmp/**)",
+      "Bash(nslookup dzrlspyrwrowaxptsgte.supabase.co)",
+      "Bash(node -e \"console.log\\(require\\('next/package.json'\\).version\\)\")",
+      "Bash(curl -s -m 30 'https://dzrlspyrwrowaxptsgte.supabase.co/rest/v1/citizen_reports?select=observed_at,created_at,tail_number,observation_type&order=created_at.desc&limit=100' -H 'apikey: sb_publishable__KBeLurFORTNUu0WjgDLGQ_jodb93EJ' -H 'Authorization: Bearer sb_publishable__KBeLurFORTNUu0WjgDLGQ_jodb93EJ')",
+      "Bash(python3 -)",
+      "Bash(cat)",
+      "Bash(TZ=America/Chicago node /tmp/dtcheck.mjs)",
+      "Bash(NEXT_PUBLIC_SUPABASE_URL=https://dzrlspyrwrowaxptsgte.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable__KBeLurFORTNUu0WjgDLGQ_jodb93EJ npx next build)",
+      "Bash(NEXT_PUBLIC_SUPABASE_URL=https://dzrlspyrwrowaxptsgte.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable__KBeLurFORTNUu0WjgDLGQ_jodb93EJ npx next dev -p 3123)",
+      "Bash(gh secret *)",
+      "Bash(gh workflow *)",
+      "PowerShell(git log *)",
+      "WebFetch(domain:supabase.com)",
+      "Bash(openssl rand *)"
     ]
   }
 }
