@@ -68,6 +68,16 @@ Postmortems and runbooks live in `docs/incidents/`. Read the relevant one before
 
 **Monitoring in place:** `/api/health` (503 when the primary feed or the database is down, meant for UptimeRobot) and a daily alert email via `/api/cron/health-check` (`?test=1` with CRON_SECRET forces a test email).
 
+## Security Rules — Abuse, Bots, Fake Data
+
+Full checklist, limits table, and per-change verify/undo notes: `docs/security/2026-10-25-abuse-hardening.md`. Read it before touching anything below.
+
+1. **The browser never writes to Supabase directly.** Every write goes through an API route that validates, rate-limits by hashed IP, and inserts with the service role. Never add an anon INSERT/UPDATE policy. New tables must `ENABLE ROW LEVEL SECURITY` (no RLS = the public anon key has full read/write).
+2. **Every submission route gets `checkSubmissionLimits()`** (`src/lib/security/submission-limits.ts`) plus a bucket in `src/proxy.ts`. Per-IP, 5/hour, 20/day, same as flags.
+3. **Flight history is evidence, so the server verifies it.** `/api/flight-history` records only positions the live ADS-B feed confirms. Never go back to trusting browser-supplied positions.
+4. **Limits must never touch a real user.** See the tuning table in the security doc before changing a number. A limit that a person could hit on a normal day is a bug.
+5. **Log abuse with the `[security]` marker** so it's searchable in Vercel logs.
+
 ## Project Status
 
 Current state, build progress, and roadmap live in `PROJECT-STATUS.md`. Update as the platform evolves.
