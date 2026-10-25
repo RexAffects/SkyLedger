@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { useTranslation } from "@/lib/i18n/use-translation";
+import { FlightsView } from "@/app/flights/flights-view";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -99,7 +100,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero — animated gradient + noise */}
-      <section className="hero-gradient noise-overlay relative overflow-hidden py-24 sm:py-32">
+      <section className="hero-gradient noise-overlay relative overflow-hidden pt-12 pb-24 sm:pt-16 sm:pb-32">
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-5xl font-bold tracking-tighter sm:text-7xl">
@@ -111,6 +112,29 @@ export default function Home() {
             <p className="mt-5 text-lg leading-8 text-muted-foreground">
               {t("home.hero.description")}
             </p>
+          </div>
+
+          {/* Live radar — starts scanning on load so visitors see it's real-time */}
+          <div className="mt-10 mx-auto max-w-6xl text-left">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+              <p className="flex items-center gap-2 text-sm font-semibold">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                </span>
+                <span className="uppercase tracking-wide text-red-500">
+                  {t("home.radar.live")}
+                </span>
+                <span className="text-foreground/80">{t("home.radar.title")}</span>
+              </p>
+              <Link
+                href="/flights"
+                className="shrink-0 text-sm font-semibold text-primary hover:underline"
+              >
+                {t("home.radar.fullTracker")}
+              </Link>
+            </div>
+            <FlightsView autoStart embedded />
           </div>
 
           {/* Stats — glass cards with animated counters */}

@@ -14,6 +14,11 @@ const en = {
       description:
         "SkyLedger gives everyday citizens a real way to do something about our sky being manipulated \u2014 track flights, build evidence, follow the money, and join the movement passing laws across America.",
     },
+    radar: {
+      live: "Live",
+      title: "Scanning the sky above you right now",
+      fullTracker: "Open full tracker →",
+    },
     pillars: {
       track: {
         title: "Track & Tag",
@@ -209,6 +214,11 @@ const es: typeof en = {
       subtitle: "Podr\u00EDas sorprenderte.",
       description:
         "SkyLedger da a los ciudadanos una forma real de hacer algo sobre la manipulaci\u00F3n de nuestro cielo \u2014 rastrear vuelos, construir evidencia, seguir el dinero y unirse al movimiento que est\u00E1 aprobando leyes en todo Estados Unidos.",
+    },
+    radar: {
+      live: "En vivo",
+      title: "Escaneando el cielo sobre ti ahora mismo",
+      fullTracker: "Abrir rastreador completo →",
     },
     pillars: {
       track: {

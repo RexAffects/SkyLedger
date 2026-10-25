@@ -9,8 +9,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CompassCalibrationDialog } from "@/components/flights/compass-calibration-dialog";
 import { alphaToHeading } from "@/lib/utils/geo";
+import { DEFAULT_MAP_CENTER } from "@/lib/constants";
 
-export function FlightsView() {
+interface FlightsViewProps {
+  /** Start scanning on load from the visitor's approximate IP location (no permission prompt). */
+  autoStart?: boolean;
+  /** Radar only — hides the tail-number lookup and "How it works" (used on the home page). */
+  embedded?: boolean;
+}
+
+export function FlightsView({ autoStart = false, embedded = false }: FlightsViewProps = {}) {
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [showFlights, setShowFlights] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState<{
@@ -35,6 +43,41 @@ export function FlightsView() {
   const [compassError, setCompassError] = useState<string | null>(null);
   const [showCalibration, setShowCalibration] = useState(false);
   const [showSatellite, setShowSatellite] = useState(false);
+  // Set when the center came from IP geolocation rather than the device's GPS
+  const [approxCity, setApproxCity] = useState<string | null>(null);
+  const userLocatedRef = useRef(false);
+
+  // Auto-start: scan the visitor's approximate area right away
+  useEffect(() => {
+    if (!autoStart) return;
+    let cancelled = false;
+
+    (async () => {
+      let center = { lat: DEFAULT_MAP_CENTER[0], lng: DEFAULT_MAP_CENTER[1] };
+      let city: string | null = null;
+      try {
+        const res = await fetch("/api/geo");
+        const geo: { lat: number | null; lon: number | null; city: string | null } =
+          await res.json();
+        if (geo.lat !== null && geo.lon !== null) {
+          center = { lat: geo.lat, lng: geo.lon };
+          city = geo.city;
+        }
+      } catch {
+        // Fall back to the default center
+      }
+      // Don't override a precise location the user already chose
+      if (cancelled || userLocatedRef.current) return;
+      setMapCenter(center);
+      setApproxCity(city ?? "your area");
+      setScanPhase("scanning");
+      setShowFlights(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [autoStart]);
 
   const handleFlightDotClick = useCallback((icaoHex: string) => {
     setHighlightedIcao(icaoHex);
@@ -224,8 +267,10 @@ export function FlightsView() {
 
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) return;
+    userLocatedRef.current = true;
     setScanPhase("locating");
     navigator.geolocation.getCurrentPosition((pos) => {
+      setApproxCity(null);
       setMapCenter({
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
@@ -238,7 +283,7 @@ export function FlightsView() {
   return (
     <div className="space-y-8">
       {/* Aircraft Lookup */}
-      <AircraftLookup />
+      {!embedded && <AircraftLookup />}
 
       {/* Live Flight Tracker */}
       <Card>
@@ -272,6 +317,12 @@ export function FlightsView() {
               (~{Math.round(radius * 1.15)} miles)
             </span>
           </div>
+          {approxCity && (
+            <p className="text-xs text-muted-foreground mt-2">
+              Scanning near <span className="font-medium text-foreground">{approxCity}</span>{" "}
+              (approximate) &mdash; tap &quot;Update Location&quot; for your exact spot.
+            </p>
+          )}
           <p className="text-xs text-muted-foreground mt-2">
             Click any aircraft to see full details including owner, route, and
             airports. Data refreshes every 5–10 seconds.
@@ -607,6 +658,7 @@ export function FlightsView() {
       />
 
       {/* How it works */}
+      {!embedded && (
       <div className="rounded-lg border border-border bg-muted/30 p-6">
         <h3 className="font-semibold">How flight tracking works</h3>
         <div className="mt-4 grid gap-4 sm:grid-cols-3 text-sm text-muted-foreground">
@@ -645,6 +697,7 @@ export function FlightsView() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
