@@ -12,6 +12,7 @@ Next.js 16 + Tailwind + shadcn/ui + TypeScript + Supabase. Free APIs: ADSB.lol (
 - Interactive Leaflet map with citizen report pins
 - Citizen report submission with photo upload, EXIF extraction, SHA-256 evidence hashing
 - Live flight tracker (ADSB.lol) with 10-sec auto-refresh, suspicion scoring, community flagging system
+- Home page opens on the live radar, auto-scanning the visitor's approximate city (IP geolocation via `/api/geo`); falls back to Austin, TX with a "tap to use your location" prompt (2026-10-25)
 - Click any aircraft → full detail panel (owner, departure/arrival airports, aircraft photo, altitude, speed)
 - Color-coded altitude bands, known WX mod operator flagging, Watch/Interest/Flagged badges
 - Community aircraft flagging with rate limiting, anomaly detection, threat badges in flight list

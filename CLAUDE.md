@@ -36,6 +36,19 @@ Don't show "Interest (2.0)" or "Watch (4.2)" labels in the flight tracker. Suspi
 - Show `suspicion_reasons` (the human-readable WHY list) in the detail panel when someone clicks an aircraft
 - Score can inform map marker color subtly, but never show the number
 
+## UI Rule — Home Page Opens on the Live Radar
+
+The home page (`src/app/page.tsx`) shows the live radar right under "What's flying over you?", already scanning on load: no click, no permission prompt. Rex's goal: visitors instantly see that this is a real-time scan.
+
+**How it works:** `<FlightsView autoStart embedded />`. `autoStart` centers on the visitor's approximate city from `/api/geo` (Vercel IP geolocation headers, no GPS needed). `embedded` hides the tail lookup and "How it works". `/flights` doesn't use these props and still waits for "Start Scanning".
+
+**Fallback when location can't be detected: Austin, TX** (`RADAR_FALLBACK_LOCATION` in `src/lib/constants.ts`), with the note "We couldn't detect your location, so we're showing Austin, TX. Tap here to see what's above you →" (the button requests GPS). **Rex explicitly does not want Fayetteville as the default.** Fayetteville only shows for visitors who are actually there.
+
+**Don't break:**
+- Leave the radar itself as it is. Rex asked that it not be redesigned.
+- The map remounts when `mapCenter` changes (`key` on `MapContainer`), because Leaflet only reads `center` on mount. Without that, switching from the IP guess to GPS scans the new spot but leaves the map showing the old one.
+- `handleUseMyLocation` must handle geolocation errors. Without that, a denied permission hangs on "Getting your location..." forever.
+
 ## Operations Bible
 
 `private/OPS.md` is the single source of truth for SkyLedger infrastructure (gitignored). Read it first for any audit, status check, or "how does X work" question. Update it whenever infrastructure changes (new tables, APIs, features, deployment, costs).
