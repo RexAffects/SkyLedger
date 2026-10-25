@@ -615,7 +615,16 @@ export function FlightsView() {
             <p className="mt-1">
               Aircraft broadcast their position on 1090 MHz. Thousands of
               volunteer antennas worldwide receive these signals and feed them
-              to ADSB.lol — an unfiltered, open-data network.
+              to ADSB.lol — an unfiltered, open-data network — with{" "}
+              <a
+                href="https://adsb.fi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                adsb.fi
+              </a>{" "}
+              as a backup.
             </p>
           </div>
           <div>

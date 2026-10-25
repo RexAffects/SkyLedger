@@ -36,8 +36,8 @@ export default function AboutPage() {
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <DataSourceCard
             title="ADS-B Flight Data"
-            source="ADSB.lol"
-            description="Unfiltered, real-time aircraft position data from the ADS-B Exchange network. Unlike commercial flight trackers, this data is not filtered or blocked &mdash; military, government, and privacy-blocked aircraft are visible."
+            source="ADSB.lol · adsb.fi (backup)"
+            description="Unfiltered, real-time aircraft position data from the ADS-B Exchange network. Unlike commercial flight trackers, this data is not filtered or blocked &mdash; military, government, and privacy-blocked aircraft are visible. If ADSB.lol is unavailable, SkyLedger automatically switches to adsb.fi, another volunteer-run open-data network."
           />
           <DataSourceCard
             title="FAA Aircraft Registry"

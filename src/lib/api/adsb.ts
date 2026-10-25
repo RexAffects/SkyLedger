@@ -8,6 +8,10 @@
  * Provider fallback: if ADSB.lol fails (error status, timeout, bad JSON) we
  * retry the same query against adsb.fi, which serves the identical readsb
  * JSON format. See docs/incidents/2026-10-25-flight-feed-403.md for why.
+ *
+ * adsb.fi terms (github.com/adsbfi/opendata): 1 req/sec, non-commercial use
+ * only, and the site must credit adsb.fi with a link (done on /flights and
+ * /about).
  */
 
 export interface ADSBFlight {
@@ -34,8 +38,6 @@ export interface ADSBFlight {
 
 export interface ADSBResponse {
   ac: ADSBFlight[] | null;
-  /** adsb.fi's lat/lon/dist endpoint names the array `aircraft` instead of `ac` */
-  aircraft?: ADSBFlight[] | null;
   msg: string;
   now: number;
   total: number;
@@ -79,7 +81,7 @@ export const PROVIDERS: Provider[] = [
   {
     name: "adsb.fi",
     nearby: (lat, lon, r) =>
-      `https://opendata.adsb.fi/api/v2/lat/${lat}/lon/${lon}/dist/${r}`,
+      `https://opendata.adsb.fi/api/v3/lat/${lat}/lon/${lon}/dist/${r}`,
     hex: (hex) => `https://opendata.adsb.fi/api/v2/hex/${hex}`,
     reg: (reg) => `https://opendata.adsb.fi/api/v2/registration/${reg}`,
   },
@@ -137,7 +139,7 @@ export async function queryProvider(
     }
 
     const data: ADSBResponse = await res.json();
-    const flights = data.ac ?? data.aircraft;
+    const flights = data.ac;
     if (flights !== null && flights !== undefined && !Array.isArray(flights)) {
       return {
         attempt: attempt({ ok: false, status: res.status, error: "Unexpected response shape" }),

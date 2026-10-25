@@ -3,7 +3,7 @@
 Citizen-powered transparency platform for weather modification accountability. Update this doc as the platform evolves.
 
 ## Tech Stack
-Next.js 16 + Tailwind + shadcn/ui + TypeScript + Supabase. Free APIs: ADSB.lol (flight tracking), ADSBDB (route/airport lookup), FAA registry (ownership), HexDB.io (route fallback).
+Next.js 16 + Tailwind + shadcn/ui + TypeScript + Supabase. Free APIs: ADSB.lol (flight tracking; adsb.fi automatic fallback), ADSBDB (route/airport lookup), FAA registry (ownership), HexDB.io (route fallback).
 
 ## Build State (as of 2026-03-20)
 
@@ -71,3 +71,7 @@ SkyLedger is the dashboard layer. Geoengineering Watch = archive (600+ patents).
 
 ## Operations
 `private/OPS.md` — single source of truth for infrastructure (gitignored).
+
+**Monitoring:** `https://skyledger.org/api/health` (both flight feeds + DB; 503 when broken) and a daily alert email (`/api/cron/health-check`).
+
+**Incidents:** `docs/incidents/` — postmortems + runbooks. Latest: [2026-10-25 radar outage (ADSB.lol 403)](docs/incidents/2026-10-25-flight-feed-403.md).
