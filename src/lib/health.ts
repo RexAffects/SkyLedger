@@ -27,7 +27,33 @@ export interface HealthReport {
     providers: ProviderAttempt[];
   };
   database: { ok: boolean; ms: number; error?: string };
+  /** Migrations the code expects but the database doesn't have yet */
+  schema: { ok: boolean; missing: string[] };
   problems: string[];
+}
+
+// Each entry: a column the code relies on and the migration that adds it.
+// A failed select means that migration hasn't been run in Supabase yet.
+const EXPECTED_SCHEMA: Array<{ table: string; column: string; migration: string }> = [
+  {
+    table: "citizen_reports",
+    column: "reporter_hash",
+    migration: "007_security_hardening.sql",
+  },
+];
+
+async function checkSchema(): Promise<HealthReport["schema"]> {
+  const missing: string[] = [];
+  try {
+    const supabase = createServiceClient();
+    for (const { table, column, migration } of EXPECTED_SCHEMA) {
+      const { error } = await supabase.from(table).select(column).limit(1);
+      if (error) missing.push(`${table}.${column} (run supabase/migrations/${migration})`);
+    }
+  } catch {
+    // Database itself is down; checkDatabase reports that.
+  }
+  return { ok: missing.length === 0, missing };
 }
 
 async function checkDatabase(): Promise<HealthReport["database"]> {
@@ -50,7 +76,7 @@ async function checkDatabase(): Promise<HealthReport["database"]> {
 }
 
 export async function runHealthChecks(): Promise<HealthReport> {
-  const [providers, database] = await Promise.all([
+  const [providers, database, schema] = await Promise.all([
     // Every provider, not just until one works — we want to know if the
     // fallback is dead *before* the primary goes down.
     Promise.all(
@@ -60,6 +86,7 @@ export async function runHealthChecks(): Promise<HealthReport> {
       })
     ),
     checkDatabase(),
+    checkSchema(),
   ]);
 
   const serving = providers.find((p) => p.ok)?.provider ?? null;
@@ -73,6 +100,9 @@ export async function runHealthChecks(): Promise<HealthReport> {
     }
   }
   if (!database.ok) problems.push(`Database check failed: ${database.error}`);
+  if (database.ok && !schema.ok) {
+    problems.push(`Database schema out of date: ${schema.missing.join("; ")}`);
+  }
 
   let status: HealthStatus = "ok";
   if (problems.length > 0) status = "degraded";
@@ -83,6 +113,7 @@ export async function runHealthChecks(): Promise<HealthReport> {
     checked_at: new Date().toISOString(),
     flight_feed: { serving, providers },
     database,
+    schema,
     problems,
   };
 }
