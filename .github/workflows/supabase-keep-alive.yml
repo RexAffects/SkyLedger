@@ -1,3 +1,10 @@
+# BACKUP keep-alive only. The primary is the Vercel Cron in vercel.json.
+#
+# Why: GitHub automatically disables scheduled workflows on public repos after
+# 60 days with no repository activity, and pushing new commits does NOT
+# re-enable them — it takes a manual click in the Actions tab. That is exactly
+# what silently killed this workflow from 2026-09-13 to 2026-10-12 and let the
+# Supabase pause warnings start. Never rely on this as the only ping.
 name: Supabase Keep-Alive
 
 on:

@@ -4,40 +4,62 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const maxDuration = 10;
 
+// Supabase pauses a Free project after ~7 days without "sufficient user
+// database activity" — their guidance is a few requests per day, so we touch
+// several tables rather than one.
+const TABLES = ["citizen_reports", "flight_flags", "faa_cache"] as const;
+
 /**
- * Simple keep-alive endpoint to prevent Supabase from pausing due to inactivity.
- * Called daily by GitHub Actions.
+ * Keep-alive endpoint that prevents Supabase from pausing due to inactivity.
+ *
+ * Called daily by Vercel Cron (primary, see vercel.json) and by the
+ * GitHub Actions workflow (backup, see .github/workflows/supabase-keep-alive.yml).
+ * Vercel Cron sends CRON_SECRET; GitHub Actions sends KEEP_ALIVE_SECRET.
  */
 export async function GET(request: Request) {
-  // Optional: verify request is from GitHub Actions or has correct token
   const authHeader = request.headers.get("authorization");
-  const expectedToken = process.env.KEEP_ALIVE_SECRET;
+  const accepted = [process.env.CRON_SECRET, process.env.KEEP_ALIVE_SECRET]
+    .filter(Boolean)
+    .map((token) => `Bearer ${token}`);
 
-  if (expectedToken && authHeader !== `Bearer ${expectedToken}`) {
+  if (accepted.length > 0 && !accepted.includes(authHeader ?? "")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const supabase = createServiceClient();
 
-    // Simple query to generate database activity
-    const { data, error } = await supabase
-      .from("citizen_reports")
-      .select("id")
-      .limit(1);
+    // Count-only queries: real database activity, column-name agnostic, cheap.
+    const results = await Promise.all(
+      TABLES.map(async (table) => {
+        const { error } = await supabase
+          .from(table)
+          .select("*", { count: "exact", head: true });
+        return { table, ok: !error, error: error?.message };
+      })
+    );
 
-    if (error) {
-      console.error("Keep-alive query failed:", error);
+    const failed = results.filter((r) => !r.ok);
+
+    // Only fail if every query failed — that means the database is genuinely
+    // unreachable. A single bad table shouldn't mask a successful ping.
+    if (failed.length === results.length) {
+      console.error("Keep-alive: all queries failed", failed);
       return NextResponse.json(
-        { ok: false, error: error.message },
+        { ok: false, error: failed[0]?.error ?? "All queries failed" },
         { status: 500 }
       );
     }
 
-    console.log("Keep-alive ping successful");
+    if (failed.length > 0) {
+      console.warn("Keep-alive: some queries failed", failed);
+    }
+
+    console.log(`Keep-alive ping successful (${results.length - failed.length}/${results.length} tables)`);
     return NextResponse.json({
       ok: true,
       timestamp: new Date().toISOString(),
+      queried: results.length - failed.length,
       message: "Supabase connection active",
     });
   } catch (err) {
