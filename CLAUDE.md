@@ -42,6 +42,19 @@ Don't show "Interest (2.0)" or "Watch (4.2)" labels in the flight tracker. Suspi
 
 Covers: domain/hosting, tech stack, env vars, all Supabase tables (8 across 4 migrations), external APIs (ADSB.lol, ADSBDB, HexDB, FAA), internal API routes, page routes, LLC piercing system, FAA cache, flight history, community flagging, security/rate limiting, costs, decision log, audit checklist.
 
+## Reliability Rules — Learned the Hard Way
+
+Postmortems and runbooks live in `docs/incidents/`. Read the relevant one before debugging a repeat.
+
+1. **Every server-side `fetch` to a third-party API must send an explicit `User-Agent`.** Node's default is `node`, and ADSB.lol started 403ing it in Oct 2026. That silently killed the radar, lookups, report correlation, and flight history recording. Use `SKYLEDGER_USER_AGENT` from `src/lib/api/adsb.ts`.
+2. **Never depend on a single free data provider.** ADS-B goes through the `PROVIDERS` list in `src/lib/api/adsb.ts` (ADSB.lol primary, adsb.fi fallback). Add new feeds there; don't call providers directly. adsb.fi terms: 1 req/s, non-commercial, attribution link required (on `/flights` and `/about`).
+3. **A failure must be loud.** Log every upstream failure, even when a fallback hides it from users, and make sure an alert reaches Rex. Silent failures cost us weeks twice in 2026: the radar 403s, and the Supabase keep-alive.
+4. **Scheduled jobs go in Vercel Cron (`vercel.json`), not GitHub Actions.** GitHub silently disables scheduled workflows on repos with no activity for 60 days.
+
+**When Rex says "nothing's tracking" or "it's broken":** open `https://skyledger.org/api/health` first. It shows each flight feed's status and the database. Then follow the runbook in `docs/incidents/2026-10-25-flight-feed-403.md`.
+
+**Monitoring in place:** `/api/health` (503 when the primary feed or the database is down, meant for UptimeRobot) and a daily alert email via `/api/cron/health-check` (`?test=1` with CRON_SECRET forces a test email).
+
 ## Project Status
 
 Current state, build progress, and roadmap live in `PROJECT-STATUS.md`. Update as the platform evolves.
