@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { fetchNearbyFlights } from "@/lib/api/adsb";
+import { fetchNearbyFlightsWithSource, FlightFeedError } from "@/lib/api/adsb";
 
 /**
  * GET /api/flights/nearby?lat=X&lon=Y&radius=Z
- * Proxies ADSB.lol to avoid exposing the API directly to clients
- * and to enable server-side caching.
+ * Proxies ADSB.lol (falling back to adsb.fi) to avoid exposing the API
+ * directly to clients and to enable server-side caching.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -27,19 +27,28 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const flights = await fetchNearbyFlights(lat, lon, radius);
+    const { flights, provider } = await fetchNearbyFlightsWithSource(lat, lon, radius);
 
     return Response.json({
       flights,
       count: flights.length,
+      source: provider,
       center: { lat, lon },
       radius,
       timestamp: Date.now(),
     });
   } catch (error) {
-    console.error("ADSB.lol API error:", error);
+    console.error("Flight feed error:", error);
     return Response.json(
-      { error: "Failed to fetch flight data" },
+      {
+        error: "Failed to fetch flight data",
+        // Provider names + HTTP statuses only — makes outages diagnosable
+        // from the browser's network tab without exposing anything sensitive.
+        providers:
+          error instanceof FlightFeedError
+            ? error.attempts.map(({ provider, status, error }) => ({ provider, status, error }))
+            : undefined,
+      },
       { status: 502 }
     );
   }

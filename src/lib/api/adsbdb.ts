@@ -4,6 +4,8 @@
  * https://www.adsbdb.com
  */
 
+import { SKYLEDGER_USER_AGENT } from "@/lib/api/adsb";
+
 export interface AirportInfo {
   icao: string;
   iata: string;
@@ -56,7 +58,10 @@ export async function lookupRouteADSBLol(
   try {
     const res = await fetch("https://api.adsb.lol/api/0/routeset", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": SKYLEDGER_USER_AGENT,
+      },
       body: JSON.stringify({
         planes: [{ callsign: cleaned, lat, lng: lon }],
       }),
