@@ -6,6 +6,7 @@
 
 ## P0 — Critical
 
+- [ ] **Abuse hardening (DDoS, bot floods, fake data)** — Started 2026-10-25. Live checklist + work log with verify/undo notes per item: `docs/security/2026-10-25-abuse-hardening.md`. Rex's part: run migration 007 in Supabase, turn on Vercel Firewall bot protection.
 - [ ] **Push Notification System (Contrail Phase 2)** — When a known weather mod operator enters a user's registered radius, fire a push notification so they can look up and photograph in real-time. Needs service workers, notification permissions, user location registration, backend position-watching. This is the "active tracking flip" that converts passive reports into gold-tier matches.
 - [ ] **Arkansas Geoengineering Ban Bill** — Spearhead weather modification ban targeting January 2027 regular session. Bill drafting should start ~September 2026. Republican supermajority (House 81-19, Senate 29-6). Governor Sanders likely to sign. Game plan in `research/`. No prior bill = clean slate.
 
