@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { submitReport } from "@/lib/supabase/reports";
 import { hashFile } from "@/lib/utils/hash";
 import { extractExif } from "@/lib/utils/exif";
+import { prepareUploadDataUrl } from "@/lib/utils/photo";
 import { OBSERVATION_TYPES, TRAIL_BEHAVIORS } from "@/lib/constants";
 
 interface PhotoEvidenceDialogProps {
@@ -61,9 +62,9 @@ export function PhotoEvidenceDialog({
       setProcessing(true);
       setProcessingStep("Reading photo...");
 
-      const reader = new FileReader();
-      reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
-      reader.readAsDataURL(file);
+      // Scaled down if large so the submission fits the API body limit;
+      // the hash is still of the original file.
+      const previewPromise = prepareUploadDataUrl(file);
 
       setProcessingStep("Extracting GPS & EXIF metadata...");
       const exifPromise = extractExif(file);
@@ -71,8 +72,9 @@ export function PhotoEvidenceDialog({
       setProcessingStep("Generating tamper-proof SHA-256 hash...");
       const hashPromise = hashFile(file);
 
-      const [exif, hash] = await Promise.all([exifPromise, hashPromise]);
+      const [preview, exif, hash] = await Promise.all([previewPromise, exifPromise, hashPromise]);
 
+      setPhotoPreview(preview);
       setPhoto(file);
       setEvidenceHash(hash);
       setExifData(exif as unknown as Record<string, unknown>);
@@ -109,7 +111,7 @@ export function PhotoEvidenceDialog({
       };
 
       setSubmitStep("Storing photo & GPS data for proof...");
-      const report = await submitReport(reportData);
+      const { report, error: submitError } = await submitReport(reportData);
 
       if (report) {
         setSubmitStep("Archiving evidence record...");
@@ -140,7 +142,7 @@ export function PhotoEvidenceDialog({
       } else {
         setResult({
           success: false,
-          message: "Failed to submit. Please try again.",
+          message: submitError ?? "Failed to submit. Please try again.",
         });
       }
     } catch {

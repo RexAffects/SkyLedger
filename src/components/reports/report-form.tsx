@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapContainer } from "@/components/map/map-container";
 import { hashFile } from "@/lib/utils/hash";
 import { extractExif } from "@/lib/utils/exif";
+import { prepareUploadDataUrl } from "@/lib/utils/photo";
 import { formatCoords } from "@/lib/utils/geo";
 import { OBSERVATION_TYPES, TRAIL_BEHAVIORS } from "@/lib/constants";
 import {
@@ -35,15 +36,6 @@ function emptyForm(observedAt = ""): ReportFormData {
     evidence_hash: "",
     exif_data: null,
   };
-}
-
-function readAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
 }
 
 export function ReportForm() {
@@ -79,8 +71,10 @@ export function ReportForm() {
       try {
         // Await the preview too — submitting before the reader fired would
         // attach a report with no photo at all.
+        // Large photos are scaled down here so the submission fits the API
+        // body limit; the hash below is still of the original file.
         const [dataUrl, exifData, hash] = await Promise.all([
-          readAsDataUrl(file),
+          prepareUploadDataUrl(file),
           extractExif(file),
           hashFile(file),
         ]);
@@ -165,7 +159,7 @@ export function ReportForm() {
     setError(null);
 
     try {
-      const result = await submitReport({
+      const { report: result, error: submitError } = await submitReport({
         latitude: formData.latitude,
         longitude: formData.longitude,
         observed_at: observedAtIso,
@@ -183,7 +177,8 @@ export function ReportForm() {
 
       if (!result) {
         setError(
-          "We could not record your observation. Check your connection and try again — your photo and details are still here."
+          submitError ??
+            "We could not record your observation. Check your connection and try again — your photo and details are still here."
         );
         return;
       }
