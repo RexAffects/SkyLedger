@@ -14,10 +14,15 @@ export async function sendHealthAlert(report: HealthReport): Promise<void> {
     throw new Error("GMAIL_ADDRESS or GMAIL_APP_PASSWORD not configured");
   }
 
+  // "fallback" only when the primary feed is actually failing; a schema or
+  // secondary problem is "needs attention" so the subject isn't alarming.
+  const primaryFeedFailing = report.flight_feed.providers[0]?.ok === false;
   const headline =
     report.status === "down"
       ? "SkyLedger radar is DOWN"
-      : "SkyLedger is running on a fallback";
+      : primaryFeedFailing
+        ? "SkyLedger is running on a fallback"
+        : "SkyLedger needs attention (site is up)";
 
   const text = [
     headline,
