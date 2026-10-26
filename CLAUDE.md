@@ -49,9 +49,13 @@ The home page (`src/app/page.tsx`) shows the live radar right under "What's flyi
 - The map remounts when `mapCenter` changes (`key` on `MapContainer`), because Leaflet only reads `center` on mount. Without that, switching from the IP guess to GPS scans the new spot but leaves the map showing the old one.
 - `handleUseMyLocation` must handle geolocation errors. Without that, a denied permission hangs on "Getting your location..." forever.
 
+## How It's Built
+
+`docs/BUILD.md` is the committed, secret-free description of the whole system: hosting, every page and API route, cron jobs, external feeds, all 11 database tables, security layers, env var names, scoring, evidence flow, and a build timeline. Read it before any "how does X work" question, and update it when you add a route, table, cron, env var, or data source. Rex's manual dashboard steps (with walkthroughs) are tracked in `ROADMAP.md` under "Operations".
+
 ## Operations Bible
 
-`private/OPS.md` is the single source of truth for SkyLedger infrastructure (gitignored). Read it first for any audit, status check, or "how does X work" question. Update it whenever infrastructure changes (new tables, APIs, features, deployment, costs).
+`private/OPS.md` is the single source of truth for SkyLedger infrastructure (gitignored; only on Rex's main machine). Read it first for any audit, status check, or "how does X work" question. Update it whenever infrastructure changes (new tables, APIs, features, deployment, costs). On machines where it's missing, work from `docs/BUILD.md` and leave an "OPS.md addendum" section in the relevant doc for Rex to merge.
 
 Covers: domain/hosting, tech stack, env vars, all Supabase tables (8 across 4 migrations), external APIs (ADSB.lol, ADSBDB, HexDB, FAA), internal API routes, page routes, LLC piercing system, FAA cache, flight history, community flagging, security/rate limiting, costs, decision log, audit checklist.
 

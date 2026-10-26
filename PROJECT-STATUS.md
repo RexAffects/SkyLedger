@@ -71,7 +71,7 @@ SkyLedger is the dashboard layer. Geoengineering Watch = archive (600+ patents).
 `npm run dev` — runs on localhost:3000.
 
 ## Operations
-`private/OPS.md` — single source of truth for infrastructure (gitignored).
+`docs/BUILD.md` — how the whole system is built (committed, no secrets). `private/OPS.md` — single source of truth for infrastructure with secrets (gitignored, seat 2 only). Rex's manual dashboard steps with walkthroughs: `ROADMAP.md` → "Operations".
 
 **Monitoring:** `https://skyledger.org/api/health` (both flight feeds + DB; 503 when broken) and a daily alert email (`/api/cron/health-check`).
 
