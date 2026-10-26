@@ -27,6 +27,8 @@ Work top to bottom. Each one has step-by-step instructions in the "Walkthroughs"
 
 ## P1 — High
 
+- [~] **Content audit, October 2026** — Started 2026-10-26. The learn pages were written March–April 2026 and state "3 bans enacted, 30+ states with bills, Clear Skies Act H.R. 4403 (Greene), Sept 2025 hearing, Stardust $75M / April 2026 experiments". Five-track research (state bills, federal, Stardust, funder network, field news) → report at `reports/SkyLedger content audit Oct 2026.md`, notes in `research_notes/SkyLedger content audit Oct 2026/`. Next: Rex reviews the report's recommendation list, then Claude updates the pages and data files (`src/app/learn/*`, `src/lib/data/*.ts`, `toolkit.ts` scripts) with sources. Recurring: re-run this audit at the start of each legislative session (January) and after any major news.
+
 - [ ] **Mobile App** — Native app for photo submissions, flight tracking, and push notifications. Matt sees this as a game changer for adoption — phones are already in hand when people see something in the sky. Current API routes can serve as backend.
 - [ ] **Compass Calibration Prompt** — AR/compass mode gets unreliable without recalibration. Build a calibration modal (tilt forward/back, side to side, left/right) modeled on FlightRadar24's AR view. Detect degraded accuracy, offer step-by-step instructions, "Don't show again" option.
 - [ ] **State Ban Playbook Expansion** — Enrich the Winning Playbook page with Tennessee and Louisiana case studies alongside existing Florida content.
