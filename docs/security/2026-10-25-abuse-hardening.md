@@ -61,8 +61,11 @@ If it ever stays false across several minutes, that's real; see the incident run
 
 ### Rex
 
-- [R] **Run migration `supabase/migrations/007_security_hardening.sql`** in Supabase → SQL Editor.
-      Until this runs, the direct-insert hole stays open (the new server route works either way).
+- [x] **Run migration `supabase/migrations/007_security_hardening.sql`** in Supabase → SQL Editor.
+      *Done by Rex 2026-10-26 ~14:40 UTC.* It failed the first time because `flight_positions`
+      never existed on the live DB (migration 003_flight_history was never run); see
+      `docs/incidents/2026-10-26-missing-flight-history-tables.md`. Both 003 and 007 are now
+      applied; `pg_tables` shows all 11 tables with `rowsecurity = true`; `/api/health` → `ok`.
 - [R] **Vercel → Project `openskies` → Firewall tab.** Turn on the managed Bot Protection rule and
       know where "Attack Challenge Mode" is (one click, use it during an active attack).
       Claude can't see this dashboard.
@@ -214,6 +217,11 @@ too (HTTP stays 200; it's degraded, not down).
 007: `ok:false` with the file named. After: `ok:true`.
 
 **How to undo** — `git revert 2fa2f73`. Add future migrations to `EXPECTED_SCHEMA` the same way.
+
+**Update 2026-10-26** — `EXPECTED_SCHEMA` now probes every table the code uses (11 tables, one
+column each, in parallel), not just the 007 column. Reason: the 007 run exposed that the
+flight-history tables had never been created on production. Incident note:
+`docs/incidents/2026-10-26-missing-flight-history-tables.md`.
 
 ### 6. Docs — this file, `CLAUDE.md`, `PROJECT-STATUS.md`, `ROADMAP.md`
 

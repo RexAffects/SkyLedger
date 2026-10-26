@@ -63,6 +63,7 @@ Postmortems and runbooks live in `docs/incidents/`. Read the relevant one before
 2. **Never depend on a single free data provider.** ADS-B goes through the `PROVIDERS` list in `src/lib/api/adsb.ts` (ADSB.lol primary, adsb.fi fallback). Add new feeds there; don't call providers directly. adsb.fi terms: 1 req/s, non-commercial, attribution link required (on `/flights` and `/about`).
 3. **A failure must be loud.** Log every upstream failure, even when a fallback hides it from users, and make sure an alert reaches Rex. Silent failures cost us weeks twice in 2026: the radar 403s, and the Supabase keep-alive.
 4. **Scheduled jobs go in Vercel Cron (`vercel.json`), not GitHub Actions.** GitHub silently disables scheduled workflows on repos with no activity for 60 days.
+5. **Every table the code uses is listed in `EXPECTED_SCHEMA` in `src/lib/health.ts`.** A migration isn't finished until its table is in that list. In Oct 2026 we discovered `flight_positions` and `flight_summaries` had never been created on the live database; flight history had silently failed since launch. Migration numbers must be unique (two files share `003_`; the next one is `008_`). See `docs/incidents/2026-10-26-missing-flight-history-tables.md`.
 
 **When Rex says "nothing's tracking" or "it's broken":** open `https://skyledger.org/api/health` first. It shows each flight feed's status and the database. Then follow the runbook in `docs/incidents/2026-10-25-flight-feed-403.md`.
 

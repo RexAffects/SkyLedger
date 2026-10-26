@@ -32,28 +32,45 @@ export interface HealthReport {
   problems: string[];
 }
 
-// Each entry: a column the code relies on and the migration that adds it.
-// A failed select means that migration hasn't been run in Supabase yet.
+// Every table the code reads or writes, with one column to probe and the
+// migration that creates it. A failed select means that migration hasn't
+// been run in Supabase yet.
+//
+// Why every table: on 2026-10-26 we found flight_positions and
+// flight_summaries had never been created on the live database. Flight
+// history, streak correlation and the weekly report had been silently
+// failing since they were built. Only citizen_reports was being checked.
+// See docs/incidents/2026-10-26-missing-flight-history-tables.md.
 const EXPECTED_SCHEMA: Array<{ table: string; column: string; migration: string }> = [
-  {
-    table: "citizen_reports",
-    column: "reporter_hash",
-    migration: "007_security_hardening.sql",
-  },
+  { table: "citizen_reports", column: "id", migration: "001_initial_schema.sql" },
+  { table: "flight_flags", column: "id", migration: "001_initial_schema.sql" },
+  { table: "flag_submissions", column: "id", migration: "002_flag_submissions.sql" },
+  { table: "flag_anomalies", column: "id", migration: "002_flag_submissions.sql" },
+  { table: "faa_cache", column: "tail_number", migration: "003_faa_cache_and_llc.sql" },
+  { table: "llc_lookups", column: "id", migration: "003_faa_cache_and_llc.sql" },
+  { table: "flight_positions", column: "id", migration: "003_flight_history.sql" },
+  { table: "flight_summaries", column: "id", migration: "003_flight_history.sql" },
+  { table: "streak_reports", column: "id", migration: "005_streak_detection.sql" },
+  { table: "streak_matched_flights", column: "id", migration: "005_streak_detection.sql" },
+  { table: "opensky_route_cache", column: "id", migration: "006_opensky_route_cache.sql" },
+  { table: "citizen_reports", column: "reporter_hash", migration: "007_security_hardening.sql" },
 ];
 
 async function checkSchema(): Promise<HealthReport["schema"]> {
-  const missing: string[] = [];
   try {
     const supabase = createServiceClient();
-    for (const { table, column, migration } of EXPECTED_SCHEMA) {
-      const { error } = await supabase.from(table).select(column).limit(1);
-      if (error) missing.push(`${table}.${column} (run supabase/migrations/${migration})`);
-    }
+    const results = await Promise.all(
+      EXPECTED_SCHEMA.map(async ({ table, column, migration }) => {
+        const { error } = await supabase.from(table).select(column).limit(1);
+        return error ? `${table}.${column} (run supabase/migrations/${migration})` : null;
+      })
+    );
+    const missing = results.filter((r): r is string => r !== null);
+    return { ok: missing.length === 0, missing };
   } catch {
     // Database itself is down; checkDatabase reports that.
+    return { ok: true, missing: [] };
   }
-  return { ok: missing.length === 0, missing };
 }
 
 async function checkDatabase(): Promise<HealthReport["database"]> {

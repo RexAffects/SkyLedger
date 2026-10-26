@@ -75,6 +75,6 @@ SkyLedger is the dashboard layer. Geoengineering Watch = archive (600+ patents).
 
 **Monitoring:** `https://skyledger.org/api/health` (both flight feeds + DB; 503 when broken) and a daily alert email (`/api/cron/health-check`).
 
-**Security:** per-IP throttling on every `/api` route (`src/proxy.ts`), DB-backed submission limits, no direct-from-browser Supabase writes, feed-verified flight history. Checklist + verify/undo notes: [docs/security/2026-10-25-abuse-hardening.md](docs/security/2026-10-25-abuse-hardening.md). Rex: run migration 007, enable Vercel Firewall bot protection.
+**Security:** per-IP throttling on every `/api` route (`src/proxy.ts`), DB-backed submission limits, no direct-from-browser Supabase writes, feed-verified flight history. Checklist + verify/undo notes: [docs/security/2026-10-25-abuse-hardening.md](docs/security/2026-10-25-abuse-hardening.md). Migration 007 applied 2026-10-26. Rex: enable Vercel Firewall bot protection.
 
-**Incidents:** `docs/incidents/` — postmortems + runbooks. Latest: [2026-10-25 radar outage (ADSB.lol 403)](docs/incidents/2026-10-25-flight-feed-403.md).
+**Incidents:** `docs/incidents/` — postmortems + runbooks. Latest: [2026-10-26 flight-history tables never created](docs/incidents/2026-10-26-missing-flight-history-tables.md); [2026-10-25 radar outage (ADSB.lol 403)](docs/incidents/2026-10-25-flight-feed-403.md).
