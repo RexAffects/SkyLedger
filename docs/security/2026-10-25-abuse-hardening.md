@@ -66,6 +66,11 @@ If it ever stays false across several minutes, that's real; see the incident run
       never existed on the live DB (migration 003_flight_history was never run); see
       `docs/incidents/2026-10-26-missing-flight-history-tables.md`. Both 003 and 007 are now
       applied; `pg_tables` shows all 11 tables with `rowsecurity = true`; `/api/health` → `ok`.
+- [x] **Rotate the Supabase service-role key** (leaked as a Config var in the April 2026 Vercel
+      breach). *Done by Rex 2026-10-26 22:25 UTC*: new `sb_secret_` key in Vercel as type Secret,
+      anon key moved to `sb_publishable_`, redeployed, verified, legacy JWT keys disabled in
+      Supabase. Procedure and undo: `ROADMAP.md` → Walkthroughs → 1a.
+- [R] **Rotate `GMAIL_APP_PASSWORD` and `ADMIN_PASSWORD`** (same breach). `ROADMAP.md` → 1b, 1c.
 - [R] **Vercel → Project `openskies` → Firewall tab.** Turn on the managed Bot Protection rule and
       know where "Attack Challenge Mode" is (one click, use it during an active attack).
       Claude can't see this dashboard.

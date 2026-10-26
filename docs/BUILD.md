@@ -228,14 +228,15 @@ security doc shows each limit next to expected real usage.
 
 | Name | Used by |
 |---|---|
-| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser and server Supabase clients. Public by design; RLS is what protects the data. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-only writes. **Bypasses RLS.** Must be a Vercel "Secret"-type variable. If it was ever a plain Config variable (the `<>` icon), rotate it in Supabase. |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser and server Supabase clients. Public by design; RLS is what protects the data. Since 2026-10-26 the anon key is a new-format `sb_publishable_…` key. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only writes. **Bypasses RLS.** Vercel type **Secret**. Since 2026-10-26 it is a new-format `sb_secret_…` key named `vercel_server` in Supabase → API Keys; the legacy JWT keys (leaked in the April 2026 Vercel breach) are disabled there. Rotation procedure: `ROADMAP.md` → Walkthroughs → 1a. |
 | `CRON_SECRET` | Vercel Cron auth; rotated after the April 2026 Vercel breach. |
 | `KEEP_ALIVE_SECRET` | GitHub Actions backup keep-alive. |
 | `FLAG_SALT` | Reporter IP hashing. Changing it resets everyone's daily limit counters. |
 | `ADMIN_PASSWORD`, `ADMIN_EMAIL` | Admin login; alert and report recipient. |
 | `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD` | Outbound email. |
-| `OPENSKY_CLIENT_ID`, `OPENSKY_CLIENT_SECRET`, `OPENSKY_USERNAME`, `OPENSKY_PASSWORD` | OpenSky historical lookups. |
+| `OPENSKY_CLIENT_ID`, `OPENSKY_CLIENT_SECRET`, `OPENSKY_USERNAME`, `OPENSKY_PASSWORD` | OpenSky historical lookups. **Not set in Vercel as of 2026-10-26**, so the OpenSky source in streak correlation is inactive. |
+| `VJA_DRAFT_SECRET` | Present in Vercel, not used by any SkyLedger code. Leftover; safe to delete. |
 | `RATE_HOURLY_LIMIT`, `RATE_DAILY_LIMIT`, `RATE_PER_AIRCRAFT_HOURS` | Submission limit overrides (defaults 5 / 20). |
 | `THREAT_HIGH_REPORTERS`, `THREAT_MEDIUM_REPORTERS` | Unique reporters needed for threat badges (defaults 5 / 3). |
 | `ANOMALY_BURST_THRESHOLD`, `ANOMALY_SCATTER_THRESHOLD`, `ANOMALY_LOW_SCORE_FLAGS`, `ANOMALY_LOW_SCORE_CEILING` | Flag anomaly detection tuning. |

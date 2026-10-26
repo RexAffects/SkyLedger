@@ -8,7 +8,7 @@
 
 Work top to bottom. Each one has step-by-step instructions in the "Walkthroughs" section at the end of this file. Check it off here when done and note the date.
 
-- [ ] **1. Vercel env var audit** — Confirm no variable still shows the `<>` Config icon, especially `SUPABASE_SERVICE_ROLE_KEY`. If it does, rotate it in Supabase and re-enter in Vercel as a Secret. Open since the April 2026 Vercel breach.
+- [~] **1. Vercel env var audit** — Audit done 2026-10-26: three Config secrets were flagged "Needs Attention" (`SUPABASE_SERVICE_ROLE_KEY`, `GMAIL_APP_PASSWORD`, `ADMIN_PASSWORD`). **Supabase keys rotated 2026-10-26 22:25 UTC**: moved to the new key system (`sb_secret_` as the service key, type Secret; `sb_publishable_` as the anon key), redeployed, verified, then legacy JWT keys disabled in Supabase. Remaining: `GMAIL_APP_PASSWORD`, `ADMIN_PASSWORD`, then `FLAG_SALT` (walkthrough 1b–1d below). Open since the April 2026 Vercel breach.
 - [ ] **2. Vercel Firewall → Bot Protection on** — Last item of the abuse-hardening checklist.
 - [ ] **3. Test the alert email** — One curl with the CRON_SECRET; confirms the daily health alert can actually reach your inbox.
 - [ ] **4. UptimeRobot on `/api/health`** — Free external monitor so a dead site pages you within minutes, not next morning.
@@ -73,14 +73,33 @@ Written 2026-10-26. Claude cannot see the Vercel or Supabase dashboards, so thes
 
 ### 1. Vercel env var audit
 
-1. vercel.com → team **rexaffects' projects** → project **openskies** → **Settings** → **Environment Variables**.
-2. Look at the icon to the left of each variable name. A `<>` icon means "Config" (plain text, included in the April 2026 breach). A lock or "Sensitive" badge means Secret.
-3. For every variable still showing `<>`:
-   - If it's `SUPABASE_SERVICE_ROLE_KEY`: Supabase → project → **Settings → API** → under "Project API keys", **Reset** the service_role key. Copy the new one. Back in Vercel, edit the variable, paste the new value, tick **Sensitive**, save. Then **Deployments → Redeploy** the latest so the running site picks it up.
-   - If it's `GMAIL_APP_PASSWORD`: Google Account → Security → App passwords → delete the SkyLedger one, create a new one, update in Vercel as Sensitive.
-   - `ADMIN_PASSWORD`, `FLAG_SALT`, `KEEP_ALIVE_SECRET`, `OPENSKY_*`: change to a new random value, mark Sensitive. (Changing `FLAG_SALT` resets everyone's daily limit counters; harmless.) `KEEP_ALIVE_SECRET` must also be updated in GitHub → repo → Settings → Secrets → Actions.
-   - `NEXT_PUBLIC_*` variables are public by design; leave them.
-4. **Confirm:** no `<>` icons remain, and after the redeploy `skyledger.org/api/health` is `ok` and submitting a test flag still works.
+Vercel's list shows each variable's **Type**: "Config" (readable after saving; exposed in the April 2026 breach) or "Secret" (write-only). Variables that are Config *and* sensitive get an orange "Needs Attention" badge. Audit on 2026-10-26 found three: `SUPABASE_SERVICE_ROLE_KEY`, `GMAIL_APP_PASSWORD`, `ADMIN_PASSWORD`. Non-secret Config values (`ADMIN_EMAIL`, `GMAIL_ADDRESS`, `NEXT_PUBLIC_*`) are fine as they are.
+
+**1a. Supabase keys — DONE 2026-10-26.** How it was done, zero downtime:
+1. Supabase → gear (Project Settings) → **API Keys** → tab **Publishable and secret keys** → **Create new secret key** named `vercel_server` → copied the `sb_secret_…` value (shown once). Copied the `sb_publishable_…` key from the same page.
+2. Vercel → openskies → Settings → Environment Variables → `SUPABASE_SERVICE_ROLE_KEY` → "…" → Edit → pasted `sb_secret_…`, Type **Secret** → Save. Then `NEXT_PUBLIC_SUPABASE_ANON_KEY` → Edit → pasted `sb_publishable_…`, Type Config → Save → accepted the redeploy prompt.
+3. Verified `/api/health` ok for four minutes, reports page 200.
+4. Supabase → API Keys → tab **Legacy anon, service_role** → **Disable JWT-based API keys**. The leaked keys stopped working at that moment. Re-verified health, pages, DB reads, radar: all ok.
+   To undo: the same tab has a re-enable button. The code needs no change; supabase-js 2.99 accepts both key formats.
+
+**1b. Gmail app password**
+1. myaccount.google.com → **Security** → **2-Step Verification** → scroll to **App passwords** (or search "app passwords" in the account search box).
+2. Delete the existing SkyLedger entry (trash icon). Create a new one: name it `SkyLedger Vercel` → **Create** → copy the 16-character password (shown once; spaces don't matter).
+3. Vercel → Environment Variables → `GMAIL_APP_PASSWORD` → "…" → Edit → paste → Type **Secret** → Save → accept the redeploy.
+4. **Confirm:** run the test-alert curl (walkthrough 3). An email arriving proves the new password works.
+
+**1c. Admin password**
+1. Pick a new long password (a password manager's generator, 20+ characters). Store it in the password manager.
+2. Vercel → Environment Variables → `ADMIN_PASSWORD` → "…" → Edit → paste → Type **Secret** → Save → accept the redeploy.
+3. **Confirm:** `skyledger.org/admin/login` with the new password. Existing admin sessions are invalidated automatically because the session cookie is an HMAC of the password.
+
+**1d. FLAG_SALT** (low value, ten seconds)
+1. Any random string of 32+ characters. Vercel → `FLAG_SALT` → Edit → paste → Type **Secret** → Save → redeploy.
+2. Side effect: everyone's hourly/daily submission counters reset once. Harmless.
+
+Not needed: `KEEP_ALIVE_SECRET`, `CRON_SECRET`, `VJA_DRAFT_SECRET` are already Secret. `VJA_DRAFT_SECRET` isn't used by SkyLedger code (leftover; can be deleted). No `OPENSKY_*` variables are set, so the OpenSky source in streak correlation is inactive; add them if that feature is wanted.
+
+**Confirm the whole step:** no "Needs Attention" badges remain on the Environment Variables page.
 
 ### 2. Vercel Firewall Bot Protection
 
