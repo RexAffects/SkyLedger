@@ -37,8 +37,10 @@ export async function gatherWeeklyStats(): Promise<WeeklyStats> {
   ] = await Promise.all([
     supabase.from("citizen_reports").select("id", { count: "exact", head: true }),
     supabase.from("citizen_reports").select("id", { count: "exact", head: true }).gte("created_at", oneWeekAgo),
-    supabase.from("citizen_reports").select("photo_urls"),
-    supabase.from("citizen_reports").select("photo_urls").gte("created_at", oneWeekAgo),
+    // Count reports that have a photo without downloading the photos. They are
+    // multi-megabyte data URLs, so selecting photo_urls pulled every image.
+    supabase.from("citizen_reports").select("id", { count: "exact", head: true }).not("photo_urls", "eq", "{}"),
+    supabase.from("citizen_reports").select("id", { count: "exact", head: true }).not("photo_urls", "eq", "{}").gte("created_at", oneWeekAgo),
     supabase.from("flight_flags").select("id", { count: "exact", head: true }),
     supabase.from("flight_flags").select("id", { count: "exact", head: true }).gte("created_at", oneWeekAgo),
     supabase.from("flight_flags").select("id", { count: "exact", head: true }).eq("threat_level", "high"),
@@ -51,11 +53,15 @@ export async function gatherWeeklyStats(): Promise<WeeklyStats> {
     supabase.from("citizen_reports").select("latitude, longitude"),
   ]);
 
-  // Count photos (each report can have multiple photos in the array)
-  const countPhotos = (rows: { photo_urls: string[] | null }[]) =>
-    rows.reduce((sum, row) => sum + (row.photo_urls?.length || 0), 0);
-  const totalPhotos = countPhotos((photosAll.data || []) as { photo_urls: string[] | null }[]);
-  const weekPhotos = countPhotos((photosWeekData.data || []) as { photo_urls: string[] | null }[]);
+  // One photo per report (enforced by POST /api/reports), so reports with a
+  // photo = photos. A failed count must not pass silently as 0.
+  for (const q of [photosAll, photosWeekData]) {
+    if (q.error) {
+      console.error(`[weekly-report] photo count failed: ${q.error.message || `HTTP ${q.status} ${q.statusText}`}`);
+    }
+  }
+  const totalPhotos = photosAll.count || 0;
+  const weekPhotos = photosWeekData.count || 0;
 
   // Aggregate sightings
   const totalSightings = (summaries.data || []).reduce(

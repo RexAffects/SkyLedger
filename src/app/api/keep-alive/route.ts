@@ -7,7 +7,14 @@ export const maxDuration = 10;
 // Supabase pauses a Free project after ~7 days without "sufficient user
 // database activity" — their guidance is a few requests per day, so we touch
 // several tables rather than one.
-const TABLES = ["citizen_reports", "flight_flags", "faa_cache"] as const;
+//
+// One small column per table, never "*": a HEAD request still makes Postgres
+// build every row, and citizen_reports rows carry multi-megabyte photos.
+const TABLES = [
+  { table: "citizen_reports", column: "id" },
+  { table: "flight_flags", column: "id" },
+  { table: "faa_cache", column: "tail_number" },
+] as const;
 
 /**
  * Keep-alive endpoint that prevents Supabase from pausing due to inactivity.
@@ -31,10 +38,10 @@ export async function GET(request: Request) {
 
     // Count-only queries: real database activity, column-name agnostic, cheap.
     const results = await Promise.all(
-      TABLES.map(async (table) => {
+      TABLES.map(async ({ table, column }) => {
         const { error } = await supabase
           .from(table)
-          .select("*", { count: "exact", head: true });
+          .select(column, { count: "exact", head: true });
         return { table, ok: !error, error: error?.message };
       })
     );

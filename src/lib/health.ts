@@ -77,11 +77,20 @@ async function checkDatabase(): Promise<HealthReport["database"]> {
   const started = Date.now();
   try {
     const supabase = createServiceClient();
-    const { error } = await supabase
+    // Select "id", never "*". A HEAD request still makes Postgres build every
+    // row, and citizen_reports rows carry photos as multi-megabyte data URLs,
+    // so "*" read every photo on each check. By Nov 2026 that took 7-14 s and
+    // tripped a false "radar is DOWN" alert.
+    const { error, status, statusText } = await supabase
       .from("citizen_reports")
-      .select("*", { count: "exact", head: true });
+      .select("id", { count: "exact", head: true });
     return error
-      ? { ok: false, ms: Date.now() - started, error: error.message }
+      ? {
+          ok: false,
+          ms: Date.now() - started,
+          // HEAD responses have no body, so the message is often empty.
+          error: error.message || `HTTP ${status} ${statusText}`.trim(),
+        }
       : { ok: true, ms: Date.now() - started };
   } catch (err) {
     return {
